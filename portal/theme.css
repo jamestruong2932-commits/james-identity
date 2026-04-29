@@ -409,14 +409,19 @@ body::before {
     padding-left: 1.25rem;
     padding-right: 1.25rem;
   }
+  .nav-logo {
+    flex-shrink: 0;
+    font-size: 1.05rem;
+  }
   .site-nav nav {
     display: flex;
     justify-content: space-between;
+    align-items: center;
     gap: 20px;
   }
   .nav-link {
-    font-size: 13px;
-    letter-spacing: 0.10em;
+    font-size: 12px;
+    letter-spacing: 0.08em;
   }
 
   .site-footer {
