@@ -1,0 +1,192 @@
+﻿<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>QROS — Quantum Rebirth OS · James Identity</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="theme.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            cream: '#F4F1EA', 'brown-deep': '#3E2723',
+            'gold-sand': '#C5A880', charcoal: '#2B2B2B', 'warm-stone': '#89837f',
+          },
+          fontFamily: {
+            serif: ['"Playfair Display"', 'Georgia', 'serif'],
+            sans:  ['Inter', 'system-ui', 'sans-serif'],
+          },
+        },
+      },
+    }
+  </script>
+</head>
+<body>
+
+  <div id="page-beams" aria-hidden="true">
+    <div class="pg-beam"></div><div class="pg-beam"></div>
+    <div class="pg-beam"></div><div class="pg-beam"></div>
+    <div class="pg-beam"></div>
+  </div>
+
+  <header class="site-nav">
+    <div class="max-w-6xl mx-auto px-6 py-5 flex items-center justify-between">
+      <a href="index.html" class="nav-logo">James.identity</a>
+      <nav class="flex gap-8">
+        <a href="about.html"      class="nav-link">About</a>
+        <a href="https://www.quantumrebirth.io.vn/" target="_blank" class="nav-link nav-link--active">QROS</a>
+        <a href="diagnostic.html" class="nav-link">Chẩn đoán</a>
+        <a href="insight.html"    class="nav-link">Insight</a>
+        <a href="academy.html"    class="nav-link">Academy</a>
+      </nav>
+    </div>
+  </header>
+
+
+  <section class="min-h-screen flex flex-col justify-center px-6 pt-24 pb-32"
+           style="border-bottom:1px solid rgba(62,39,35,0.08)">
+    <div class="max-w-4xl mx-auto w-full">
+
+      <p class="font-sans text-xs tracking-widest uppercase mb-6 reveal"
+         style="color:#C5A880;letter-spacing:0.22em">
+        Quantum Rebirth OS
+      </p>
+
+      <h1 class="font-serif mb-8 reveal"
+          style="font-size:clamp(3rem,8vw,7rem);font-weight:900;color:#3E2723;line-height:0.95;letter-spacing:-0.03em">
+        QROS
+      </h1>
+
+      <p class="font-sans text-base leading-loose max-w-xl mb-12 reveal" style="color:#A8A39D">
+        Hệ điều hành tái sinh lượng tử — 21 ngày, 7 module.<br />
+        Không thay đổi hành vi trước. Thay đổi người vận hành trước.<br />
+        Hành vi đi theo sau.
+      </p>
+
+      <div class="reveal">
+        <a href="academy.html" class="btn-cta">
+          Vào Academy
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+            <path d="M5 12h14M12 5l7 7-7 7"/>
+          </svg>
+        </a>
+      </div>
+
+    </div>
+  </section>
+
+
+  <section class="py-32 px-6" style="border-bottom:1px solid rgba(62,39,35,0.08)">
+    <div class="max-w-4xl mx-auto">
+      <p class="font-sans text-xs tracking-widest uppercase mb-4 reveal" style="color:#A8A39D">Lộ trình</p>
+      <h2 class="font-serif text-3xl md:text-4xl text-brown-deep mb-16 reveal"
+          style="line-height:1.15">
+        7 Module.<br /><em style="color:#C5A880">21 Ngày Chuyển Hóa.</em>
+      </h2>
+
+      <div class="flex flex-col">
+        <div class="card reveal p-8 mb-3">
+          <div class="flex items-start gap-8">
+            <span class="font-sans text-xs tracking-widest" style="color:#C5A880;min-width:2rem">01</span>
+            <div>
+              <h3 class="font-serif text-xl text-brown-deep mb-2">Quantum Diagnosis</h3>
+              <p class="font-sans text-sm leading-loose" style="color:#A8A39D">Đọc mã nguồn. Xác định Brule chạy ngầm ở tầng tế bào.</p>
+            </div>
+          </div>
+        </div>
+        <div class="card reveal p-8 mb-3">
+          <div class="flex items-start gap-8">
+            <span class="font-sans text-xs tracking-widest" style="color:#C5A880;min-width:2rem">02</span>
+            <div>
+              <h3 class="font-serif text-xl text-brown-deep mb-2">Neural Rewire</h3>
+              <p class="font-sans text-sm leading-loose" style="color:#A8A39D">Ghi đè pattern thần kinh cũ bằng Neuroplasticity Protocol.</p>
+            </div>
+          </div>
+        </div>
+        <div class="card reveal p-8 mb-3">
+          <div class="flex items-start gap-8">
+            <span class="font-sans text-xs tracking-widest" style="color:#C5A880;min-width:2rem">03</span>
+            <div>
+              <h3 class="font-serif text-xl text-brown-deep mb-2">Epigenetic Reset</h3>
+              <p class="font-sans text-sm leading-loose" style="color:#A8A39D">Thay đổi biểu hiện gen thông qua môi trường và cảm xúc có chủ đích.</p>
+            </div>
+          </div>
+        </div>
+        <div class="card reveal p-8 mb-3">
+          <div class="flex items-start gap-8">
+            <span class="font-sans text-xs tracking-widest" style="color:#C5A880;min-width:2rem">04</span>
+            <div>
+              <h3 class="font-serif text-xl text-brown-deep mb-2">HeartMath Coherence</h3>
+              <p class="font-sans text-sm leading-loose" style="color:#A8A39D">Đồng bộ trường tim-não. Vận hành từ tần số thịnh vượng.</p>
+            </div>
+          </div>
+        </div>
+        <div class="card reveal p-8 mb-3">
+          <div class="flex items-start gap-8">
+            <span class="font-sans text-xs tracking-widest" style="color:#C5A880;min-width:2rem">05</span>
+            <div>
+              <h3 class="font-serif text-xl text-brown-deep mb-2">Quantum Collapse</h3>
+              <p class="font-sans text-sm leading-loose" style="color:#A8A39D">Sụp đổ hàm sóng có chủ đích. Chọn kênh thực tại để hiện hóa.</p>
+            </div>
+          </div>
+        </div>
+        <div class="card reveal p-8 mb-3">
+          <div class="flex items-start gap-8">
+            <span class="font-sans text-xs tracking-widest" style="color:#C5A880;min-width:2rem">06</span>
+            <div>
+              <h3 class="font-serif text-xl text-brown-deep mb-2">Identity Architecture</h3>
+              <p class="font-sans text-sm leading-loose" style="color:#A8A39D">Thiết kế và cài đặt phiên bản danh tính mới từ tầng hệ điều hành.</p>
+            </div>
+          </div>
+        </div>
+        <div class="card reveal p-8">
+          <div class="flex items-start gap-8">
+            <span class="font-sans text-xs tracking-widest" style="color:#C5A880;min-width:2rem">07</span>
+            <div>
+              <h3 class="font-serif text-xl text-brown-deep mb-2">Integration & Emergence</h3>
+              <p class="font-sans text-sm leading-loose" style="color:#A8A39D">Hợp nhất. Để hệ điều hành mới trồi sinh tự nhiên vào đời sống thực.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <footer class="site-footer reveal">
+    <div class="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-8">
+      <a href="index.html" class="footer-logo">James.identity</a>
+      <nav class="flex gap-8">
+        <a href="about.html"      class="nav-link">About</a>
+        <a href="https://www.quantumrebirth.io.vn/" target="_blank" class="nav-link">QROS</a>
+        <a href="diagnostic.html" class="nav-link">Chẩn đoán</a>
+        <a href="insight.html"    class="nav-link">Insight</a>
+        <a href="academy.html"    class="nav-link">Academy</a>
+      </nav>
+      <p class="footer-copy">© 2026 James Trương</p>
+    </div>
+  </footer>
+
+
+  <script>
+    gsap.registerPlugin(ScrollTrigger);
+    gsap.utils.toArray('.reveal').forEach(function(el) {
+      gsap.fromTo(el,
+        { opacity: 0, y: 28 },
+        { opacity: 1, y: 0, duration: 0.85, ease: 'power4.out',
+          scrollTrigger: { trigger: el, start: 'top 88%', toggleActions: 'play none none none' }
+        }
+      );
+    });
+  </script>
+
+</body>
+</html>
+

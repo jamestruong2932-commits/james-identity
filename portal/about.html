@@ -1,0 +1,796 @@
+﻿<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>James Identity — Hệ Sinh Thái</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,700;1,400&family=Inter:wght@300;400;500&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&display=swap" rel="stylesheet" />
+
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- James Identity Theme -->
+  <link rel="stylesheet" href="theme.css" />
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            cream:        '#F4F1EA',
+            'brown-deep': '#3E2723',
+            'gold-sand':  '#C5A880',
+            charcoal:     '#2B2B2B',
+            'warm-stone': '#89837f',
+          },
+          fontFamily: {
+            serif:     ['"Playfair Display"', 'Georgia', 'serif'],
+            sans:      ['Inter', 'system-ui', 'sans-serif'],
+            cormorant: ['"Cormorant Garamond"', 'Georgia', 'serif'],
+          },
+        },
+      },
+    }
+  </script>
+
+  <style>
+    /* ── AWARENESS VARIANT CARD ── */
+    .av-card {
+      border: 1px solid var(--color-accent-border);
+      background: var(--color-accent-tint);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    .av-toggle {
+      width: 100%; display: flex; align-items: center;
+      justify-content: space-between; gap: 10px;
+      padding: 13px 16px; background: none; border: none;
+      cursor: pointer; text-align: left;
+      transition: background var(--dur-fast) ease;
+    }
+    .av-toggle:hover { background: rgba(197,168,128,0.12); }
+    .av-toggle-label {
+      font-family: var(--font-sans); font-size: 10px;
+      font-weight: 600; letter-spacing: 0.2em;
+      text-transform: uppercase; color: var(--color-accent);
+    }
+    .av-chevron {
+      flex-shrink: 0; color: var(--color-accent);
+      transition: transform var(--dur-fast) ease;
+    }
+    .av-toggle[aria-expanded="true"] .av-chevron { transform: rotate(180deg); }
+    .av-body {
+      padding: 16px 16px 18px;
+      border-top: 1px solid var(--color-accent-border);
+    }
+    .av-trigger {
+      font-family: var(--font-text); font-size: 13.5px;
+      color: var(--color-accent); line-height: 1.85;
+      font-style: italic; margin-bottom: 14px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--color-accent-border);
+    }
+    .av-section-label {
+      font-family: var(--font-sans); font-size: 10px;
+      font-weight: 600; letter-spacing: 0.14em;
+      text-transform: uppercase; color: var(--color-muted);
+      margin-bottom: 8px; margin-top: 14px;
+    }
+    .av-section-label:first-of-type { margin-top: 0; }
+    .av-text {
+      font-family: var(--font-sans); font-size: 13px;
+      color: #89837f; line-height: 1.82; margin-bottom: 8px;
+    }
+    .av-text:last-of-type { margin-bottom: 0; }
+    .av-list { display: flex; flex-direction: column; gap: 7px; }
+    .av-list li {
+      font-family: var(--font-sans); font-size: 13px;
+      color: #89837f; line-height: 1.7;
+      padding-left: 1.2rem; position: relative;
+    }
+    .av-list li::before {
+      content: '—'; position: absolute; left: 0; color: var(--color-accent);
+    }
+  </style>
+</head>
+
+<body>
+
+  <div id="page-beams" aria-hidden="true">
+    <div class="pg-beam"></div><div class="pg-beam"></div>
+    <div class="pg-beam"></div><div class="pg-beam"></div>
+    <div class="pg-beam"></div>
+  </div>
+
+  <!-- ═══════════════════════════ NAV ═══════════════════════════ -->
+  <header class="site-nav">
+    <div class="max-w-6xl mx-auto px-6 py-5 flex items-center justify-between">
+      <a href="index.html" class="nav-logo">James.identity</a>
+      <nav class="flex gap-8">
+        <a href="about.html"      class="nav-link nav-link--active">About</a>
+        <a href="https://www.quantumrebirth.io.vn/" target="_blank" class="nav-link">QROS</a>
+        <a href="diagnostic.html" class="nav-link">Chẩn đoán</a>
+        <a href="insight.html"    class="nav-link">Insight</a>
+        <a href="academy.html"    class="nav-link">Academy</a>
+      </nav>
+    </div>
+  </header>
+
+
+  <!-- ═══════════════════════════ HERO ═══════════════════════════ -->
+  <section id="hero" class="relative flex flex-col justify-center min-h-screen px-6 pt-24">
+    <div class="absolute top-0 left-1/2 -translate-x-1/2 w-px h-14 bg-gold-sand opacity-20" style="top:5rem"></div>
+    <div class="max-w-5xl mx-auto w-full">
+
+      <p id="hero-eyebrow"
+         class="font-sans text-xs tracking-widest text-warm-stone uppercase mb-10"
+         style="opacity:0; transform:translateY(16px);">
+        HỆ SINH THÁI · NEURO-QUANTUM EDITION
+      </p>
+
+      <h1 id="hero-headline"
+          class="font-serif text-brown-deep mb-10"
+          style="opacity:0; filter:blur(14px); font-size:clamp(0.9rem,5vw,4.5rem); line-height:1.1; overflow:visible">
+        <span style="display:block; white-space:nowrap; padding:0.1em 0; margin-bottom:0.2em">Không phải làm nhiều hơn.</span>
+        <span style="display:block; white-space:nowrap; padding:0.1em 0; margin-bottom:0.2em">Không phải cố gắng hơn.</span>
+        <span style="display:block; white-space:nowrap; padding:0.1em 0"><em style="color:#C5A880">Là dịch chuyển danh tính.</em></span>
+      </h1>
+
+      <p id="hero-sub"
+         class="font-cormorant text-lg md:text-xl text-charcoal max-w-xl mb-14 leading-loose"
+         style="opacity:0; transform:translateY(20px);">
+        Bạn đã thử đủ mọi thứ — kỷ luật, thói quen, chiến lược.<br />
+        Mỗi cái work được vài tuần. Rồi về điểm cũ.<br />
+        Không phải vì bạn thiếu nỗ lực.<br />
+        Mà vì <span class="text-charcoal">người thực thi</span> tất cả những điều đó vẫn chưa đổi.<br /><br />
+        <span class="text-charcoal">Identity Shift</span> không dạy bạn làm gì khác.<br />
+        Nó thay đổi người đang làm.
+      </p>
+
+      <div id="hero-cta" style="opacity:0; transform:translateY(20px);">
+        <a href="#projects" class="btn-cta">
+          Khám Phá Hệ Sinh Thái
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+            <path d="M5 12h14M12 5l7 7-7 7"/>
+          </svg>
+        </a>
+      </div>
+
+
+    </div>
+  </section>
+
+
+  <!-- ═══════════════════════════ INTRO ═══════════════════════════ -->
+  <section id="intro" class="py-32 px-6" style="border-top:1px solid rgba(62,39,35,0.08)">
+    <div class="max-w-5xl mx-auto">
+
+      <p class="reveal font-sans text-xs tracking-widest text-warm-stone uppercase mb-4">01 — Lời Giới Thiệu</p>
+      <div class="reveal w-8 h-px bg-gold-sand mb-16"></div>
+
+      <blockquote class="intro-quote reveal">
+        <p class="font-sans text-lg md:text-xl text-warm-stone leading-[1.9] max-w-3xl italic">
+          "Tôi không xuất phát từ một nền tảng đủ đầy.<br />
+          Bố vắng mặt. Mẹ một mình xoay xở. Tôi lớn lên với một niềm tin âm thầm —<br />
+          rằng thiếu thốn là bản chất của cuộc đời, không phải ngoại lệ.<br /><br />
+          Rồi những điều tốt đẹp nhất đều rời đi.<br />
+          Không phải vì tôi không đủ tốt.<br />
+          Mà vì phiên bản tôi lúc đó đang vô thức chứng minh điều mình tin nhất:<br />
+          <em class="text-brown-deep">'Tôi không đủ để ai ở lại.'</em><br /><br />
+          Đêm đó là điểm kỳ dị.<br />
+          Tôi bắt đầu nghiên cứu — không phải chiến lược kinh doanh, mà là não bộ.<br />
+          Neuroplasticity. Epigenetics. Vật lý lượng tử ứng dụng. Trồi sinh.<br />
+          Tôi tự mình làm thí nghiệm. Trên chính mình.<br /><br />
+          <span class="not-italic font-normal text-brown-deep">
+            Tôi là nguyên mẫu đầu tiên của hệ thống này.<br />
+            Không phải lý thuyết. Đã được thử nghiệm trong lửa.
+          </span>"
+        </p>
+      </blockquote>
+
+      <div class="mt-20 max-w-3xl">
+        <h3 class="reveal font-serif text-2xl text-brown-deep mb-6">Identity Shift là gì?</h3>
+        <p class="reveal font-cormorant text-xl text-charcoal leading-[1.9]">
+          Không phải thêm công cụ. Không phải thêm thói quen. Không phải thêm kỷ luật.<br /><br />
+          James.Identity đi vào tầng mà 99% chương trình self-help bỏ qua:
+          <span class="text-charcoal">tầng danh tính</span> — người bạn đang là ở cấp độ
+          thần kinh, cảm xúc, tần số vận hành.<br /><br />
+          Bởi vì mọi kết quả — tài chính, mối quan hệ, sức khỏe, sự nghiệp — đều là
+          <span class="text-charcoal">hiện tượng trồi sinh</span>
+          từ người bạn đang là. Không phải những gì bạn đang làm.
+        </p>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ═══════════════════════════ CORE VALUES ═══════════════════════════ -->
+  <section id="values" class="py-32 px-6" style="border-top:1px solid rgba(62,39,35,0.08)">
+    <div class="max-w-5xl mx-auto">
+
+      <p class="reveal font-sans text-xs tracking-widest text-warm-stone uppercase mb-4">02 — Giá Trị Cốt Lõi</p>
+      <h2 class="reveal font-serif text-3xl md:text-4xl text-brown-deep leading-[1.15] max-w-lg mb-4">
+        Những điều<br /><em style="color:#C5A880">không bao giờ thay đổi.</em>
+      </h2>
+      <div class="reveal w-8 h-px bg-gold-sand mb-20"></div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+        <div class="card reveal p-10 flex flex-col">
+          <span class="font-sans text-xl mb-8">⚗️</span>
+          <h3 class="font-serif text-xl text-brown-deep mb-4">Chuyển Hóa Từ Gốc Rễ</h3>
+          <p class="font-sans text-sm text-warm-stone leading-loose flex-grow">
+            Không điều trị triệu chứng. Phẫu thuật lại mã nguồn. Mọi vấn đề bề mặt đều có gốc rễ ở tầng danh tính — đó là nơi duy nhất cần thay đổi.
+          </p>
+          <div class="mt-8 w-8 h-px bg-gold-sand opacity-60"></div>
+        </div>
+
+        <div class="card reveal p-10 flex flex-col">
+          <span class="font-sans text-xl mb-8">🔬</span>
+          <h3 class="font-serif text-xl text-brown-deep mb-4">Khoa Học Làm Nền, Đạo Làm Hướng</h3>
+          <p class="font-sans text-sm text-warm-stone leading-loose flex-grow">
+            Mỗi công cụ đều có scientific backing — Lipton, Dispenza, HeartMath, Penrose. Mỗi hành trình đều có triết lý dẫn đường. Không tâm linh mơ hồ.
+          </p>
+          <div class="mt-8 w-8 h-px bg-gold-sand opacity-60"></div>
+        </div>
+
+        <div class="card reveal p-10 flex flex-col">
+          <span class="font-sans text-xl mb-8">🏛️</span>
+          <h3 class="font-serif text-xl text-brown-deep mb-4">Tính Toàn Vẹn Tuyệt Đối</h3>
+          <p class="font-sans text-sm text-warm-stone leading-loose flex-grow">
+            Không tạo khan hiếm giả tạo. Không dùng nỗi sợ để bán hàng. Nói thật, kể cả khi sự thật không dễ chịu. Quyền lực dựa trên lực hấp dẫn — không phải thao túng.
+          </p>
+          <div class="mt-8 w-8 h-px bg-gold-sand opacity-60"></div>
+        </div>
+
+        <div class="card reveal p-10 flex flex-col">
+          <span class="font-sans text-xl mb-8">🔓</span>
+          <h3 class="font-serif text-xl text-brown-deep mb-4">Trao Quyền, Không Tạo Phụ Thuộc</h3>
+          <p class="font-sans text-sm text-warm-stone leading-loose flex-grow">
+            Mục tiêu là học viên không cần tôi nữa — vì họ đã trở thành kiến trúc sư của chính mình. Sự thành công của tôi được đo bằng sự tự chủ của họ.
+          </p>
+          <div class="mt-8 w-8 h-px bg-gold-sand opacity-60"></div>
+        </div>
+
+        <div class="card reveal p-10 flex flex-col">
+          <span class="font-sans text-xl mb-8">☯️</span>
+          <h3 class="font-serif text-xl text-brown-deep mb-4">Bình Yên Là Nền Tảng</h3>
+          <p class="font-sans text-sm text-warm-stone leading-loose flex-grow">
+            Bình yên không phải phần thưởng sau khi thành công. Bình yên là trạng thái vận hành. Thành công là hệ quả — không phải điều kiện để cảm thấy đủ.
+          </p>
+          <div class="mt-8 w-8 h-px bg-gold-sand opacity-60"></div>
+        </div>
+
+        <div class="card reveal p-10 flex flex-col">
+          <span class="font-sans text-xl mb-8">🌀</span>
+          <h3 class="font-serif text-xl text-brown-deep mb-4">Thiết Kế, Không Cưỡng Ép</h3>
+          <p class="font-sans text-sm text-warm-stone leading-loose flex-grow">
+            Mọi kết quả bền vững đều là hiện tượng trồi sinh. Công việc của tôi là thiết kế điều kiện đúng — rồi lùi lại để vũ trụ vận hành. Không kéo lê. Không gồng mình.
+          </p>
+          <div class="mt-8 w-8 h-px bg-gold-sand opacity-60"></div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ═══════════════════════════ PHILOSOPHY ═══════════════════════════ -->
+  <section id="philosophy" class="py-32 px-6" style="border-top:1px solid rgba(62,39,35,0.08)">
+    <div class="max-w-5xl mx-auto">
+
+      <p class="reveal font-sans text-xs tracking-widest text-warm-stone uppercase mb-4">03 — Triết Lý Sống</p>
+      <h2 class="reveal font-serif text-3xl md:text-4xl text-brown-deep leading-[1.15] max-w-lg mb-4">
+        Mã Nguồn<br /><em style="color:#C5A880">Vận Hành.</em>
+      </h2>
+      <p class="reveal font-sans text-sm text-warm-stone max-w-xl mb-16 leading-relaxed">
+        Đây không phải tập hợp của các mẹo hay chiến lược. Đây là hệ điều hành — những nguyên lý nền tảng chi phối mọi hành động, mọi quyết định, mọi kết quả.
+      </p>
+
+      <div>
+        <div class="phi-item reveal">
+          <div class="phi-grid grid gap-12" style="grid-template-columns:80px 1fr">
+            <span class="font-sans text-xs tracking-widest text-gold-sand uppercase pt-1">01</span>
+            <div>
+              <h3 class="font-serif text-xl text-brown-deep mb-4">Công Thức Quantum — LÀ → LÀM → CÓ</h3>
+              <p class="font-sans text-sm text-warm-stone leading-loose max-w-2xl">
+                Trước tiên, <em class="text-charcoal">là</em> nhân dạng của người đã có kết quả đó — ở tầng sóng não, tầng tế bào, tầng cảm xúc. Hành động phát xuất từ tần số hoàn toàn khác. Vật chất tự động trồi sinh.<br /><br />
+                Công thức cũ — LÀM → CÓ → LÀ — là lý do tại sao người tham vọng vẫn cảm thấy trống rỗng dù có đủ mọi thứ.
+              </p>
+              <span class="phi-formula">LÀ → LÀM → CÓ</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="phi-item reveal">
+          <div class="phi-grid grid gap-12" style="grid-template-columns:80px 1fr">
+            <span class="font-sans text-xs tracking-widest text-gold-sand uppercase pt-1">02</span>
+            <div>
+              <h3 class="font-serif text-xl text-brown-deep mb-4">Vô Vi — Hành Động Với Lực Ma Sát Bằng Không</h3>
+              <p class="font-sans text-sm text-warm-stone leading-loose max-w-2xl">
+                Vô Vi không phải lười biếng. Vô Vi là <em class="text-charcoal">thiết kế môi trường để trí tuệ tự trồi sinh.</em> Giống Steve Jobs quản trị Apple, giống đàn kiến tự xây tổ mà không cần kẻ chỉ huy.<br /><br />
+                Không tôn vinh sự bận rộn. Bận rộn không phải bằng chứng của giá trị.
+              </p>
+              <span class="phi-formula">Làm ít · Kết quả nhiều · Năng lượng đủ đầy</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="phi-item reveal">
+          <div class="phi-grid grid gap-12" style="grid-template-columns:80px 1fr">
+            <span class="font-sans text-xs tracking-widest text-gold-sand uppercase pt-1">03</span>
+            <div>
+              <h3 class="font-serif text-xl text-brown-deep mb-4">Bạn Là Ăng-Ten — Không Phải Máy Phát</h3>
+              <p class="font-sans text-sm text-warm-stone leading-loose max-w-2xl">
+                Theo Penrose-Hameroff, ý thức là đặc tính cơ bản của vũ trụ. Não bộ là thiết bị thu sóng. Mọi phiên bản của bạn — thành công rực rỡ, tự do, mắc kẹt — <em class="text-charcoal">đều đang tồn tại đồng thời</em> trong trường lượng tử dưới dạng sóng xác suất.<br /><br />
+                Bạn không "tạo ra" thực tại mới. Bạn chọn kênh để sụp đổ vào.
+              </p>
+              <span class="phi-formula">Thực tại mong muốn = (Tập trung × Cảm xúc) ^ Thời gian</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ═══════════════════════════ PROJECTS ═══════════════════════════ -->
+  <section id="projects" class="py-32 px-6" style="border-top:1px solid rgba(62,39,35,0.08)">
+    <div class="max-w-5xl mx-auto">
+
+      <p class="reveal font-sans text-xs tracking-widest text-warm-stone uppercase mb-4">04 — Hệ Sinh Thái Dự Án</p>
+      <h2 class="reveal font-serif text-3xl md:text-4xl text-brown-deep leading-[1.15] max-w-lg mb-4">
+        Bốn cánh cửa.<br /><em style="color:#C5A880">Một hệ điều hành.</em>
+      </h2>
+      <p class="reveal font-sans text-sm text-warm-stone max-w-xl mb-20 leading-relaxed">
+        Mỗi dự án là một điểm tiếp cận khác nhau vào cùng một sự chuyển hóa.
+        Bạn ở đâu trong hành trình — hệ sinh thái đã có một cánh cửa dành cho bạn.
+      </p>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+        <div class="card reveal p-10 flex flex-col">
+          <span class="font-sans text-xs tracking-widest text-gold-sand uppercase mb-3">Flagship</span>
+          <h3 class="font-serif text-2xl text-brown-deep mb-5">Identity Shift</h3>
+          <p class="font-sans text-sm text-warm-stone leading-loose flex-grow">
+            Hệ thống huấn luyện nhận thức toàn diện và xây dựng Lifestyle Business. Chuyển dịch danh tính từ quá khứ trong 30 ngày. Từ "Kiến trúc sư bị mắc kẹt" sang người thiết kế cuộc đời của chính mình.
+          </p>
+          <div class="mt-8 flex items-center gap-2">
+            <div class="w-2 h-2 rounded-full bg-gold-sand opacity-70"></div>
+            <span class="font-sans text-xs tracking-widest text-gold-sand uppercase">Core Program</span>
+          </div>
+        </div>
+
+        <div class="card reveal p-10 flex flex-col">
+          <span class="font-sans text-xs tracking-widest text-gold-sand uppercase mb-3">Quantum Tools</span>
+          <h3 class="font-serif text-2xl text-brown-deep mb-5">Quantum Rebirth OS</h3>
+          <p class="font-sans text-sm text-warm-stone leading-loose flex-grow">
+            Bộ công cụ gỡ bỏ Brule và cài đặt mã nguồn thịnh vượng thông qua Neuro-Quantum Override. Lộ trình 21 ngày, 7 module. Không thay đổi hành vi trước — thay đổi danh tính trước. Hành vi sẽ đi theo.
+          </p>
+          <div class="mt-8 flex items-center gap-2">
+            <div class="w-2 h-2 rounded-full bg-gold-sand opacity-70"></div>
+            <span class="font-sans text-xs tracking-widest text-gold-sand uppercase">21 Ngày · 7 Module</span>
+          </div>
+        </div>
+
+        <div class="card reveal p-10 flex flex-col">
+          <span class="font-sans text-xs tracking-widest text-gold-sand uppercase mb-3">Automation</span>
+          <h3 class="font-serif text-2xl text-brown-deep mb-5">AI-Agent Sales Funnel</h3>
+          <p class="font-sans text-sm text-warm-stone leading-loose flex-grow">
+            Phễu bán hàng tự động bằng AI. Deploy từ Claude, không dùng Wordpress. Hệ thống thu hút và chuyển đổi khách hàng trong khi bạn ngủ — Vô Vi ở cấp độ kinh doanh.
+          </p>
+          <div class="mt-8 flex items-center gap-2">
+            <div class="w-2 h-2 rounded-full bg-muted opacity-70"></div>
+            <span class="font-sans text-xs tracking-widest text-warm-stone uppercase">In Development</span>
+          </div>
+        </div>
+
+        <div class="card reveal p-10 flex flex-col">
+          <span class="font-sans text-xs tracking-widest text-gold-sand uppercase mb-3">Knowledge</span>
+          <h3 class="font-serif text-2xl text-brown-deep mb-5">Micro Digital Products</h3>
+          <p class="font-sans text-sm text-warm-stone leading-loose flex-grow">
+            Sản phẩm số tinh gọn dựa trên kiến thức độc bản về chuyển hóa nhận thức. Kết quả lớn được đóng gói thành định dạng nhỏ — để ai cũng có một điểm khởi đầu.
+          </p>
+          <div class="mt-8 flex items-center gap-2">
+            <div class="w-2 h-2 rounded-full bg-gold-sand opacity-70"></div>
+            <span class="font-sans text-xs tracking-widest text-gold-sand uppercase">Nhiều sản phẩm</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ═══════════════════════════ AUDIENCE ═══════════════════════════ -->
+  <section id="audience" class="py-32 px-6" style="border-top:1px solid rgba(62,39,35,0.08)">
+    <div class="max-w-5xl mx-auto">
+
+      <p class="reveal font-sans text-xs tracking-widest text-warm-stone uppercase mb-4">05 — Hệ Khách Hàng Mục Tiêu</p>
+      <h2 class="reveal font-serif text-3xl md:text-4xl text-brown-deep leading-[1.15] max-w-lg mb-6">
+        Bạn đang ở<br /><em style="color:#C5A880">nhóm nào?</em>
+      </h2>
+      <p class="reveal font-sans text-sm text-warm-stone max-w-xl mb-12 leading-relaxed">
+        Tất cả người trong profile <em class="text-charcoal">The Trapped Architect</em> đều chia sẻ cùng một căn bệnh gốc —
+        vòng lặp LÀM→CÓ→LÀ sai chiều. Nhưng mỗi người biểu hiện lỗi hệ thống đó theo một cơ chế khác nhau.
+        Nhận ra mình ở đây là bước đầu tiên của phẫu thuật.
+      </p>
+
+      <div class="reveal flex flex-wrap gap-3 mb-12">
+        <button class="group-tab active" onclick="switchGroup(0)">Cỗ Máy Không Tắt</button>
+        <button class="group-tab" onclick="switchGroup(1)">Người Mang Bóng Tối</button>
+        <button class="group-tab" onclick="switchGroup(2)">Nhà Tầm Nhìn Mắc Kẹt</button>
+        <button class="group-tab" onclick="switchGroup(3)">Tù Nhân Thành Công</button>
+        <button class="group-tab" onclick="switchGroup(4)">Bản Vẽ Hoàn Hảo</button>
+        <button class="group-tab" onclick="switchGroup(5)" style="border-color:rgba(197,168,128,0.5)">★ Kiến Trúc Sư Thức Tỉnh</button>
+      </div>
+
+      <div id="groupPanels">
+
+        <!-- GROUP 1 -->
+        <div class="group-panel active" id="group-0">
+          <div class="card p-8 flex flex-col gap-6">
+            <div>
+              <p class="font-sans text-xs tracking-widest text-gold-sand uppercase mb-2">Nhóm 1 · Hội Chứng Tăng Tốc Sai Hướng</p>
+              <h3 class="font-serif text-2xl text-brown-deep mb-1">Cỗ Máy Không Tắt Được</h3>
+              <p class="font-sans text-xs text-warm-stone">Cơ chế: Nghiện Cortisol / Bản sắc Hustle</p>
+            </div>
+            <div>
+              <p class="font-sans text-xs tracking-widest text-gold-sand uppercase mb-3">Đặc Điểm Nhận Dạng</p>
+              <ul class="flex flex-col gap-2">
+                <li class="font-sans text-sm text-warm-stone leading-relaxed" style="padding-left:1.2rem;position:relative"><span style="position:absolute;left:0;color:#C5A880">—</span>Làm 10–14 tiếng/ngày và vẫn cảm thấy "chưa làm đủ"</li>
+                <li class="font-sans text-sm text-warm-stone leading-relaxed" style="padding-left:1.2rem;position:relative"><span style="position:absolute;left:0;color:#C5A880">—</span>Luôn có ít nhất 2–3 khoá học đang chạy song song</li>
+                <li class="font-sans text-sm text-warm-stone leading-relaxed" style="padding-left:1.2rem;position:relative"><span style="position:absolute;left:0;color:#C5A880">—</span>To-do list dài ra mỗi ngày thay vì ngắn lại</li>
+                <li class="font-sans text-sm text-warm-stone leading-relaxed" style="padding-left:1.2rem;position:relative"><span style="position:absolute;left:0;color:#C5A880">—</span>Cảm thấy tội lỗi khi nghỉ ngơi, lo lắng khi không bận</li>
+                <li class="font-sans text-sm text-warm-stone leading-relaxed" style="padding-left:1.2rem;position:relative"><span style="position:absolute;left:0;color:#C5A880">—</span>Tự hào về sự bận rộn — dùng nó như bằng chứng cho giá trị bản thân</li>
+                <li class="font-sans text-sm text-warm-stone leading-relaxed" style="padding-left:1.2rem;position:relative"><span style="position:absolute;left:0;color:#C5A880">—</span>Burnout nhưng vẫn tiếp tục, vì dừng lại còn đáng sợ hơn kiệt sức</li>
+              </ul>
+            </div>
+            <div class="diagnosis-block">
+              <p class="font-sans text-xs tracking-widest text-gold-sand uppercase mb-3">Chẩn Đoán</p>
+              <p class="font-sans text-sm text-warm-stone leading-relaxed italic">Cỗ máy sinh học của bạn đang chạy ở chế độ Sinh tồn toàn thời gian. Vấn đề không phải là bạn chưa đủ cố gắng — mà là bạn đang cố gắng bằng nhiên liệu sai. Cortisol giúp bạn chạy nhanh trong 100 mét. Nhưng bạn đang chạy marathon bằng nó.</p>
+            </div>
+          </div>
+          <div class="card p-8 flex flex-col gap-6">
+            <div>
+              <p class="font-sans text-xs tracking-widest text-warm-stone uppercase mb-3">Niềm Tin Gốc Đang Chạy Ngầm</p>
+              <p class="font-serif text-xl text-brown-deep italic leading-relaxed">"Nếu tôi dừng lại, tôi sẽ tụt hậu mãi mãi."</p>
+            </div>
+            <div>
+              <p class="font-sans text-xs tracking-widest text-warm-stone uppercase mb-3">Mức Độ Nhận Thức</p>
+              <p class="font-sans text-sm text-warm-stone leading-relaxed">Thấp — họ nghĩ giải pháp là làm nhiều hơn, chưa nghi ngờ hướng đi. Vòng lặp được hợp lý hóa thành "tôi đang đầu tư cho tương lai."</p>
+            </div>
+
+            <div class="av-card">
+              <button class="av-toggle" onclick="toggleAvCard(this)" aria-expanded="false">
+                <span class="av-toggle-label">Phiên bản tự nhận thức cao</span>
+                <svg class="av-chevron" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" aria-hidden="true"><path d="M19 9l-7 7-7-7"/></svg>
+              </button>
+              <div class="av-body" hidden>
+                <p class="av-trigger">Nếu bạn đọc đến đây và nghĩ <em>"đúng — nhưng tôi có thể ngồi yên được mà"</em> — đọc tiếp phần này.</p>
+                <p class="av-section-label" style="margin-top:0">Cảm giác sống — tầng sâu hơn</p>
+                <p class="av-text">Bạn có thể ngồi yên. Bạn có thể nhìn ra biển mà không cần lấy điện thoại ra. Bạn không phải kiểu người cứ phải làm việc mới cảm thấy ổn.</p>
+                <p class="av-text">Nhưng khi bạn ngồi đó — trong đầu có bao nhiêu suy nghĩ đang chạy?</p>
+                <p class="av-text">Đây là phiên bản tinh vi hơn của cùng một cơ chế. Cỗ máy không tắt được không có nghĩa là thân xác không ngồi yên được. Nó có nghĩa là engine bên trong — cái bộ xử lý liên tục phân tích, lên kế hoạch, đánh giá, lo lắng — không bao giờ thực sự nghỉ. Kể cả khi cơ thể đang thư giãn.</p>
+                <p class="av-text">Và có một chi tiết nhỏ bạn có thể nhận ra trong mình: bạn cần tự nhắc mình rằng đã làm đủ rồi. Rằng chỉ được thế thôi. Rằng ổn rồi.</p>
+                <p class="av-text">Bạn không cần nhắc bản thân về điều không phải vấn đề với mình. Khi bạn cần nói "đã đủ rồi" — nghĩa là có một phần bên trong vẫn đang nói ngược lại. Bạn đã phát triển được một cơ chế đối phó trưởng thành. Nhưng cơ chế đối phó không phải là giải pháp — nó là bằng chứng rằng thứ cần được đối phó vẫn còn đó.</p>
+                <p class="av-section-label">Đặc điểm bổ sung</p>
+                <ul class="av-list">
+                  <li>Thân xác có thể ngồi yên — nhưng đầu liên tục xử lý, phân tích, lên kế hoạch</li>
+                  <li>Cần tự nhắc bản thân "đã làm đủ rồi" — và cần nhắc thường xuyên hơn bạn muốn thừa nhận</li>
+                  <li>Khi không còn gì để nghĩ đến, có một cảm giác nhẹ khó chịu xuất hiện — không đủ để gọi là lo lắng, chỉ là không hoàn toàn ổn</li>
+                  <li>Đã nhận ra pattern này trong mình — nhưng nhận thức chưa tắt được engine</li>
+                  <li>Người ngoài không thấy được điều này. Chỉ bạn mới biết nó đang chạy</li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="mt-auto">
+              <div class="flex justify-between font-sans text-xs text-warm-stone mb-2"><span>Nhận Thức Về Gốc Rễ</span><span>20%</span></div>
+              <div class="awareness-track"><div class="awareness-fill" style="width:20%"></div></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- GROUP 2 -->
+        <div class="group-panel" id="group-1">
+          <div class="card p-8 flex flex-col gap-6">
+            <div>
+              <p class="font-sans text-xs tracking-widest text-gold-sand uppercase mb-2">Nhóm 2 · Hội Chứng Tự Phá Ngưỡng</p>
+              <h3 class="font-serif text-2xl text-brown-deep mb-1">Người Mang Bóng Tối</h3>
+              <p class="font-sans text-xs text-warm-stone">Cơ chế: Brules từ quá khứ đang điều khiển hiện tại</p>
+            </div>
+            <div>
+              <p class="font-sans text-xs tracking-widest text-gold-sand uppercase mb-3">Đặc Điểm Nhận Dạng</p>
+              <ul class="flex flex-col gap-2">
+                <li class="font-sans text-sm text-warm-stone leading-relaxed" style="padding-left:1.2rem;position:relative"><span style="position:absolute;left:0;color:#C5A880">—</span>Trì hoãn đúng những việc quan trọng nhất, trong khi làm rất tốt việc thứ yếu</li>
+                <li class="font-sans text-sm text-warm-stone leading-relaxed" style="padding-left:1.2rem;position:relative"><span style="position:absolute;left:0;color:#C5A880">—</span>Cảm giác "chưa sẵn sàng" không bao giờ biến mất dù đã chuẩn bị kỹ</li>
+                <li class="font-sans text-sm text-warm-stone leading-relaxed" style="padding-left:1.2rem;position:relative"><span style="position:absolute;left:0;color:#C5A880">—</span>Rút lui khi cơ hội tốt đến gần — tạo ra lý do "hợp lý"</li>
+                <li class="font-sans text-sm text-warm-stone leading-relaxed" style="padding-left:1.2rem;position:relative"><span style="position:absolute;left:0;color:#C5A880">—</span>Sợ bị nhìn thấy, sợ bị phán xét, sợ nổi bật</li>
+                <li class="font-sans text-sm text-warm-stone leading-relaxed" style="padding-left:1.2rem;position:relative"><span style="position:absolute;left:0;color:#C5A880">—</span>Lặp lại cùng một pattern trong nhiều mối quan hệ hoặc dự án</li>
+                <li class="font-sans text-sm text-warm-stone leading-relaxed" style="padding-left:1.2rem;position:relative"><span style="position:absolute;left:0;color:#C5A880">—</span>Cảm giác "mình không xứng đáng với điều tốt đẹp"</li>
+              </ul>
+            </div>
+            <div class="diagnosis-block">
+              <p class="font-sans text-xs tracking-widest text-gold-sand uppercase mb-3">Chẩn Đoán</p>
+              <p class="font-sans text-sm text-warm-stone leading-relaxed italic">Hệ điều hành của bạn không bị lỗi vì bạn yếu đuối. Nó đang hoạt động chính xác theo thiết kế ban đầu — một thiết kế được viết khi bạn còn là một đứa trẻ cần tự bảo vệ mình. Vấn đề là thiết kế đó đã lỗi thời 20 năm rồi. Và bạn vẫn đang chạy nó.</p>
+            </div>
+          </div>
+          <div class="card p-8 flex flex-col gap-6">
+            <div>
+              <p class="font-sans text-xs tracking-widest text-warm-stone uppercase mb-3">Niềm Tin Gốc Đang Chạy Ngầm</p>
+              <p class="font-serif text-xl text-brown-deep italic leading-relaxed">"Nếu tôi vươn lên, tôi sẽ bị tổn thương / bị từ bỏ / bị phán xét."</p>
+            </div>
+            <div>
+              <p class="font-sans text-xs tracking-widest text-warm-stone uppercase mb-3">Mức Độ Nhận Thức</p>
+              <p class="font-sans text-sm text-warm-stone leading-relaxed">Trung bình — cảm nhận được pattern nhưng không thể giải thích nguồn gốc. Họ biết mình tự phá — nhưng không biết tại sao.</p>
+            </div>
+            <div class="mt-auto">
+              <div class="flex justify-between font-sans text-xs text-warm-stone mb-2"><span>Nhận Thức Về Gốc Rễ</span><span>45%</span></div>
+              <div class="awareness-track"><div class="awareness-fill" style="width:45%"></div></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- GROUP 3 -->
+        <div class="group-panel" id="group-2">
+          <div class="card p-8 flex flex-col gap-6">
+            <div>
+              <p class="font-sans text-xs tracking-widest text-gold-sand uppercase mb-2">Nhóm 3 · Hội Chứng Hàm Sóng Sai Lệch</p>
+              <h3 class="font-serif text-2xl text-brown-deep mb-1">Nhà Tầm Nhìn Mắc Kẹt</h3>
+              <p class="font-sans text-xs text-warm-stone">Cơ chế: Đảo ngược Nhân-Quả + Không thể thể hiện hóa tầm nhìn</p>
+            </div>
+            <div>
+              <p class="font-sans text-xs tracking-widest text-gold-sand uppercase mb-3">Đặc Điểm Nhận Dạng</p>
+              <ul class="flex flex-col gap-2">
+                <li class="font-sans text-sm text-warm-stone leading-relaxed" style="padding-left:1.2rem;position:relative"><span style="position:absolute;left:0;color:#C5A880">—</span>Có vision board / danh sách mục tiêu rõ ràng nhưng cảm thấy xa vời và ảo</li>
+                <li class="font-sans text-sm text-warm-stone leading-relaxed" style="padding-left:1.2rem;position:relative"><span style="position:absolute;left:0;color:#C5A880">—</span>Làm affirmation nhưng trong lòng biết mình đang "nói dối bản thân"</li>
+                <li class="font-sans text-sm text-warm-stone leading-relaxed" style="padding-left:1.2rem;position:relative"><span style="position:absolute;left:0;color:#C5A880">—</span>Hiểu lý thuyết lượng tử / manifestation nhưng không cảm thấy nó là thật</li>
+                <li class="font-sans text-sm text-warm-stone leading-relaxed" style="padding-left:1.2rem;position:relative"><span style="position:absolute;left:0;color:#C5A880">—</span>Dao động giữa tin tưởng và nghi ngờ — mỗi lần "thất bại" là một cú giáng</li>
+                <li class="font-sans text-sm text-warm-stone leading-relaxed" style="padding-left:1.2rem;position:relative"><span style="position:absolute;left:0;color:#C5A880">—</span>Cảm giác "Có khi mình bị hỏng, không áp dụng được như người khác"</li>
+                <li class="font-sans text-sm text-warm-stone leading-relaxed" style="padding-left:1.2rem;position:relative"><span style="position:absolute;left:0;color:#C5A880">—</span>Bề ngoài tích cực, bên trong đầy mâu thuẫn và lo âu ngầm</li>
+              </ul>
+            </div>
+            <div class="diagnosis-block">
+              <p class="font-sans text-xs tracking-widest text-gold-sand uppercase mb-3">Chẩn Đoán</p>
+              <p class="font-sans text-sm text-warm-stone leading-relaxed italic">Vấn đề không phải là bạn không biết luật. Vấn đề là bạn đang cố áp dụng phần mềm mới lên một phần cứng chưa được dọn sạch. Affirmation không thể ghi đè được những vết sẹo hóa học đang phát tần số ngược chiều từ tầng tiềm thức. Bạn cần đi sâu hơn lớp ngôn từ.</p>
+            </div>
+          </div>
+          <div class="card p-8 flex flex-col gap-6">
+            <div>
+              <p class="font-sans text-xs tracking-widest text-warm-stone uppercase mb-3">Niềm Tin Gốc Đang Chạy Ngầm</p>
+              <p class="font-serif text-xl text-brown-deep italic leading-relaxed">"Tôi biết mình muốn gì, nhưng tôi không xứng đáng — hoặc không đủ năng lực — để hiển lộ nó."</p>
+            </div>
+            <div>
+              <p class="font-sans text-xs tracking-widest text-warm-stone uppercase mb-3">Mức Độ Nhận Thức</p>
+              <p class="font-sans text-sm text-warm-stone leading-relaxed">Trung bình-Cao — nhận ra chiều kích nội tâm quan trọng, nhưng đang dùng sai công cụ. Họ đã gần — nhưng đang dùng búa để mổ xẻ.</p>
+            </div>
+            <div class="mt-auto">
+              <div class="flex justify-between font-sans text-xs text-warm-stone mb-2"><span>Nhận Thức Về Gốc Rễ</span><span>60%</span></div>
+              <div class="awareness-track"><div class="awareness-fill" style="width:60%"></div></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- GROUP 4 -->
+        <div class="group-panel" id="group-3">
+          <div class="card p-8 flex flex-col gap-6">
+            <div>
+              <p class="font-sans text-xs tracking-widest text-gold-sand uppercase mb-2">Nhóm 4 · Hội Chứng Chiến Thắng Rỗng Không</p>
+              <h3 class="font-serif text-2xl text-brown-deep mb-1">Tù Nhân Thành Công</h3>
+              <p class="font-sans text-xs text-warm-stone">Cơ chế: Thành tựu bề ngoài — khoảng trống bên trong ngày càng lớn hơn</p>
+            </div>
+            <div>
+              <p class="font-sans text-xs tracking-widest text-gold-sand uppercase mb-3">Đặc Điểm Nhận Dạng</p>
+              <ul class="flex flex-col gap-2">
+                <li class="font-sans text-sm text-warm-stone leading-relaxed" style="padding-left:1.2rem;position:relative"><span style="position:absolute;left:0;color:#C5A880">—</span>Đạt mục tiêu nhưng không cảm thấy thỏa mãn — cảm giác "vậy thôi à?"</li>
+                <li class="font-sans text-sm text-warm-stone leading-relaxed" style="padding-left:1.2rem;position:relative"><span style="position:absolute;left:0;color:#C5A880">—</span>Ngay sau khi thành công, nỗi lo âu tiếp theo xuất hiện ngay lập tức</li>
+                <li class="font-sans text-sm text-warm-stone leading-relaxed" style="padding-left:1.2rem;position:relative"><span style="position:absolute;left:0;color:#C5A880">—</span>Khó tận hưởng kết quả vì sợ mất nó</li>
+                <li class="font-sans text-sm text-warm-stone leading-relaxed" style="padding-left:1.2rem;position:relative"><span style="position:absolute;left:0;color:#C5A880">—</span>Thành tựu bên ngoài tốt nhưng mối quan hệ, sức khỏe, hoặc ý nghĩa đang xói mòn</li>
+                <li class="font-sans text-sm text-warm-stone leading-relaxed" style="padding-left:1.2rem;position:relative"><span style="position:absolute;left:0;color:#C5A880">—</span>Bắt đầu tự hỏi "Tất cả những thứ này để làm gì?"</li>
+                <li class="font-sans text-sm text-warm-stone leading-relaxed" style="padding-left:1.2rem;position:relative"><span style="position:absolute;left:0;color:#C5A880">—</span>Cảm giác mình đang diễn một vai mà bên trong biết không phải thật</li>
+              </ul>
+            </div>
+            <div class="diagnosis-block">
+              <p class="font-sans text-xs tracking-widest text-gold-sand uppercase mb-3">Chẩn Đoán</p>
+              <p class="font-sans text-sm text-warm-stone leading-relaxed italic">Bạn đang dùng thành tựu vật chất như một loại thuốc giảm đau — nó che đi cơn đau trong vài tuần, rồi liều cũ không còn tác dụng. Vấn đề không nằm ở những gì bạn chưa đạt được — mà nằm ở hệ điều hành đang chạy sau lưng mọi thành tựu đó.</p>
+            </div>
+          </div>
+          <div class="card p-8 flex flex-col gap-6">
+            <div>
+              <p class="font-sans text-xs tracking-widest text-warm-stone uppercase mb-3">Niềm Tin Gốc Đang Chạy Ngầm</p>
+              <p class="font-serif text-xl text-brown-deep italic leading-relaxed">"Tôi sẽ cảm thấy đủ khi đạt được [mục tiêu tiếp theo]. Nhưng chưa bao giờ thật sự đủ."</p>
+            </div>
+            <div>
+              <p class="font-sans text-xs tracking-widest text-warm-stone uppercase mb-3">Mức Độ Nhận Thức</p>
+              <p class="font-sans text-sm text-warm-stone leading-relaxed">Cao — đã nghi ngờ rằng vấn đề không phải ở bên ngoài. Đây là nhóm đau âm thầm nhất — vì họ "đã có tất cả" mà vẫn không đủ.</p>
+            </div>
+            <div class="mt-auto">
+              <div class="flex justify-between font-sans text-xs text-warm-stone mb-2"><span>Nhận Thức Về Gốc Rễ</span><span>75%</span></div>
+              <div class="awareness-track"><div class="awareness-fill" style="width:75%"></div></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- GROUP 5 -->
+        <div class="group-panel" id="group-4">
+          <div class="card p-8 flex flex-col gap-6">
+            <div>
+              <p class="font-sans text-xs tracking-widest text-gold-sand uppercase mb-2">Nhóm 5 · Hội Chứng Cầu Toàn Vô Hành</p>
+              <h3 class="font-serif text-2xl text-brown-deep mb-1">Bản Vẽ Hoàn Hảo, Công Trường Trống</h3>
+              <p class="font-sans text-xs text-warm-stone">Cơ chế: Perfectionism paralysis · Nỗi sợ bị nhìn thấy khi chưa hoàn hảo</p>
+            </div>
+            <div>
+              <p class="font-sans text-xs tracking-widest text-gold-sand uppercase mb-3">Đặc Điểm Nhận Dạng</p>
+              <ul class="flex flex-col gap-2">
+                <li class="font-sans text-sm text-warm-stone leading-relaxed" style="padding-left:1.2rem;position:relative"><span style="position:absolute;left:0;color:#C5A880">—</span>Có rất nhiều dự án đang ở trạng thái "gần xong" — từ nhiều tháng đến nhiều năm</li>
+                <li class="font-sans text-sm text-warm-stone leading-relaxed" style="padding-left:1.2rem;position:relative"><span style="position:absolute;left:0;color:#C5A880">—</span>Tìm ra lý do để làm lại từ đầu khi đã gần xong — vì có cách tốt hơn</li>
+                <li class="font-sans text-sm text-warm-stone leading-relaxed" style="padding-left:1.2rem;position:relative"><span style="position:absolute;left:0;color:#C5A880">—</span>Research kỹ đến mức biết nhiều hơn cả người đã làm rồi — nhưng chưa bắt đầu</li>
+                <li class="font-sans text-sm text-warm-stone leading-relaxed" style="padding-left:1.2rem;position:relative"><span style="position:absolute;left:0;color:#C5A880">—</span>Tiêu chuẩn nội tâm quá cao: không thể chấp nhận "đủ tốt để ra mắt"</li>
+                <li class="font-sans text-sm text-warm-stone leading-relaxed" style="padding-left:1.2rem;position:relative"><span style="position:absolute;left:0;color:#C5A880">—</span>Khi bị hỏi "khi nào ra mắt?" — câu trả lời luôn là một mốc thời gian trong tương lai</li>
+                <li class="font-sans text-sm text-warm-stone leading-relaxed" style="padding-left:1.2rem;position:relative"><span style="position:absolute;left:0;color:#C5A880">—</span>Hay nói: "Mình cần thêm một chút nữa rồi sẵn sàng" — nhưng "một chút" không bao giờ đủ</li>
+                <li class="font-sans text-sm text-warm-stone leading-relaxed" style="padding-left:1.2rem;position:relative"><span style="position:absolute;left:0;color:#C5A880">—</span>Cảm giác ngầm: "Nếu ra mắt và thất bại, đó là bằng chứng mình không đủ giỏi"</li>
+              </ul>
+            </div>
+            <div class="diagnosis-block">
+              <p class="font-sans text-xs tracking-widest text-gold-sand uppercase mb-3">Chẩn Đoán</p>
+              <p class="font-sans text-sm text-warm-stone leading-relaxed italic">Bạn không lười. Bạn đang làm rất nhiều — chỉ là trong bóng tối, nơi không ai có thể nhìn thấy và phán xét. Cái bẫy hoàn hảo không phải là đức tính — đó là hệ thống bảo vệ tinh vi: nếu không bao giờ ra mắt, bạn không bao giờ thực sự thất bại. Và không ai — kể cả bản thân bạn — có thể xác nhận rằng bạn không đủ giỏi.</p>
+            </div>
+          </div>
+          <div class="card p-8 flex flex-col gap-6">
+            <div>
+              <p class="font-sans text-xs tracking-widest text-warm-stone uppercase mb-3">Niềm Tin Gốc Đang Chạy Ngầm</p>
+              <p class="font-serif text-xl text-brown-deep italic leading-relaxed">"Nếu tôi ra mắt thứ chưa hoàn hảo và nó thất bại — điều đó sẽ chứng minh tôi không đủ giỏi. An toàn hơn là không bao giờ biết."</p>
+            </div>
+            <div>
+              <p class="font-sans text-xs tracking-widest text-warm-stone uppercase mb-3">Mức Độ Nhận Thức</p>
+              <p class="font-sans text-sm text-warm-stone leading-relaxed">Trung bình — nhận ra mình hay trì hoãn nhưng đổ lỗi cho "chưa sẵn sàng". Vấn đề bề mặt rõ, nhưng gốc rễ còn ẩn sau lớp bào chữa hợp lý.</p>
+            </div>
+            <div class="mt-auto">
+              <div class="flex justify-between font-sans text-xs text-warm-stone mb-2"><span>Nhận Thức Về Gốc Rễ</span><span>50%</span></div>
+              <div class="awareness-track"><div class="awareness-fill" style="width:50%"></div></div>
+            </div>
+          </div>
+        </div>
+
+
+        <!-- OVERLAY STATE -->
+        <div class="group-panel" id="group-5">
+          <div class="card p-8 flex flex-col gap-6" style="border-color:rgba(197,168,128,0.35)">
+            <div>
+              <p class="font-sans text-xs tracking-widest text-gold-sand uppercase mb-2">★ Overlay State · Trạng Thái Chuyển Tiếp — Không Phải Nhóm Riêng</p>
+              <h3 class="font-serif text-2xl text-brown-deep mb-1">Kiến Trúc Sư Đang Thức Tỉnh</h3>
+              <p class="font-sans text-xs text-warm-stone">Cơ chế: Dark Night of the Soul — hệ thống cũ đã chạm đáy</p>
+            </div>
+            <div class="font-sans text-xs text-warm-stone leading-relaxed max-w-2xl" style="border-left:2px solid rgba(197,168,128,0.4);padding-left:1rem">
+              Đây không phải một nhóm riêng biệt. Bất kỳ ai trong 5 nhóm trên đều có thể bước vào trạng thái này khi hệ thống cũ chạm đáy — thường sau một cuộc khủng hoảng thực sự.
+            </div>
+            <div>
+              <p class="font-sans text-xs tracking-widest text-gold-sand uppercase mb-3">Dấu Hiệu Nhận Biết</p>
+              <ul class="flex flex-col gap-2">
+                <li class="font-sans text-sm text-warm-stone leading-relaxed" style="padding-left:1.2rem;position:relative"><span style="position:absolute;left:0;color:#C5A880">—</span>Vừa trải qua hoặc đang trong một cuộc khủng hoảng thực sự — tài chính, mối quan hệ, sức khỏe, danh tiếng</li>
+                <li class="font-sans text-sm text-warm-stone leading-relaxed" style="padding-left:1.2rem;position:relative"><span style="position:absolute;left:0;color:#C5A880">—</span>Cảm giác "con người cũ của mình đang chết đi" — đáng sợ nhưng cũng có gì đó đúng</li>
+                <li class="font-sans text-sm text-warm-stone leading-relaxed" style="padding-left:1.2rem;position:relative"><span style="position:absolute;left:0;color:#C5A880">—</span>Đã thử nhiều giải pháp bề mặt và biết chắc chúng sẽ không đủ</li>
+                <li class="font-sans text-sm text-warm-stone leading-relaxed" style="padding-left:1.2rem;position:relative"><span style="position:absolute;left:0;color:#C5A880">—</span>Đặt câu hỏi về mọi thứ — danh tính, giá trị, ý nghĩa</li>
+                <li class="font-sans text-sm text-warm-stone leading-relaxed" style="padding-left:1.2rem;position:relative"><span style="position:absolute;left:0;color:#C5A880">—</span>Cảm giác đứng ở ngưỡng cửa của điều gì đó lớn hơn, dù chưa biết nó là gì</li>
+                <li class="font-sans text-sm text-warm-stone leading-relaxed" style="padding-left:1.2rem;position:relative"><span style="position:absolute;left:0;color:#C5A880">—</span>Mức độ sẵn sàng chuyển hóa: Cao nhất trong tất cả các nhóm</li>
+              </ul>
+            </div>
+            <div class="diagnosis-block">
+              <p class="font-sans text-xs tracking-widest text-gold-sand uppercase mb-3">Chẩn Đoán</p>
+              <p class="font-sans text-sm text-warm-stone leading-relaxed italic">Điều bạn đang trải qua không phải là sự thất bại. Đây là Sụp đổ Hàm sóng Bắt buộc — vũ trụ đang giật sập cấu trúc cũ vì nó được xây trên nền tần số sai. Đây không phải điểm cuối. Đây là Điểm Kỳ Dị — khoảnh khắc mà mọi thứ cũ sụp đổ để nhường chỗ cho hệ điều hành mới.</p>
+            </div>
+          </div>
+          <div class="card p-8 flex flex-col gap-6" style="border-color:rgba(197,168,128,0.35)">
+            <div>
+              <p class="font-sans text-xs tracking-widest text-warm-stone uppercase mb-3">Niềm Tin Gốc Đang Chuyển Dịch</p>
+              <p class="font-serif text-xl text-brown-deep italic leading-relaxed">"Tôi không thể tiếp tục là con người cũ nữa. Cách cũ đã hết thời."</p>
+            </div>
+            <div>
+              <p class="font-sans text-xs tracking-widest text-warm-stone uppercase mb-3">Mức Độ Nhận Thức</p>
+              <p class="font-sans text-sm text-warm-stone leading-relaxed">Rất Cao — đã sẵn sàng cho sự thay đổi ở cấp độ hệ điều hành. Không tìm thêm công thức — họ tìm sự chuyển sinh.</p>
+            </div>
+            <div class="mt-auto">
+              <div class="flex justify-between font-sans text-xs text-warm-stone mb-2"><span>Nhận Thức Về Gốc Rễ</span><span>95%</span></div>
+              <div class="awareness-track"><div class="awareness-fill" style="width:95%"></div></div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ═══════════════════════════ MANTRA ═══════════════════════════ -->
+  <section id="mantra" class="py-32 px-6 text-center" style="border-top:1px solid rgba(62,39,35,0.08)">
+    <div class="max-w-2xl mx-auto">
+      <p class="reveal font-sans text-xs tracking-widest text-warm-stone uppercase mb-16">Lệnh Kích Hoạt</p>
+      <div class="flex flex-col gap-5">
+        <p class="reveal font-serif text-xl md:text-2xl text-brown-deep leading-relaxed">Tôi không đến đây để thêm thứ gì vào con người cũ.</p>
+        <p class="reveal font-serif text-xl md:text-2xl text-warm-stone italic leading-relaxed">Tôi đến đây để cho con người cũ được chết đi.</p>
+        <p class="reveal font-serif text-xl md:text-2xl text-brown-deep leading-relaxed">Tôi không phải là suy nghĩ của tôi.</p>
+        <p class="reveal font-serif text-xl md:text-2xl text-warm-stone italic leading-relaxed">Tôi là không gian nơi suy nghĩ diễn ra.</p>
+        <p class="reveal font-serif text-xl md:text-2xl text-brown-deep leading-relaxed">Bình yên là tần số vận hành của tôi.</p>
+        <p class="reveal font-serif text-xl md:text-2xl text-warm-stone italic leading-relaxed">Thịnh vượng là hệ quả tất yếu.</p>
+        <p class="reveal font-serif text-xl md:text-2xl text-brown-deep leading-relaxed">Tôi không đuổi theo. Tôi phát sóng.</p>
+        <p class="reveal font-serif text-xl md:text-2xl text-warm-stone italic leading-relaxed">Và những gì thuộc về tôi — tự tìm đến.</p>
+      </div>
+      <div class="reveal w-px h-16 bg-gold-sand opacity-30 mx-auto mt-16"></div>
+    </div>
+  </section>
+
+
+  <!-- ═══════════════════════════ FOOTER ═══════════════════════════ -->
+  <footer class="site-footer reveal">
+    <div class="max-w-5xl mx-auto flex flex-col md:flex-row items-center justify-between gap-8">
+      <a href="index.html" class="footer-logo">James.identity</a>
+      <nav class="flex gap-10">
+        <a href="index.html" class="nav-link">Trang chủ</a>
+        <a href="about.html" class="nav-link">About</a>
+        <a href="#"          class="nav-link">Liên hệ</a>
+      </nav>
+      <p class="footer-copy">© 2026 James Trương</p>
+    </div>
+  </footer>
+
+
+  <!-- ═══════════════════════════ SCRIPTS ═══════════════════════════ -->
+  <script>
+    // ─── Awareness variant card toggle ───
+    function toggleAvCard(btn) {
+      var isOpen = btn.getAttribute('aria-expanded') === 'true';
+      var body = btn.nextElementSibling;
+      btn.setAttribute('aria-expanded', isOpen ? 'false' : 'true');
+      isOpen ? body.setAttribute('hidden', '') : body.removeAttribute('hidden');
+    }
+
+    // ─── Tab switching ───
+    function switchGroup(index) {
+      document.querySelectorAll('.group-tab').forEach(function(tab, i) {
+        tab.classList.toggle('active', i === index);
+      });
+      document.querySelectorAll('.group-panel').forEach(function(panel, i) {
+        panel.classList.toggle('active', i === index);
+      });
+    }
+
+    // ─── GSAP ───
+    gsap.registerPlugin(ScrollTrigger);
+
+    // Hero load sequence
+    gsap.to('#hero-eyebrow',  { opacity: 1, y: 0,           duration: 0.8, ease: 'power4.out',  delay: 0.2 });
+    gsap.to('#hero-headline', { opacity: 1, filter:'blur(0px)', duration: 1.5, ease: 'expo.out', delay: 0.5 });
+    gsap.to('#hero-sub',      { opacity: 1, y: 0,           duration: 1.0, ease: 'power4.out',  delay: 1.2 });
+    gsap.to('#hero-cta',      { opacity: 1, y: 0,           duration: 0.8, ease: 'power4.out',  delay: 1.6 });
+
+    // Scroll reveal — Fade & Float-up for all .reveal elements
+    gsap.utils.toArray('.reveal').forEach(function(el) {
+      gsap.fromTo(
+        el,
+        { opacity: 0, y: 28 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.8,
+          ease: 'power4.out',
+          scrollTrigger: {
+            trigger: el,
+            start: 'top 88%',
+            toggleActions: 'play none none none',
+          },
+        }
+      );
+    });
+  </script>
+
+</body>
+</html>
+

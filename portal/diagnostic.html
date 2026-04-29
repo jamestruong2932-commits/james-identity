@@ -1,0 +1,2082 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>OS Audit — Chẩn Đoán · James Identity</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,700;0,900;1,400;1,700&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=EB+Garamond:ital,wght@0,400;0,500;1,400;1,500&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="theme.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            cream: '#F4F1EA', 'brown-deep': '#3E2723',
+            'gold-sand': '#C5A880', charcoal: '#2B2B2B', 'warm-stone': '#89837f',
+          },
+          fontFamily: {
+            serif:     ['"Playfair Display"', 'Georgia', 'serif'],
+            sans:      ['Inter', 'system-ui', 'sans-serif'],
+            cormorant: ['"Cormorant Garamond"', 'Georgia', 'serif'],
+          },
+        },
+      },
+    }
+  </script>
+
+  <style>
+    /* ── QUIZ SCREENS ── */
+    .screen {
+      display: none;
+      min-height: calc(100vh - 70px);
+      padding: 0 20px;
+    }
+    .screen.active { display: flex; flex-direction: column; }
+
+    /* ── WELCOME SCREEN ── */
+    #welcome {
+      justify-content: center; align-items: center;
+      padding: 100px 20px 80px;
+    }
+    .wlc-wrap {
+      max-width: 600px; width: 100%;
+      margin: 0 auto; text-align: center;
+    }
+    .wlc-eyebrow {
+      font-family: var(--font-serif); font-size: 11px; font-weight: 500;
+      letter-spacing: 0.22em; text-transform: uppercase;
+      color: var(--color-accent); margin-bottom: 28px;
+    }
+    .wlc-title {
+      font-family: var(--font-serif);
+      font-size: clamp(34px, 6vw, 58px);
+      font-weight: 700; line-height: 1.15;
+      color: var(--color-heading); margin-bottom: 40px;
+    }
+    .wlc-title em {
+      font-style: italic; color: var(--color-accent);
+    }
+    .wlc-body {
+      text-align: left; margin-bottom: 40px;
+    }
+    .wlc-p {
+      font-family: var(--font-sans); font-size: 15px;
+      color: var(--color-muted); line-height: 1.85;
+      margin-bottom: 18px;
+    }
+    .wlc-p strong {
+      color: var(--color-heading); font-weight: 600;
+    }
+    .wlc-p em {
+      font-style: italic; color: var(--color-heading);
+    }
+    .wlc-p--quiet {
+      font-style: italic; color: var(--color-accent);
+      font-size: 14px; line-height: 1.9;
+    }
+    .wlc-divider {
+      width: 48px; height: 1px;
+      background: var(--color-border-gold);
+      margin: 28px 0;
+    }
+    .btn-wlc-start {
+      display: inline-block;
+      background: var(--color-accent);
+      color: #fff;
+      font-family: var(--font-sans); font-size: 14px;
+      font-weight: 600; letter-spacing: 0.08em;
+      padding: 16px 44px; border: none;
+      cursor: pointer; transition: opacity 0.2s, transform 0.2s;
+    }
+    .btn-wlc-start:hover { opacity: 0.88; transform: translateY(-1px); }
+    .wlc-footnote {
+      margin-top: 18px;
+      font-family: 'Cormorant Garamond', Georgia, serif; font-size: 13px;
+      color: var(--color-muted); letter-spacing: 0.05em;
+      opacity: 0.65;
+    }
+
+    /* ── LETTER STYLE ── */
+    .wlc-letter {
+      text-align: left;
+      margin-bottom: 44px;
+    }
+    .letter-greeting {
+      font-family: 'EB Garamond', Georgia, serif;
+      font-size: clamp(16px, 1.9vw, 19px);
+      font-weight: 400;
+      font-style: italic;
+      color: var(--color-heading);
+      margin-bottom: 20px;
+      letter-spacing: 0.01em;
+    }
+    .letter-p {
+      font-family: 'EB Garamond', Georgia, serif;
+      font-size: clamp(16px, 1.9vw, 19px);
+      font-weight: 400;
+      line-height: 1.9;
+      color: var(--color-heading);
+      margin-bottom: 20px;
+      letter-spacing: 0.01em;
+    }
+    .letter-p strong {
+      font-weight: 500;
+      color: var(--color-heading);
+    }
+    .letter-p em {
+      font-style: italic;
+      color: var(--color-heading);
+    }
+    .letter-p strong {
+      font-weight: 600;
+      color: var(--color-heading);
+    }
+    .letter-note {
+      font-size: 0.85em;
+      color: var(--color-muted);
+      font-style: italic;
+    }
+    .letter-close {
+      font-style: italic;
+      color: var(--color-accent);
+    }
+
+    /* ── PROGRESS BAR ── */
+    #progress-bar-wrap {
+      position: fixed; top: 70px; left: 0; right: 0; z-index: 99;
+      height: 2px; background: var(--color-border-soft);
+      display: none;
+    }
+    #progress-bar-fill {
+      height: 100%; background: var(--color-accent);
+      transition: width 0.4s ease; width: 0%;
+    }
+
+    /* ── GATE (post-quiz email capture) ── */
+    #gate {
+      justify-content: center; align-items: center;
+      text-align: center; padding: 110px 20px 80px;
+    }
+    .gate-eyebrow {
+      font-family: var(--font-sans); font-size: 11px; font-weight: 500;
+      letter-spacing: 0.22em; text-transform: uppercase;
+      color: var(--color-accent); margin-bottom: 32px;
+    }
+    .gate-headline {
+      font-family: var(--font-serif);
+      font-size: clamp(30px, 5.5vw, 52px);
+      font-weight: 700; line-height: 1.15;
+      margin-bottom: 20px; color: var(--color-heading);
+    }
+    .gate-headline em { font-style: italic; color: var(--color-accent); }
+    .gate-sub {
+      font-size: 15px; color: var(--color-muted); line-height: 1.8;
+      max-width: 420px; margin: 0 auto 40px;
+    }
+    .gate-form {
+      display: flex; flex-direction: column; gap: 12px;
+      max-width: 360px; margin: 0 auto;
+    }
+    .gate-form input {
+      background: rgba(253, 250, 244, 0.9);
+      border: 1px solid var(--color-border-gold);
+      color: var(--color-heading); font-family: var(--font-sans);
+      font-size: 15px; padding: 16px 20px; outline: none;
+      transition: border-color 0.25s; width: 100%; border-radius: 2px;
+    }
+    .gate-form input::placeholder { color: var(--color-muted); }
+    .gate-form input:focus { border-color: var(--color-accent); }
+    .btn-primary {
+      background: var(--color-heading); color: var(--color-bg);
+      border: none; font-family: var(--font-sans); font-size: 13px;
+      font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase;
+      padding: 18px 32px; cursor: pointer; transition: opacity 0.2s;
+      width: 100%; border-radius: 2px;
+    }
+    .btn-primary:hover { opacity: 0.82; }
+    .gate-micro { font-size: 12px; color: var(--color-muted); margin-top: 8px; }
+    .gate-tags {
+      display: flex; justify-content: center; gap: 24px;
+      margin-top: 52px; flex-wrap: wrap;
+    }
+    .gate-tag { font-size: 12px; color: var(--color-muted); letter-spacing: 0.05em; }
+    .gate-tag span { color: var(--color-accent); margin-right: 6px; }
+
+    /* ── QUIZ ── */
+    #quiz { justify-content: flex-start; padding-top: 100px; padding-bottom: 80px; }
+    .q-container { max-width: 600px; margin: 0 auto; width: 100%; }
+    .question-wrap { display: none; flex-direction: column; }
+    .question-wrap.active { display: flex; }
+    .q-number {
+      font-size: 11px; font-weight: 500; letter-spacing: 0.22em;
+      text-transform: uppercase; color: var(--color-accent); margin-bottom: 28px;
+    }
+    .q-text {
+      font-family: var(--font-serif); font-size: clamp(20px, 3.8vw, 26px);
+      font-weight: 500; line-height: 1.45; margin-bottom: 36px; color: var(--color-heading);
+    }
+    .q-context {
+      font-size: 14px; color: var(--color-muted);
+      margin-top: -20px; margin-bottom: 32px; font-style: italic;
+    }
+    .options { display: flex; flex-direction: column; gap: 10px; }
+    .option {
+      background: rgba(253, 250, 244, 0.6);
+      border: 1px solid var(--color-border-soft);
+      padding: 18px 22px; cursor: pointer; transition: all 0.22s;
+      display: flex; align-items: flex-start; gap: 16px;
+      text-align: left; border-radius: 4px;
+    }
+    .option:hover {
+      border-color: var(--color-border-gold);
+      background: rgba(244, 241, 234, 0.95);
+    }
+    .option.selected {
+      border-color: var(--color-accent);
+      background: rgba(197, 168, 128, 0.12);
+    }
+    .option-letter {
+      font-size: 11px; font-weight: 600; letter-spacing: 0.1em;
+      color: var(--color-accent); min-width: 16px; padding-top: 3px; flex-shrink: 0;
+    }
+    .option-text { font-size: 15px; color: var(--color-text); line-height: 1.65; }
+    .btn-next {
+      margin-top: 28px; background: transparent;
+      border: 1px solid var(--color-border-gold); color: var(--color-accent);
+      font-family: var(--font-sans); font-size: 12px; font-weight: 600;
+      letter-spacing: 0.15em; text-transform: uppercase;
+      padding: 16px 32px; cursor: pointer; transition: all 0.22s;
+      display: none; align-self: flex-start; border-radius: 2px;
+    }
+    .btn-next:hover {
+      background: rgba(197, 168, 128, 0.1);
+      border-color: var(--color-accent);
+    }
+    .btn-next.visible { display: block; }
+
+    /* ── PROCESSING ── */
+    #processing { justify-content: center; align-items: center; text-align: center; }
+    .processing-inner { max-width: 400px; }
+    .processing-icon {
+      width: 48px; height: 48px;
+      border: 1px solid var(--color-accent);
+      border-top-color: transparent;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 36px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .processing-line {
+      font-size: 13px; color: var(--color-muted);
+      letter-spacing: 0.06em; height: 22px; transition: opacity 0.4s;
+    }
+
+    /* ── PHONG KHAM ORIENTATION ── */
+    #phong-kham {
+      justify-content: center; align-items: center;
+      text-align: center; padding: 100px 20px 80px;
+    }
+    .pk-inner { max-width: 580px; width: 100%; margin: 0 auto; }
+    .pk-eyebrow {
+      font-family: var(--font-sans); font-size: 11px; font-weight: 500;
+      letter-spacing: 0.22em; text-transform: uppercase;
+      color: var(--color-accent); margin-bottom: 24px;
+    }
+    .pk-title {
+      font-family: var(--font-serif);
+      font-size: clamp(28px, 5vw, 44px);
+      font-weight: 700; line-height: 1.2;
+      color: var(--color-heading); margin-bottom: 16px;
+    }
+    .pk-title em { font-style: italic; color: var(--color-accent); }
+    .pk-sub {
+      font-size: 15px; color: var(--color-muted); line-height: 1.8;
+      max-width: 400px; margin: 0 auto 48px;
+    }
+    .pk-steps {
+      display: flex; gap: 16px; margin-bottom: 44px; text-align: left;
+    }
+    .pk-step {
+      flex: 1; border: 1px solid var(--color-border-soft);
+      padding: 24px 22px; border-radius: 4px;
+    }
+    .pk-step--active {
+      border-color: var(--color-border-gold);
+      background: rgba(197, 168, 128, 0.05);
+    }
+    .pk-step-num {
+      font-size: 10px; font-weight: 600; letter-spacing: 0.2em;
+      text-transform: uppercase; color: var(--color-accent); margin-bottom: 10px;
+    }
+    .pk-step-title {
+      font-family: var(--font-serif); font-size: 18px; font-weight: 700;
+      color: var(--color-heading); margin-bottom: 10px; line-height: 1.3;
+    }
+    .pk-step-desc {
+      font-size: 13px; color: var(--color-muted); line-height: 1.7; margin-bottom: 16px;
+    }
+    .pk-step-tag {
+      font-size: 11px; font-weight: 500; letter-spacing: 0.1em;
+      color: var(--color-accent);
+    }
+    .pk-step--muted { opacity: 0.65; }
+    .pk-step--muted .pk-step-tag { color: var(--color-muted); }
+    .btn-pk {
+      background: var(--color-heading); color: var(--color-bg);
+      border: none; font-family: var(--font-sans); font-size: 13px;
+      font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase;
+      padding: 18px 40px; cursor: pointer; transition: opacity 0.2s;
+      border-radius: 2px; width: 100%;
+    }
+    .btn-pk:hover { opacity: 0.82; }
+    .pk-micro {
+      font-size: 12px; color: var(--color-muted); margin-top: 12px;
+    }
+    @media (max-width: 520px) {
+      .pk-steps { flex-direction: column; }
+    }
+
+    /* ── RESULT ── */
+    #result { display: none; }
+    .result-page { display: none; }
+    .result-page.active { display: block; }
+
+    .result-hero {
+      padding: 100px 20px 52px; text-align: center;
+      border-bottom: 1px solid var(--color-border-soft);
+    }
+    .result-eyebrow {
+      font-size: 11px; font-weight: 500; letter-spacing: 0.22em;
+      text-transform: uppercase; color: var(--color-muted); margin-bottom: 16px;
+    }
+    .result-archetype {
+      font-family: var(--font-serif);
+      font-size: clamp(28px, 6vw, 44px);
+      font-weight: 700; color: var(--color-accent); line-height: 1.25; margin-bottom: 16px;
+    }
+    .result-tagline {
+      font-size: 14px; color: var(--color-muted); max-width: 400px;
+      margin: 0 auto; font-style: italic; font-family: 'EB Garamond', Georgia, serif;
+    }
+
+    /* Overlay state banner */
+    .overlay-banner {
+      display: none;
+      background: rgba(197, 168, 128, 0.07);
+      border-left: 2px solid var(--color-accent);
+      padding: 20px 24px;
+    }
+    .overlay-banner p {
+      font-size: 14px; color: var(--color-text); line-height: 1.75;
+      font-family: 'EB Garamond', Georgia, serif; font-style: italic;
+      max-width: 640px; margin: 0 auto;
+    }
+
+    .result-body { max-width: 640px; margin: 0 auto; padding: 0 20px 80px; }
+    .result-section {
+      padding: 44px 0;
+      border-bottom: 1px solid var(--color-border-soft);
+    }
+    .result-section:last-child { border-bottom: none; }
+    .section-label {
+      font-size: 10px; font-weight: 600; letter-spacing: 0.24em;
+      text-transform: uppercase; color: var(--color-accent); margin-bottom: 20px;
+    }
+
+    .mirror-text {
+      font-family: 'EB Garamond', Georgia, serif;
+      font-size: clamp(17px, 3vw, 20px); line-height: 1.85; color: var(--color-text);
+    }
+    .mirror-text p { margin-bottom: 16px; }
+    .mirror-text p:last-child { margin-bottom: 0; }
+
+    /* Neural Loop */
+    .neural-loop { display: flex; flex-direction: column; gap: 0; }
+    .loop-node {
+      background: rgba(253, 250, 244, 0.7);
+      border: 1px solid var(--color-border-soft);
+      padding: 16px 20px; display: flex;
+      align-items: flex-start; gap: 14px;
+    }
+    .loop-node-label {
+      font-size: 9px; font-weight: 600; letter-spacing: 0.18em;
+      text-transform: uppercase; color: var(--color-accent);
+      min-width: 80px; padding-top: 3px; flex-shrink: 0;
+    }
+    .loop-node-text {
+      font-family: 'EB Garamond', Georgia, serif;
+      font-size: 15px; color: var(--color-text);
+      line-height: 1.65; font-style: italic;
+    }
+    .loop-arrow {
+      text-align: center; padding: 5px 0;
+      color: var(--color-accent); font-size: 16px; line-height: 1;
+    }
+    .loop-return {
+      margin-top: 8px; padding: 10px 20px;
+      border: 1px dashed rgba(197, 168, 128, 0.30);
+      text-align: center; font-size: 12px;
+      color: var(--color-muted); letter-spacing: 0.08em;
+    }
+
+    /* Diagnostic letter */
+    .letter-text {
+      font-family: 'EB Garamond', Georgia, serif;
+      font-size: clamp(16px, 2.8vw, 18px); line-height: 1.9; color: var(--color-text);
+    }
+    .letter-text p { margin-bottom: 20px; }
+    .letter-text p:last-child { margin-bottom: 0; }
+    .letter-highlight {
+      background: rgba(197, 168, 128, 0.10);
+      border-left: 2px solid var(--color-accent);
+      padding: 14px 18px;
+      font-style: italic;
+      color: var(--color-heading);
+    }
+
+    /* Practice box */
+    .practice-box {
+      background: rgba(197, 168, 128, 0.07);
+      border: 1px solid var(--color-border-gold);
+      padding: 28px 28px 24px; border-radius: 4px;
+    }
+    .practice-title {
+      font-size: 11px; font-weight: 600; letter-spacing: 0.18em;
+      text-transform: uppercase; color: var(--color-accent); margin-bottom: 16px;
+    }
+    .practice-text { font-family: 'EB Garamond', Georgia, serif; font-size: 16px; line-height: 1.8; color: var(--color-text); margin-bottom: 16px; }
+    .practice-why {
+      font-family: 'EB Garamond', Georgia, serif;
+      font-size: 14px; color: var(--color-muted); line-height: 1.75; font-style: italic;
+      border-top: 1px solid var(--color-border-soft); padding-top: 16px; margin-top: 4px;
+    }
+
+    /* CTAs */
+    .result-ctas { padding: 0; margin-top: 12px; display: flex; flex-direction: column; gap: 12px; }
+    .cta-primary {
+      display: block; background: var(--color-heading); color: var(--color-bg);
+      text-decoration: none; text-align: center; font-family: var(--font-sans);
+      font-size: 13px; font-weight: 600; letter-spacing: 0.12em;
+      text-transform: uppercase; padding: 18px 32px; transition: opacity 0.2s;
+    }
+    .cta-primary:hover { opacity: 0.82; }
+    .cta-secondary {
+      display: block; border: 1px solid var(--color-border-soft);
+      color: var(--color-muted); text-decoration: none; text-align: center;
+      font-size: 13px; padding: 18px 32px; transition: all 0.22s; letter-spacing: 0.05em;
+    }
+    .cta-secondary:hover { border-color: var(--color-border-gold); color: var(--color-heading); }
+    .cta-micro { text-align: center; font-size: 11px; color: var(--color-muted); margin-top: 4px; }
+
+    /* ── SAFETY NET CTA ── */
+    .safety-net {
+      padding: 44px 0 0;
+      border-top: 2px solid var(--color-border-gold);
+      margin-top: 8px;
+      text-align: center;
+    }
+    .safety-net-label {
+      font-size: 11px; font-weight: 500; letter-spacing: 0.2em;
+      text-transform: uppercase; color: var(--color-muted); margin-bottom: 12px;
+    }
+    .safety-net-question {
+      font-family: var(--font-serif); font-size: clamp(18px, 3.2vw, 22px);
+      font-weight: 500; color: var(--color-heading); line-height: 1.4;
+      margin-bottom: 32px;
+    }
+    .safety-net-question em { font-style: italic; color: var(--color-accent); }
+    .safety-net-btns { display: flex; gap: 12px; flex-direction: column; }
+    .btn-safety-primary {
+      display: block; background: var(--color-heading); color: var(--color-bg);
+      text-decoration: none; text-align: center; font-family: var(--font-sans);
+      font-size: 13px; font-weight: 600; letter-spacing: 0.12em;
+      text-transform: uppercase; padding: 20px 32px; transition: opacity 0.2s;
+      border-radius: 2px;
+    }
+    .btn-safety-primary:hover { opacity: 0.82; }
+    .btn-safety-secondary {
+      display: block; border: 1px solid var(--color-border-gold);
+      color: var(--color-accent); text-decoration: none; text-align: center;
+      font-family: var(--font-sans); font-size: 13px; font-weight: 500;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      padding: 18px 32px; transition: all 0.22s; border-radius: 2px; cursor: pointer;
+    }
+    .btn-safety-secondary:hover {
+      background: rgba(197, 168, 128, 0.1); color: var(--color-heading);
+    }
+
+    /* Other groups nav */
+    .other-groups { padding: 40px 0; border-top: 1px solid var(--color-border-soft); }
+    .other-groups-label {
+      font-size: 11px; color: var(--color-muted);
+      letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 16px;
+    }
+    .other-groups-links { display: flex; flex-wrap: wrap; gap: 8px; }
+    .other-groups-links a {
+      font-size: 12px; color: var(--color-muted); text-decoration: none;
+      border: 1px solid var(--color-border-soft); padding: 8px 14px;
+      transition: all 0.22s; border-radius: 2px;
+    }
+    .other-groups-links a:hover {
+      border-color: var(--color-border-gold); color: var(--color-accent);
+    }
+
+    /* ── FEEDBACK CHECK ── */
+    .feedback-check {
+      margin-top: 48px;
+      padding: 32px 28px 28px;
+      background: rgba(197, 168, 128, 0.08);
+      border: 1px solid var(--color-border-gold);
+      text-align: center;
+    }
+    .feedback-check-eyebrow {
+      font-size: 10px; font-weight: 600; letter-spacing: 0.22em;
+      text-transform: uppercase; color: var(--color-accent); margin-bottom: 12px;
+    }
+    .feedback-check-label {
+      font-family: var(--font-serif);
+      font-size: clamp(18px, 3.2vw, 22px);
+      font-weight: 500; color: var(--color-heading);
+      line-height: 1.3; margin-bottom: 24px;
+    }
+    .feedback-btns {
+      display: flex; flex-wrap: wrap; gap: 10px; justify-content: center;
+    }
+    .feedback-btn {
+      font-family: var(--font-sans); font-size: 12px;
+      letter-spacing: 0.06em; padding: 12px 20px;
+      border: 1px solid var(--color-border-soft);
+      background: transparent; color: var(--color-muted);
+      cursor: pointer; transition: all 0.2s; border-radius: 2px;
+    }
+    .feedback-btn:hover { border-color: var(--color-border-gold); color: var(--color-heading); }
+    .feedback-btn--yes {
+      background: var(--color-heading); color: var(--color-bg);
+      border-color: var(--color-heading);
+    }
+    .feedback-btn--yes:hover { opacity: 0.84; }
+    .feedback-thanks {
+      display: none;
+      font-family: 'EB Garamond', Georgia, serif;
+      font-size: 16px; color: var(--color-accent); font-style: italic;
+    }
+
+    /* ── FEEDBACK MODAL ── */
+    .feedback-modal-overlay {
+      display: none; position: fixed; inset: 0;
+      background: rgba(43,43,43,0.72); z-index: 1000;
+      align-items: center; justify-content: center; padding: 20px;
+    }
+    .feedback-modal-overlay.open { display: flex; }
+    .feedback-modal {
+      background: var(--color-bg);
+      max-width: 560px; width: 100%;
+      padding: 36px 32px 28px;
+      position: relative; max-height: 90vh; overflow-y: auto;
+    }
+    .feedback-modal-close {
+      position: absolute; top: 14px; right: 18px;
+      background: none; border: none; font-size: 22px;
+      color: var(--color-muted); cursor: pointer; line-height: 1; padding: 0;
+    }
+    .feedback-modal-close:hover { color: var(--color-heading); }
+    .feedback-modal-title {
+      font-family: var(--font-serif); font-size: 20px;
+      font-weight: 600; color: var(--color-heading);
+      margin-bottom: 20px; line-height: 1.3;
+    }
+    .feedback-modal-body {
+      font-family: 'EB Garamond', Georgia, serif;
+      font-size: 15px; color: var(--color-text); line-height: 1.85;
+    }
+    .feedback-modal-body p { margin-bottom: 14px; }
+    .feedback-modal-body p:last-child { margin-bottom: 0; }
+    .feedback-modal-divider { height: 1px; background: var(--color-border-soft); margin: 22px 0; }
+    .feedback-modal-ask {
+      font-family: var(--font-sans); font-size: 12px;
+      font-weight: 500; letter-spacing: 0.1em;
+      text-transform: uppercase; color: var(--color-muted); margin-bottom: 10px;
+    }
+    .feedback-modal-textarea {
+      width: 100%; border: 1px solid var(--color-border-soft);
+      background: transparent; padding: 12px 14px;
+      font-family: var(--font-sans); font-size: 14px;
+      color: var(--color-text); line-height: 1.7;
+      resize: vertical; min-height: 80px; outline: none;
+      transition: border-color 0.2s; border-radius: 2px;
+      box-sizing: border-box;
+    }
+    .feedback-modal-textarea:focus { border-color: var(--color-border-gold); }
+    .feedback-modal-textarea::placeholder { color: var(--color-muted); opacity: 0.7; }
+    .feedback-modal-submit {
+      display: block; width: 100%; margin-top: 12px;
+      background: var(--color-heading); color: var(--color-bg);
+      border: none; font-family: var(--font-sans); font-size: 12px;
+      font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase;
+      padding: 14px 24px; cursor: pointer; transition: opacity 0.2s; border-radius: 2px;
+    }
+    .feedback-modal-submit:hover { opacity: 0.82; }
+    .feedback-modal-sent {
+      display: none; text-align: center; padding: 20px 0;
+      font-family: 'EB Garamond', Georgia, serif;
+      font-size: 17px; color: var(--color-accent); font-style: italic;
+    }
+
+    /* ── BUOC 02 CHAT UI ── */
+    #buoc-02 {
+      max-width: 640px; margin: 0 auto;
+      padding: 0 20px 100px;
+    }
+    .buoc02-header {
+      padding: 60px 0 44px;
+      border-top: 2px solid var(--color-border-soft);
+    }
+    .buoc02-label {
+      font-size: 10px; font-weight: 600; letter-spacing: 0.24em;
+      text-transform: uppercase; color: var(--color-accent); margin-bottom: 14px;
+    }
+    .buoc02-title {
+      font-family: var(--font-serif); font-size: clamp(24px, 4.5vw, 34px);
+      font-weight: 700; color: var(--color-heading); margin-bottom: 14px; line-height: 1.25;
+    }
+    .buoc02-sub {
+      font-size: 15px; color: var(--color-muted); line-height: 1.8; max-width: 480px;
+    }
+    .chat-window {
+      border: 1px solid var(--color-border-soft); border-radius: 4px;
+      overflow: hidden;
+    }
+    .chat-messages {
+      min-height: 180px; padding: 28px 24px;
+      display: flex; flex-direction: column; gap: 20px;
+      background: rgba(253, 250, 244, 0.5);
+    }
+    .chat-msg { display: flex; gap: 14px; align-items: flex-start; }
+    .chat-avatar {
+      width: 36px; height: 36px; border-radius: 50%;
+      background: var(--color-heading); color: var(--color-bg);
+      font-family: var(--font-serif); font-size: 15px; font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .chat-bubble {
+      background: white; border: 1px solid var(--color-border-soft);
+      padding: 14px 18px; border-radius: 0 8px 8px 8px;
+      font-size: 15px; color: var(--color-text); line-height: 1.75;
+      font-family: var(--font-serif); max-width: 520px;
+    }
+    .chat-bubble em { font-style: italic; color: var(--color-heading); }
+    .chat-msg--user { flex-direction: row-reverse; }
+    .chat-msg--user .chat-bubble {
+      border-radius: 8px 0 8px 8px;
+      background: rgba(197, 168, 128, 0.10);
+      border-color: var(--color-border-gold);
+    }
+    .chat-msg--user .chat-avatar {
+      background: rgba(197, 168, 128, 0.20);
+      color: var(--color-accent); font-size: 11px; font-family: var(--font-sans);
+    }
+    .chat-input-wrap {
+      border-top: 1px solid var(--color-border-soft);
+      padding: 16px 20px; display: flex; gap: 12px;
+      align-items: flex-end; background: white;
+    }
+    .chat-input {
+      flex: 1; resize: none; border: 1px solid var(--color-border-soft);
+      border-radius: 4px; padding: 12px 16px; font-size: 14px;
+      font-family: var(--font-sans); color: var(--color-text);
+      outline: none; transition: border-color 0.22s;
+      background: rgba(253, 250, 244, 0.8); line-height: 1.6;
+    }
+    .chat-input::placeholder { color: var(--color-muted); }
+    .chat-input:focus { border-color: var(--color-border-gold); }
+    .chat-send {
+      background: var(--color-heading); color: var(--color-bg);
+      border: none; border-radius: 4px; padding: 12px 20px;
+      font-family: var(--font-sans); font-size: 13px; font-weight: 600;
+      letter-spacing: 0.1em; text-transform: uppercase; cursor: pointer;
+      transition: opacity 0.2s; white-space: nowrap;
+    }
+    .chat-send:hover { opacity: 0.82; }
+    .chat-notice {
+      font-size: 11px; color: var(--color-muted); text-align: center;
+      padding: 12px 20px 0; letter-spacing: 0.03em; font-style: italic;
+    }
+
+    @media (max-width: 480px) {
+      .loop-node-label { min-width: 64px; font-size: 8px; }
+      .gate-tags { flex-direction: column; align-items: center; gap: 10px; }
+      .chat-input-wrap { flex-direction: column; align-items: stretch; }
+      .chat-send { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+
+  <div id="page-beams" aria-hidden="true">
+    <div class="pg-beam"></div><div class="pg-beam"></div>
+    <div class="pg-beam"></div><div class="pg-beam"></div>
+    <div class="pg-beam"></div>
+  </div>
+
+  <!-- ── PROGRESS BAR ── -->
+  <div id="progress-bar-wrap"><div id="progress-bar-fill"></div></div>
+
+  <!-- ═══════════════════════════ NAV ═══════════════════════════ -->
+  <header class="site-nav">
+    <div class="max-w-6xl mx-auto px-6 py-5 flex items-center justify-between">
+      <a href="index.html" class="nav-logo">James.identity</a>
+      <nav class="flex gap-8">
+        <a href="about.html"      class="nav-link nav-desktop">About</a>
+        <a href="https://www.quantumrebirth.io.vn/" target="_blank" class="nav-link nav-desktop">QROS</a>
+        <a href="diagnostic.html" class="nav-link nav-link--active">Chẩn đoán</a>
+        <a href="insight.html"    class="nav-link">Insight</a>
+        <a href="academy.html"    class="nav-link">Academy</a>
+      </nav>
+    </div>
+  </header>
+
+
+  <!-- ═══════════════════════════════════════════════
+       SCREEN 0: WELCOME (active by default)
+  ═══════════════════════════════════════════════ -->
+  <div id="welcome" class="screen active">
+    <div class="wlc-wrap">
+
+      <div class="wlc-eyebrow">OS Audit · James Identity</div>
+
+      <h1 class="wlc-title">Mã Độc Nào<br><em>Đang Chạy Ngầm</em><br>Trong Bạn?</h1>
+
+      <div class="wlc-letter">
+
+        <p class="letter-greeting">Chào bạn,</p>
+
+        <p class="letter-p">Bạn có bao giờ tự hỏi tại sao mình làm việc chăm chỉ nhưng tài chính vẫn bấp bênh? Tại sao bạn khao khát tình yêu nhưng lại luôn gặp nhầm người?</p>
+
+        <p class="letter-p">Vấn đề không phải ở năng lực của bạn. Vấn đề nằm ở <em>phần mềm bạn đang chạy.</em></p>
+
+        <p class="letter-p">Trong thế giới của <em>Kiến tạo Ý thức</em>, Vishen Lakhiani gọi những phần mềm lỗi này là Brules — những niềm tin bạn thừa kế từ gia đình, xã hội và giáo dục mà chưa bao giờ đặt câu hỏi.</p>
+
+        <p class="letter-p">Chúng hoạt động như những bức tường vô hình, giam cầm tiềm năng của bạn.</p>
+
+        <div class="wlc-divider"></div>
+
+        <p class="letter-p letter-close">Bài chẩn đoán này là chìa khóa để bạn nhìn thấy những bức tường đó. Hãy trung thực. Hãy dũng cảm. Bởi vì bạn không thể phá vỡ những gì bạn không thể nhìn thấy.</p>
+
+      </div>
+
+      <button class="btn-wlc-start" onclick="startQuiz()">Bắt đầu Chẩn Đoán →</button>
+
+
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════
+       SCREEN 1: QUIZ
+  ═══════════════════════════════════════════════ -->
+  <div id="quiz" class="screen">
+    <div class="q-container">
+
+      <!-- Q1 -->
+      <div class="question-wrap active" id="q1">
+        <div class="q-number">Câu 1 / 6</div>
+        <h2 class="q-text">Sáng thứ 7, nhà yên tĩnh, không có lịch hẹn. Tuần vừa rồi dày đặc. Trong giờ đầu tiên của ngày hôm đó, bạn <em>thực sự</em> làm gì?</h2>
+        <div class="options">
+          <div class="option" onclick="selectOption(1,'A',this)">
+            <span class="option-letter">A</span>
+            <span class="option-text">Mở email hoặc app ghi chú — một task xuất hiện trong đầu, xử lý ngay kẻo quên.</span>
+          </div>
+          <div class="option" onclick="selectOption(1,'B',this)">
+            <span class="option-letter">B</span>
+            <span class="option-text">Định thư giãn — nhưng ngồi một lúc lại thấy bứt rứt, lo âu mơ hồ không rõ vì sao.</span>
+          </div>
+          <div class="option" onclick="selectOption(1,'C',this)">
+            <span class="option-letter">C</span>
+            <span class="option-text">Mở sách, podcast, hoặc video — nghỉ ngơi mà học được gì thì mới cảm thấy xứng đáng.</span>
+          </div>
+          <div class="option" onclick="selectOption(1,'D',this)">
+            <span class="option-letter">D</span>
+            <span class="option-text">Đi chơi hoặc làm gì đó cho bản thân — thực sự thư giãn được — nhưng suốt lúc đó có cảm giác mơ hồ rằng mình đang bỏ lỡ điều gì quan trọng.</span>
+          </div>
+          <div class="option" onclick="selectOption(1,'E',this)">
+            <span class="option-letter">E</span>
+            <span class="option-text">Thư giãn một lúc — rồi tự nhiên nghĩ đến dự án đang chờ, cảm giác tội lỗi cụ thể xuất hiện.</span>
+          </div>
+        </div>
+        <button class="btn-next" id="next1" onclick="goNext(1)">Tiếp theo →</button>
+      </div>
+
+      <!-- Q2 -->
+      <div class="question-wrap" id="q2">
+        <div class="q-number">Câu 2 / 6</div>
+        <h2 class="q-text">Bạn có một sản phẩm / bài viết / video đã làm được 3 tuần. Ngày mai là ngày bạn định ra mắt. Tối hôm nay, bạn đang làm gì?</h2>
+        <div class="options">
+          <div class="option" onclick="selectOption(2,'A',this)">
+            <span class="option-letter">A</span>
+            <span class="option-text">Chuẩn bị plan phân phối — ra mắt xong là chuyển ngay sang dự án tiếp theo.</span>
+          </div>
+          <div class="option" onclick="selectOption(2,'B',this)">
+            <span class="option-letter">B</span>
+            <span class="option-text">Đọc lại toàn bộ một lần nữa — rồi phát hiện một đoạn cần sửa. Rồi một đoạn nữa.</span>
+          </div>
+          <div class="option" onclick="selectOption(2,'C',this)">
+            <span class="option-letter">C</span>
+            <span class="option-text">Xem lại tài liệu hướng dẫn — lo rằng đang thiếu một bước quan trọng chưa học được.</span>
+          </div>
+          <div class="option" onclick="selectOption(2,'D',this)">
+            <span class="option-letter">D</span>
+            <span class="option-text">Xong xuôi từ tối qua rồi — nhưng có câu hỏi cứ xuất hiện: <em>"Thứ này có thực sự tạo ra điều gì ý nghĩa không?"</em></span>
+          </div>
+          <div class="option" onclick="selectOption(2,'E',this)">
+            <span class="option-letter">E</span>
+            <span class="option-text">Đang chuẩn bị bình thường — rồi bỗng lo âu mơ hồ ập đến, bắt đầu nghĩ đến những thứ có thể đi sai.</span>
+          </div>
+        </div>
+        <button class="btn-next" id="next2" onclick="goNext(2)">Tiếp theo →</button>
+      </div>
+
+      <!-- Q3 -->
+      <div class="question-wrap" id="q3">
+        <div class="q-number">Câu 3 / 6</div>
+        <h2 class="q-text">Bạn nhận được tin nhắn từ một người muốn hợp tác — cơ hội thực sự tốt, đúng ngành, đúng người. Bạn hứng khởi. Nhưng 48 giờ sau, bạn đang ở đâu trong chuyện này?</h2>
+        <div class="options">
+          <div class="option" onclick="selectOption(3,'A',this)">
+            <span class="option-letter">A</span>
+            <span class="option-text">Đã nhắn lại, đã hẹn gặp, đang lên kế hoạch cụ thể — không cần suy nghĩ lâu.</span>
+          </div>
+          <div class="option" onclick="selectOption(3,'B',this)">
+            <span class="option-letter">B</span>
+            <span class="option-text">Vẫn chưa nhắn lại — vừa nghĩ ra một rủi ro nghe rất hợp lý, cần cân nhắc thêm.</span>
+          </div>
+          <div class="option" onclick="selectOption(3,'C',this)">
+            <span class="option-letter">C</span>
+            <span class="option-text">Nhắn rồi — nhưng đang lo mình chưa đủ kiến thức / trình độ để xứng với cơ hội này.</span>
+          </div>
+          <div class="option" onclick="selectOption(3,'D',this)">
+            <span class="option-letter">D</span>
+            <span class="option-text">Đã nhắn và bắt đầu rồi — nhưng tự hỏi: <em>"Cái này có thực sự làm mình thỏa mãn, hay chỉ thêm một thứ bận?"</em></span>
+          </div>
+          <div class="option" onclick="selectOption(3,'E',this)">
+            <span class="option-letter">E</span>
+            <span class="option-text">Hứng khởi và muốn nhắn — nhưng cảm thấy profile / sản phẩm hiện tại chưa đủ tốt để tiếp cận họ lúc này.</span>
+          </div>
+        </div>
+        <button class="btn-next" id="next3" onclick="goNext(3)">Tiếp theo →</button>
+      </div>
+
+      <!-- Q4 -->
+      <div class="question-wrap" id="q4">
+        <div class="q-number">Câu 4 / 6</div>
+        <h2 class="q-text">Bạn đang gặp khó khăn với một vấn đề — công việc, tài chính, hay trong đầu. Điều đầu tiên bạn <em>thực sự</em> làm là gì?</h2>
+        <div class="options">
+          <div class="option" onclick="selectOption(4,'A',this)">
+            <span class="option-letter">A</span>
+            <span class="option-text">Tìm ngay action plan — cần làm gì, làm thế nào, bắt tay vào ngay.</span>
+          </div>
+          <div class="option" onclick="selectOption(4,'B',this)">
+            <span class="option-letter">B</span>
+            <span class="option-text">Ngồi với cảm giác đó, nhìn vào bên trong — nhưng không biết cách thoát ra.</span>
+          </div>
+          <div class="option" onclick="selectOption(4,'C',this)">
+            <span class="option-letter">C</span>
+            <span class="option-text">Tìm kiếm kiến thức, framework, hoặc người đã giải quyết vấn đề tương tự.</span>
+          </div>
+          <div class="option" onclick="selectOption(4,'D',this)">
+            <span class="option-letter">D</span>
+            <span class="option-text">Nhận ra vấn đề — và cảm nhận rằng câu trả lời không đến từ bên ngoài, chỉ là chưa biết cần gì.</span>
+          </div>
+          <div class="option" onclick="selectOption(4,'E',this)">
+            <span class="option-letter">E</span>
+            <span class="option-text">Lên kế hoạch giải quyết chi tiết — nhưng kế hoạch cứ dài ra mà hành động thực sự thì vẫn chưa bắt đầu.</span>
+          </div>
+        </div>
+        <button class="btn-next" id="next4" onclick="goNext(4)">Tiếp theo →</button>
+      </div>
+
+      <!-- Q5 -->
+      <div class="question-wrap" id="q5">
+        <div class="q-number">Câu 5 / 6</div>
+        <h2 class="q-text">Đọc 5 câu dưới đây và chọn câu <em>gần nhất</em> với thứ bạn đang thực sự cảm thấy — không phải câu đúng nhất hay hay nhất:</h2>
+        <div class="options">
+          <div class="option" onclick="selectOption(5,'A',this)">
+            <span class="option-letter">A</span>
+            <span class="option-text">"Mình biết cần làm gì — chỉ thiếu thời gian và năng lượng để làm hết tất cả."</span>
+          </div>
+          <div class="option" onclick="selectOption(5,'B',this)">
+            <span class="option-letter">B</span>
+            <span class="option-text">"Mình gần đến nơi muốn nhiều lần rồi — nhưng không hiểu sao cứ quay về vạch cũ."</span>
+          </div>
+          <div class="option" onclick="selectOption(5,'C',this)">
+            <span class="option-letter">C</span>
+            <span class="option-text">"Mình đã học rất nhiều thứ — nhưng những gì biết chưa thay đổi được cuộc sống thực tế."</span>
+          </div>
+          <div class="option" onclick="selectOption(5,'D',this)">
+            <span class="option-letter">D</span>
+            <span class="option-text">"Mình đạt được nhiều thứ — nhưng cảm giác thỏa mãn thực sự chưa bao giờ đến đủ lâu."</span>
+          </div>
+          <div class="option" onclick="selectOption(5,'E',this)">
+            <span class="option-letter">E</span>
+            <span class="option-text">"Mình có ý tưởng rõ ràng — nhưng nó vẫn đang ở trong đầu, đang chờ thêm một bước nữa."</span>
+          </div>
+        </div>
+        <button class="btn-next" id="next5" onclick="goNext(5)">Tiếp theo →</button>
+      </div>
+
+      <!-- Q6 — Overlay State Detection (6A) -->
+      <div class="question-wrap" id="q6">
+        <div class="q-number">Câu 6 / 6</div>
+        <h2 class="q-text">Câu cuối — không có đúng sai. Chọn câu gần nhất với thực tế của bạn ngay lúc này:</h2>
+        <div class="options">
+          <div class="option" onclick="selectOption(6,'A',this)">
+            <span class="option-letter">A</span>
+            <span class="option-text">Mọi thứ đang vận hành — mình chỉ muốn tốt hơn mức hiện tại.</span>
+          </div>
+          <div class="option" onclick="selectOption(6,'B',this)">
+            <span class="option-letter">B</span>
+            <span class="option-text">Có điều gì đó đang không ổn — mình đang đứng trước một ngưỡng cửa gì đó, dù chưa biết là gì.</span>
+          </div>
+          <div class="option" onclick="selectOption(6,'C',this)">
+            <span class="option-letter">C</span>
+            <span class="option-text">Hệ thống cũ đã hết tác dụng — mình đang cần một thứ khác hoàn toàn.</span>
+          </div>
+        </div>
+        <button class="btn-next" id="next6" onclick="goNext(6)">Tiếp theo →</button>
+      </div>
+
+      <!-- Q7 — Overlay State Depth (6B, chỉ hiển thị nếu Q6 = B hoặc C) -->
+      <div class="question-wrap" id="q7">
+        <div class="q-number">Câu Bổ Sung</div>
+        <h2 class="q-text">Điều nào mô tả gần nhất lý do bạn đang ở đây hôm nay?</h2>
+        <div class="options">
+          <div class="option" onclick="selectOption(7,'A',this)">
+            <span class="option-letter">A</span>
+            <span class="option-text">Một kết quả cụ thể không đến như kỳ vọng — tài chính, sự nghiệp, mối quan hệ, hay điều gì đó có thể đặt tên.</span>
+          </div>
+          <div class="option" onclick="selectOption(7,'B',this)">
+            <span class="option-letter">B</span>
+            <span class="option-text">Cảm giác mình đang sống một cuộc đời không hoàn toàn là của mình — khó giải thích nhưng rất thật.</span>
+          </div>
+        </div>
+        <button class="btn-next" id="next7" onclick="goNext(7)">Xem kết quả →</button>
+      </div>
+
+    </div>
+  </div>
+
+
+  <!-- ═══════════════════════════════════════════════
+       SCREEN 2: PROCESSING
+  ═══════════════════════════════════════════════ -->
+  <div id="processing" class="screen">
+    <div class="processing-inner">
+      <div class="processing-icon"></div>
+      <div class="processing-line" id="proc-line">Đang đọc dấu vân thần kinh của bạn...</div>
+    </div>
+  </div>
+
+
+  <!-- ═══════════════════════════════════════════════
+       SCREEN 3: EMAIL GATE (post-quiz unlock)
+  ═══════════════════════════════════════════════ -->
+  <div id="gate" class="screen">
+    <div class="gate-eyebrow">OS Audit · Phân Tích Hoàn Tất</div>
+
+    <h1 class="gate-headline">
+      Chẩn đoán của bạn<br>
+      đã <em>sẵn sàng</em>
+    </h1>
+
+    <p class="gate-sub">
+      Nhập email để nhận bức thư chẩn đoán cá nhân — vòng lặp thần kinh đang chạy ngầm và micro-practice tháo gỡ đúng nhóm của bạn.
+    </p>
+
+    <form class="gate-form" id="gate-form" onsubmit="submitEmail(event)">
+      <input
+        type="email"
+        id="email-input"
+        placeholder="Email của bạn"
+        required
+        autocomplete="email"
+      />
+      <p id="gate-error" style="display:none; color:#c0392b; font-size:13px; margin:0; text-align:left;"></p>
+      <button type="submit" class="btn-primary">Nhận Kết Quả Chẩn Đoán →</button>
+      <p class="gate-micro">Bạn nên điền email hay dùng nhất để tiện theo dõi.</p>
+    </form>
+
+    <div class="gate-tags">
+      <div class="gate-tag"><span>·</span> Bức thư cá nhân hóa</div>
+      <div class="gate-tag"><span>·</span> Vòng lặp thần kinh</div>
+      <div class="gate-tag"><span>·</span> Micro-practice 24h</div>
+    </div>
+  </div>
+
+
+  <!-- ═══════════════════════════════════════════════
+       SCREEN 4: PHONG KHAM ORIENTATION
+  ═══════════════════════════════════════════════ -->
+  <div id="phong-kham" class="screen">
+    <div class="pk-inner">
+      <div class="pk-eyebrow">OS Audit · Trang Giải Mã</div>
+
+      <h2 class="pk-title">Hệ điều hành của bạn<br><em>vừa được quét xong.</em></h2>
+
+      <p class="pk-sub">
+        Kết quả của bạn gồm 2 lớp. Mỗi lớp mở ra một chiều sâu khác nhau — hãy khai thác đúng thứ tự.
+      </p>
+
+      <div class="pk-steps">
+        <div class="pk-step pk-step--active">
+          <div class="pk-step-num">Bước 01</div>
+          <div class="pk-step-title">Kết Quả Chẩn Đoán</div>
+          <div class="pk-step-desc">Bức thư chẩn đoán cá nhân · Vòng lặp thần kinh đang chạy ngầm · Micro-practice tháo gỡ 24h.</div>
+          <div class="pk-step-tag">→ Ngay bên dưới</div>
+        </div>
+        <div class="pk-step pk-step--muted">
+          <div class="pk-step-num">Bước 02</div>
+          <div class="pk-step-title">Khám 1-1</div>
+          <div class="pk-step-desc">Chat sâu về trường hợp cụ thể của bạn. Nhận phác đồ cá nhân hóa theo đúng cơ chế mắc kẹt.</div>
+          <div class="pk-step-tag">↓ Sau kết quả chẩn đoán</div>
+        </div>
+      </div>
+
+      <button class="btn-pk" onclick="goToResult()">Bước 01 — Xem Kết Quả Chẩn Đoán →</button>
+      <p class="pk-micro">Bước 02 sẽ xuất hiện ngay bên dưới kết quả</p>
+    </div>
+  </div>
+
+
+  <!-- ═══════════════════════════════════════════════
+       SCREEN 5: RESULTS
+  ═══════════════════════════════════════════════ -->
+  <div id="result">
+
+    <!-- ── RESULT 1: CỖ MÁY KHÔNG TẮT ĐƯỢC ── -->
+    <div class="result-page" id="result-1">
+      <div class="result-hero">
+        <div class="result-eyebrow">Kết quả chẩn đoán của bạn</div>
+        <div class="result-archetype">Cỗ Máy Không Tắt Được</div>
+        <div class="result-tagline">Hội chứng Tăng Tốc Sai Hướng · Nghiện Cortisol</div>
+      </div>
+
+      <div class="overlay-banner" id="overlay-1">
+        <p>"Điều bạn đang trải qua không phải là sự thất bại. Đây là Sụp đổ Hàm sóng Bắt buộc — vũ trụ đang giật sập cấu trúc cũ vì nó được xây trên tần số sai. Đây không phải điểm cuối. Đây là Điểm Kỳ Dị — khoảnh khắc mọi thứ cũ sụp đổ để nhường chỗ cho hệ điều hành mới."</p>
+      </div>
+
+      <div class="result-body">
+
+        <div class="result-section">
+          <div class="section-label">Nhận Diện</div>
+          <div class="mirror-text">
+            <p>Bạn không thể ngồi yên 10 phút mà không cảm thấy mình đang lãng phí cuộc đời.</p>
+            <p>Không phải vì bạn siêng năng. Mà vì sự tĩnh lặng với bạn <em>nguy hiểm hơn cả sự kiệt sức</em>.</p>
+            <p>Bạn thức dậy và danh sách việc cần làm đã chạy trước khi kịp uống ngụm nước đầu tiên. Làm việc 10–14 tiếng, học 2–3 khóa song song, lên kế hoạch cho tuần tới trong lúc vẫn chưa xong tuần này. Và vẫn — vào cuối ngày — có cảm giác mơ hồ rằng mình chưa làm đủ.</p>
+            <p>Khi ai đó hỏi bạn dạo này thế nào, bạn nói "bận lắm" và trong giọng có một tia tự hào nhỏ. Bận rộn là bằng chứng. Bận rộn là huy chương. Bận rộn là thứ duy nhất làm im cái tiếng thì thầm bên trong rằng <em>nếu dừng lại, mọi thứ sẽ đổ vỡ</em>.</p>
+          </div>
+        </div>
+
+        <div class="result-section">
+          <div class="section-label">Vòng Lặp Thần Kinh Của Bạn</div>
+          <div class="neural-loop">
+            <div class="loop-node">
+              <span class="loop-node-label">Trigger</span>
+              <span class="loop-node-text">Khoảng trống / tĩnh lặng / không có việc để làm</span>
+            </div>
+            <div class="loop-arrow">↓</div>
+            <div class="loop-node">
+              <span class="loop-node-label">Brule</span>
+              <span class="loop-node-text">"Người không bận rộn là người không đủ tham vọng"</span>
+            </div>
+            <div class="loop-arrow">↓</div>
+            <div class="loop-node">
+              <span class="loop-node-label">Hành vi</span>
+              <span class="loop-node-text">Tìm ngay một task mới để lấp đầy khoảng trống</span>
+            </div>
+            <div class="loop-arrow">↓</div>
+            <div class="loop-node">
+              <span class="loop-node-label">Kết quả</span>
+              <span class="loop-node-text">Bận hơn, kiệt hơn — và vẫn cảm thấy "chưa đủ"</span>
+            </div>
+            <div class="loop-return">↺ Vòng lặp tiếp tục</div>
+          </div>
+        </div>
+
+        <div class="result-section">
+          <div class="section-label">Chẩn Đoán</div>
+          <div class="letter-text">
+            <p>Bạn không lười. Bạn không thiếu kỷ luật.</p>
+            <p>Bạn đang chạy một chiếc xe thể thao với bình xăng bị rò — và phản ứng duy nhất bạn biết là đổ thêm xăng vào.</p>
+            <p>Cơ thể bạn đã nghiện Cortisol. Không phải ẩn dụ — đây là sinh hóa học. Sau nhiều năm sống trong trạng thái gồng mình liên tục, các tế bào đã được lập trình để đòi hỏi sự căng thẳng như một chất gây nghiện. Khi bạn thực sự nghỉ ngơi, não bộ hoảng loạn vì thiếu hụt hóa chất quen thuộc — và nó gào lên: <em>"Nguy hiểm! Bạn đang tụt hậu rồi!"</em></p>
+            <p>Bạn tưởng đó là ý chí sắt đá. Thực ra đó là một cơn nghiện đang giả dạng thành đức tính.</p>
+            <p>Vấn đề chưa bao giờ là thiếu cố gắng. Vấn đề là bạn đang cố gắng bằng nhiên liệu sai — và xe đang chạy sai hướng trong khi bạn đạp ga hết cỡ.</p>
+            <p class="letter-highlight">Nếu bạn đọc đến đây và nghĩ <em>"đúng — nhưng tôi có thể ngồi yên được mà"</em> — đọc tiếp phần này.</p>
+            <p>Có một phiên bản của Cỗ Máy mà ít người nhận ra — kể cả người đang sống trong đó. Không phải vì nó không tồn tại. Mà vì nó đã học cách ẩn đi.</p>
+            <p>Bạn có thể ngồi yên. Bạn đã học cách cho cơ thể nghỉ ngơi. Bạn thậm chí hiểu rằng làm việc liên tục không phải con đường. Nhưng engine bên trong không cần bạn đang gõ bàn phím mới hoạt động. Nó chạy dưới dạng suy nghĩ. Dưới dạng phân tích. Dưới dạng kế hoạch được lập ra, bỏ đó, rồi lập lại. Dưới dạng câu hỏi không có điểm dừng thực sự.</p>
+            <p>Và bạn đã xây được một cơ chế đối phó rất trưởng thành: tự nhắc mình rằng đã đủ rồi. Rằng chỉ được thế thôi. Đó là một bước tiến thực sự — không phải ai cũng đi đến được đó. Nhưng nó vẫn là đối phó, không phải chữa lành. Và sự khác biệt giữa hai thứ đó quan trọng hơn bạn nghĩ.</p>
+            <p>Cortisol không cần hành động để tồn tại. Nó tồn tại trong sự cảnh giác liên tục, trong cái engine xử lý không bao giờ thực sự vào chế độ nghỉ — kể cả khi bạn đang nhìn ra biển.</p>
+            <p>Điều cần thay đổi không phải là học cách ngồi yên hơn. Là học cách để engine thực sự dừng — không phải nhắc mình rằng nó nên dừng.</p>
+          </div>
+        </div>
+
+        <div class="result-section">
+          <div class="section-label">Bước Tiếp Theo Của Bạn — 24 Giờ Tới</div>
+          <div class="practice-box">
+            <div class="practice-title">Micro-Practice</div>
+            <div class="practice-text">Tối nay, từ 9 đến 10 giờ: không làm gì cả. Không điện thoại. Không content. Không sách. Chỉ ngồi hoặc nằm với bất kỳ cảm giác nào xuất hiện. Sau 60 phút đó, viết lại một câu: <em>"Cơ thể tôi đã nói gì trong giờ vừa rồi?"</em></div>
+            <div class="practice-why">Cơn nghiện Cortisol sẽ bùng lên rõ nhất trong 60 phút đó. Đây không phải tra tấn — đây là dữ liệu chẩn đoán trực tiếp. Khi cơ thể bắt đầu bứt rứt vì không làm gì, bạn sẽ lần đầu tiên nhìn thấy con nghiện của mình bằng mắt thường.</div>
+          </div>
+        </div>
+
+        <div class="safety-net">
+          <div class="safety-net-label">Sẵn sàng thay đổi tận gốc?</div>
+          <div class="safety-net-question">
+            Tháo gỡ vòng lặp ngay — hoặc<br><em>khám sâu hơn 1-1 với tôi.</em>
+          </div>
+          <div class="safety-net-btns">
+            <a class="btn-safety-secondary" onclick="scrollToChat(event)">Vào Bước 02 — Khám 1-1 ↓</a>
+          </div>
+        </div>
+
+        <div class="result-ctas">
+          <a href="insight.html" class="cta-secondary">Đọc phân tích cơ chế đầy đủ về nhóm này</a>
+          <a href="https://www.quantumrebirth.io.vn/" class="cta-primary" target="_blank">Xem Phác Đồ Tháo Gỡ Vòng Lặp Này →</a>
+          <p class="cta-micro">Bảo hành 21 ngày chuyển hóa tế bào</p>
+        </div>
+
+        <div class="feedback-check">
+          <div class="feedback-check-eyebrow">Một câu trước khi bạn rời đi</div>
+          <div class="feedback-check-label">Kết quả này có đúng với bạn không?</div>
+          <div class="feedback-btns">
+            <button class="feedback-btn feedback-btn--yes" onclick="feedbackYes(this)">Đúng, tôi thấy mình trong đó</button>
+            <button class="feedback-btn" onclick="feedbackOpenModal()">Đúng một phần</button>
+            <button class="feedback-btn" onclick="feedbackOpenModal()">Chưa thấy chính xác</button>
+          </div>
+          <div class="feedback-thanks">Cảm ơn bạn — phản hồi này có ý nghĩa.</div>
+        </div>
+
+        <div class="other-groups">
+          <div class="other-groups-label">Tìm hiểu các nhóm khác</div>
+          <div class="other-groups-links">
+            <a href="insight.html">Người Mang Bóng Tối</a>
+            <a href="insight.html">Nhà Tầm Nhìn Mắc Kẹt</a>
+            <a href="insight.html">Tù Nhân Thành Công</a>
+            <a href="insight.html">Bản Vẽ Hoàn Hảo</a>
+          </div>
+        </div>
+
+      </div>
+    </div><!-- /result-1 -->
+
+
+    <!-- ── RESULT 2: NGƯỜI MANG BÓNG TỐI ── -->
+    <div class="result-page" id="result-2">
+      <div class="result-hero">
+        <div class="result-eyebrow">Kết quả chẩn đoán của bạn</div>
+        <div class="result-archetype">Người Mang Bóng Tối</div>
+        <div class="result-tagline">Hội chứng Tự Phá Ngưỡng · Brules từ quá khứ</div>
+      </div>
+
+      <div class="overlay-banner" id="overlay-2">
+        <p>"Điều bạn đang trải qua không phải là sự thất bại. Đây là Sụp đổ Hàm sóng Bắt buộc — vũ trụ đang giật sập cấu trúc cũ vì nó được xây trên tần số sai. Đây không phải điểm cuối. Đây là Điểm Kỳ Dị — khoảnh khắc mọi thứ cũ sụp đổ để nhường chỗ cho hệ điều hành mới."</p>
+      </div>
+
+      <div class="result-body">
+
+        <div class="result-section">
+          <div class="section-label">Nhận Diện</div>
+          <div class="mirror-text">
+            <p>Bạn có năng lực. Bạn biết điều đó. Những người xung quanh cũng biết.</p>
+            <p>Nhưng cứ mỗi khi gần chạm đến ngưỡng bứt phá — khi cơ hội đẹp nhất xuất hiện, khi dự án quan trọng nhất sắp hoàn thành — có gì đó xảy ra. Một lý do hợp lý xuất hiện. Một sự rút lui không giải thích được.</p>
+            <p>Bạn đã nhận ra pattern này. Bạn không hiểu tại sao. Và sâu thẳm, bạn nghi ngờ rằng có điều gì đó trong bạn đang <em>tự phá hoại chính mình</em>.</p>
+            <p>Bạn đúng. Hệ thống bảo vệ được viết từ hồi bạn còn nhỏ đang hoạt động chính xác theo thiết kế ban đầu. Vấn đề là thiết kế đó đã lỗi thời 20 năm rồi. Và bạn vẫn đang chạy nó.</p>
+          </div>
+        </div>
+
+        <div class="result-section">
+          <div class="section-label">Vòng Lặp Thần Kinh Của Bạn</div>
+          <div class="neural-loop">
+            <div class="loop-node">
+              <span class="loop-node-label">Trigger</span>
+              <span class="loop-node-text">Cơ hội tốt xuất hiện / Sắp được nhìn thấy</span>
+            </div>
+            <div class="loop-arrow">↓</div>
+            <div class="loop-node">
+              <span class="loop-node-label">Brule</span>
+              <span class="loop-node-text">"Nếu tôi vươn lên, tôi sẽ bị tổn thương / từ bỏ / phán xét"</span>
+            </div>
+            <div class="loop-arrow">↓</div>
+            <div class="loop-node">
+              <span class="loop-node-label">Hành vi</span>
+              <span class="loop-node-text">Tạo ra một lý do hợp lý để trì hoãn / rút lui</span>
+            </div>
+            <div class="loop-arrow">↓</div>
+            <div class="loop-node">
+              <span class="loop-node-label">Kết quả</span>
+              <span class="loop-node-text">Cơ hội qua đi — an toàn tạm thời, pattern ghi sâu thêm</span>
+            </div>
+            <div class="loop-return">↺ Vòng lặp tiếp tục</div>
+          </div>
+        </div>
+
+        <div class="result-section">
+          <div class="section-label">Chẩn Đoán</div>
+          <div class="letter-text">
+            <p>Hệ điều hành của bạn không bị lỗi vì bạn yếu đuối. Nó đang hoạt động chính xác theo thiết kế ban đầu.</p>
+            <p>Vấn đề là thiết kế đó được viết khi bạn còn là một đứa trẻ cần tự bảo vệ mình — trong một thế giới mà việc nổi bật, việc muốn nhiều, việc được nhìn thấy đã từng kết thúc bằng sự tổn thương.</p>
+            <p>Não bộ 7 tuổi của bạn không thể hiểu sự phức tạp của người lớn. Nó chỉ tự viết ra một kết luận sống còn: <em>"An toàn hơn là ở trong bóng tối."</em></p>
+            <p>Bạn đã lớn rồi. Bạn tưởng mình đã quên. Nhưng kết luận đó vẫn đang chạy ngầm — và nó tinh vi đến mức không bao giờ nói "Tôi sợ." Nó chỉ thì thầm những lý do rất thuyết phục để bạn dừng lại đúng trước ngưỡng cửa.</p>
+            <p>Không phải bạn không đủ năng lực. Không phải cơ hội không đủ tốt. Mà là thiết kế bảo vệ cũ đang nhầm thành công với nguy hiểm.</p>
+          </div>
+        </div>
+
+        <div class="result-section">
+          <div class="section-label">Bước Tiếp Theo Của Bạn — 24 Giờ Tới</div>
+          <div class="practice-box">
+            <div class="practice-title">Micro-Practice</div>
+            <div class="practice-text">Tối nay, lấy một tờ giấy trắng. Viết câu này và để tay viết tiếp mà không kiểm soát: <em>"Điều tôi sợ nhất khi thực sự thành công là..."</em> Đừng nghĩ. Đừng chỉnh sửa. Viết cho đến khi không còn gì để viết.</div>
+            <div class="practice-why">Brule của nhóm này sống trong im lặng — nó không bao giờ nói thẳng, chỉ tạo ra "lý do hợp lý" để rút lui. Khi bạn viết không kiểm soát, bạn bypass được lớp kiểm duyệt của não trước và chạm vào cái đang thực sự chạy phía sau.</div>
+          </div>
+        </div>
+
+        <div class="safety-net">
+          <div class="safety-net-label">Sẵn sàng thay đổi tận gốc?</div>
+          <div class="safety-net-question">
+            Tháo gỡ vòng lặp ngay — hoặc<br><em>khám sâu hơn 1-1 với tôi.</em>
+          </div>
+          <div class="safety-net-btns">
+            <a class="btn-safety-secondary" onclick="scrollToChat(event)">Vào Bước 02 — Khám 1-1 ↓</a>
+          </div>
+        </div>
+
+        <div class="result-ctas">
+          <a href="insight.html" class="cta-secondary">Đọc phân tích cơ chế đầy đủ về nhóm này</a>
+          <a href="https://www.quantumrebirth.io.vn/" class="cta-primary" target="_blank">Xem Phác Đồ Tháo Gỡ Vòng Lặp Này →</a>
+          <p class="cta-micro">Bảo hành 21 ngày chuyển hóa tế bào</p>
+        </div>
+
+        <div class="feedback-check">
+          <div class="feedback-check-eyebrow">Một câu trước khi bạn rời đi</div>
+          <div class="feedback-check-label">Kết quả này có đúng với bạn không?</div>
+          <div class="feedback-btns">
+            <button class="feedback-btn feedback-btn--yes" onclick="feedbackYes(this)">Đúng, tôi thấy mình trong đó</button>
+            <button class="feedback-btn" onclick="feedbackOpenModal()">Đúng một phần</button>
+            <button class="feedback-btn" onclick="feedbackOpenModal()">Chưa thấy chính xác</button>
+          </div>
+          <div class="feedback-thanks">Cảm ơn bạn — phản hồi này có ý nghĩa.</div>
+        </div>
+
+        <div class="other-groups">
+          <div class="other-groups-label">Tìm hiểu các nhóm khác</div>
+          <div class="other-groups-links">
+            <a href="insight.html">Cỗ Máy Không Tắt</a>
+            <a href="insight.html">Nhà Tầm Nhìn Mắc Kẹt</a>
+            <a href="insight.html">Tù Nhân Thành Công</a>
+            <a href="insight.html">Bản Vẽ Hoàn Hảo</a>
+          </div>
+        </div>
+
+      </div>
+    </div><!-- /result-2 -->
+
+
+    <!-- ── RESULT 3: NHÀ TẦM NHÌN MẮC KẸT ── -->
+    <div class="result-page" id="result-3">
+      <div class="result-hero">
+        <div class="result-eyebrow">Kết quả chẩn đoán của bạn</div>
+        <div class="result-archetype">Nhà Tầm Nhìn Mắc Kẹt</div>
+        <div class="result-tagline">Hội chứng Hàm Sóng Sai Lệch · Affirmation không vào tế bào</div>
+      </div>
+
+      <div class="overlay-banner" id="overlay-3">
+        <p>"Điều bạn đang trải qua không phải là sự thất bại. Đây là Sụp đổ Hàm sóng Bắt buộc — vũ trụ đang giật sập cấu trúc cũ vì nó được xây trên tần số sai. Đây không phải điểm cuối. Đây là Điểm Kỳ Dị — khoảnh khắc mọi thứ cũ sụp đổ để nhường chỗ cho hệ điều hành mới."</p>
+      </div>
+
+      <div class="result-body">
+
+        <div class="result-section">
+          <div class="section-label">Nhận Diện</div>
+          <div class="mirror-text">
+            <p>Bạn đã đọc Joe Dispenza. Đã thử The Secret. Đã làm vision board. Đã ngồi thiền mỗi sáng, đọc affirmation mỗi tối. Bạn biết rằng nội tâm tạo ra ngoại cảnh. Bạn tin điều đó về mặt lý thuyết.</p>
+            <p>Nhưng khoảng cách giữa tầm nhìn và thực tại không thu hẹp. Nó cứ ở đó.</p>
+            <p>Và có một loại đau đặc biệt trong đó: không phải đau vì không biết. Mà đau vì <em>biết mà vẫn không làm được</em>. Bạn nhìn những người khác áp dụng được và tự hỏi: "Có khi mình bị hỏng. Có khi cái này không dành cho mình."</p>
+            <p>Bạn đúng rằng giải pháp tồn tại. Chỉ là nó không nằm ở thêm lý thuyết — nó nằm ở chỗ hoàn toàn khác với nơi bạn đang tìm.</p>
+          </div>
+        </div>
+
+        <div class="result-section">
+          <div class="section-label">Vòng Lặp Thần Kinh Của Bạn</div>
+          <div class="neural-loop">
+            <div class="loop-node">
+              <span class="loop-node-label">Trigger</span>
+              <span class="loop-node-text">Cố manifest / làm affirmation / ngồi thiền hình dung</span>
+            </div>
+            <div class="loop-arrow">↓</div>
+            <div class="loop-node">
+              <span class="loop-node-label">Brule</span>
+              <span class="loop-node-text">"Điều tốt như vậy không phải dành cho người như mình" (chạy ngầm, 95% tiềm thức)</span>
+            </div>
+            <div class="loop-arrow">↓</div>
+            <div class="loop-node">
+              <span class="loop-node-label">Hành vi</span>
+              <span class="loop-node-text">Não nói tích cực — cơ thể phát tần số lo âu ngược chiều</span>
+            </div>
+            <div class="loop-arrow">↓</div>
+            <div class="loop-node">
+              <span class="loop-node-label">Kết quả</span>
+              <span class="loop-node-text">Manifestation không work — cảm giác "mình bị hỏng"</span>
+            </div>
+            <div class="loop-return">↺ Vòng lặp tiếp tục</div>
+          </div>
+        </div>
+
+        <div class="result-section">
+          <div class="section-label">Chẩn Đoán</div>
+          <div class="letter-text">
+            <p>Vấn đề không phải là bạn không biết luật. Vấn đề là bạn đang cố cài phần mềm mới lên phần cứng chưa được dọn sạch.</p>
+            <p>Affirmation hoạt động ở tầng ngôn ngữ — tầng ý thức, chiếm 5% não bộ. Nhưng những vết sẹo hóa học từ quá khứ đang phát tần số ngược chiều từ tầng tiềm thức — chiếm 95% còn lại. Bạn đang dùng micro-amply để lấn át một subwoofer. Không thể thắng bằng cách đó.</p>
+            <p>Vũ trụ không nghe suy nghĩ — nó phản hồi theo tần số cảm xúc mà cơ thể đang phát đi. Và khi bạn đang ngồi hình dung sự thịnh vượng mà máu trong người đang ngập Cortisol — tín hiệu nào mạnh hơn?</p>
+            <p>Bạn không bị hỏng. Bạn chỉ đang dùng sai công cụ. Công cụ đúng không phải thêm affirmation — mà là phẫu thuật lại phần cứng trước khi cài phần mềm mới.</p>
+          </div>
+        </div>
+
+        <div class="result-section">
+          <div class="section-label">Bước Tiếp Theo Của Bạn — 24 Giờ Tới</div>
+          <div class="practice-box">
+            <div class="practice-title">Micro-Practice</div>
+            <div class="practice-text">Sáng mai, thay vì đọc affirmation: Ngồi yên 5 phút. Nghĩ đến một kết quả bạn muốn. Rồi <em>không</em> hình dung kết quả đó — thay vào đó hỏi cơ thể: <em>"Nếu tôi đã có điều đó rồi, tôi đang cảm thấy gì trong ngực? Trong vai? Trong hơi thở?"</em> Ở với cảm giác đó 2 phút.</div>
+            <div class="practice-why">Vấn đề của nhóm này không phải thiếu ý định mà thiếu thể hiện thân xác (embodiment). Affirmation là ngôn ngữ của não. Cơ thể nói ngôn ngữ khác — cảm giác. Practice này bắt đầu dạy cơ thể ngôn ngữ đó.</div>
+          </div>
+        </div>
+
+        <div class="safety-net">
+          <div class="safety-net-label">Sẵn sàng thay đổi tận gốc?</div>
+          <div class="safety-net-question">
+            Tháo gỡ vòng lặp ngay — hoặc<br><em>khám sâu hơn 1-1 với tôi.</em>
+          </div>
+          <div class="safety-net-btns">
+            <a class="btn-safety-secondary" onclick="scrollToChat(event)">Vào Bước 02 — Khám 1-1 ↓</a>
+          </div>
+        </div>
+
+        <div class="result-ctas">
+          <a href="insight.html" class="cta-secondary">Đọc phân tích cơ chế đầy đủ về nhóm này</a>
+          <a href="https://www.quantumrebirth.io.vn/" class="cta-primary" target="_blank">Xem Phác Đồ Tháo Gỡ Vòng Lặp Này →</a>
+          <p class="cta-micro">Bảo hành 21 ngày chuyển hóa tế bào</p>
+        </div>
+
+        <div class="feedback-check">
+          <div class="feedback-check-eyebrow">Một câu trước khi bạn rời đi</div>
+          <div class="feedback-check-label">Kết quả này có đúng với bạn không?</div>
+          <div class="feedback-btns">
+            <button class="feedback-btn feedback-btn--yes" onclick="feedbackYes(this)">Đúng, tôi thấy mình trong đó</button>
+            <button class="feedback-btn" onclick="feedbackOpenModal()">Đúng một phần</button>
+            <button class="feedback-btn" onclick="feedbackOpenModal()">Chưa thấy chính xác</button>
+          </div>
+          <div class="feedback-thanks">Cảm ơn bạn — phản hồi này có ý nghĩa.</div>
+        </div>
+
+        <div class="other-groups">
+          <div class="other-groups-label">Tìm hiểu các nhóm khác</div>
+          <div class="other-groups-links">
+            <a href="insight.html">Cỗ Máy Không Tắt</a>
+            <a href="insight.html">Người Mang Bóng Tối</a>
+            <a href="insight.html">Tù Nhân Thành Công</a>
+            <a href="insight.html">Bản Vẽ Hoàn Hảo</a>
+          </div>
+        </div>
+
+      </div>
+    </div><!-- /result-3 -->
+
+
+    <!-- ── RESULT 4: TÙ NHÂN THÀNH CÔNG ── -->
+    <div class="result-page" id="result-4">
+      <div class="result-hero">
+        <div class="result-eyebrow">Kết quả chẩn đoán của bạn</div>
+        <div class="result-archetype">Tù Nhân Thành Công</div>
+        <div class="result-tagline">Hội chứng Chiến Thắng Rỗng Không · Thành tựu không lấp được khoảng trống</div>
+      </div>
+
+      <div class="overlay-banner" id="overlay-4">
+        <p>"Điều bạn đang trải qua không phải là sự thất bại. Đây là Sụp đổ Hàm sóng Bắt buộc — vũ trụ đang giật sập cấu trúc cũ vì nó được xây trên tần số sai. Đây không phải điểm cuối. Đây là Điểm Kỳ Dị — khoảnh khắc mọi thứ cũ sụp đổ để nhường chỗ cho hệ điều hành mới."</p>
+      </div>
+
+      <div class="result-body">
+
+        <div class="result-section">
+          <div class="section-label">Nhận Diện</div>
+          <div class="mirror-text">
+            <p>Nhìn từ bên ngoài, bạn đang ổn. Thậm chí đang tốt.</p>
+            <p>Doanh thu có. Danh tiếng có. Những mục tiêu bạn đặt ra 3 năm trước — phần lớn đã đạt được. Những người mới bắt đầu nhìn vào bạn như một tấm gương.</p>
+            <p>Nhưng mỗi lần chạm đến đỉnh của một mục tiêu, có một khoảnh khắc rất ngắn — <em>"vậy thôi à?"</em> — trước khi não bộ tự động tìm ngọn núi tiếp theo để leo. Khoảng trống không biến mất. Nó chỉ đổi hình dạng.</p>
+            <p>Đôi khi bạn nhìn vào người mình đang diễn và tự hỏi: "Đây có phải thật sự là mình không?"</p>
+          </div>
+        </div>
+
+        <div class="result-section">
+          <div class="section-label">Vòng Lặp Thần Kinh Của Bạn</div>
+          <div class="neural-loop">
+            <div class="loop-node">
+              <span class="loop-node-label">Trigger</span>
+              <span class="loop-node-text">Đạt được một mục tiêu / hoàn thành dự án lớn</span>
+            </div>
+            <div class="loop-arrow">↓</div>
+            <div class="loop-node">
+              <span class="loop-node-label">Brule</span>
+              <span class="loop-node-text">"Cảm giác đủ đầy đến từ kết quả — và kết quả này chưa đủ"</span>
+            </div>
+            <div class="loop-arrow">↓</div>
+            <div class="loop-node">
+              <span class="loop-node-label">Hành vi</span>
+              <span class="loop-node-text">Ngay lập tức leo sang mục tiêu tiếp theo để lấp khoảng trống</span>
+            </div>
+            <div class="loop-arrow">↓</div>
+            <div class="loop-node">
+              <span class="loop-node-label">Kết quả</span>
+              <span class="loop-node-text">Thành tựu tích lũy — khoảng trống bên trong không thay đổi</span>
+            </div>
+            <div class="loop-return">↺ Vòng lặp tiếp tục</div>
+          </div>
+        </div>
+
+        <div class="result-section">
+          <div class="section-label">Chẩn Đoán</div>
+          <div class="letter-text">
+            <p>Bạn không đang thiếu thành tựu. Bạn đang thiếu trải nghiệm đủ đầy — và bạn đang cố gắng mua nó bằng kết quả vật chất.</p>
+            <p>Đây là vấn đề không thể giải quyết bằng thêm kết quả. Vì mỗi lần đạt được thứ bạn nghĩ sẽ làm bạn đủ đầy, não bộ lại reset thanh đo — và cái đích đủ đầy lại lùi xa thêm một chút.</p>
+            <p>Sự đủ đầy không phải là điểm đến. Nó là trạng thái xuất phát.</p>
+            <p>Người đã đạt được nhiều như bạn mà vẫn cảm thấy trống rỗng — không phải vì chưa đủ thành công. Mà vì chưa bao giờ được phép <em>là</em> mà không cần <em>làm</em>.</p>
+            <p>Con người đó — người biết mình là đủ mà không cần bằng chứng — không phải là người bạn chưa trở thành. Đó là người bạn đã là, trước khi thế giới dạy bạn rằng giá trị cần được chứng minh.</p>
+          </div>
+        </div>
+
+        <div class="result-section">
+          <div class="section-label">Bước Tiếp Theo Của Bạn — 24 Giờ Tới</div>
+          <div class="practice-box">
+            <div class="practice-title">Micro-Practice</div>
+            <div class="practice-text">Ngày mai, dành đúng 1 tiếng làm điều gì đó hoàn toàn "vô ích" — không tạo ra giá trị, không học, không xây dựng gì. Chỉ làm vì bạn thích. Và khi cảm giác tội lỗi hoặc bứt rứt xuất hiện, đừng đè nó xuống — hãy hỏi nó: <em>"Mày đang bảo vệ mình khỏi điều gì?"</em></div>
+            <div class="practice-why">Nhóm này đang dùng thành tựu như một loại thuốc giảm đau cho cảm giác thiếu đủ đầy nội tâm. Practice này không cất đi thuốc — nó chỉ ra cơn đau thật đang ở đâu.</div>
+          </div>
+        </div>
+
+        <div class="safety-net">
+          <div class="safety-net-label">Sẵn sàng thay đổi tận gốc?</div>
+          <div class="safety-net-question">
+            Tháo gỡ vòng lặp ngay — hoặc<br><em>khám sâu hơn 1-1 với tôi.</em>
+          </div>
+          <div class="safety-net-btns">
+            <a class="btn-safety-secondary" onclick="scrollToChat(event)">Vào Bước 02 — Khám 1-1 ↓</a>
+          </div>
+        </div>
+
+        <div class="result-ctas">
+          <a href="insight.html" class="cta-secondary">Đọc phân tích cơ chế đầy đủ về nhóm này</a>
+          <a href="https://www.quantumrebirth.io.vn/" class="cta-primary" target="_blank">Xem Phác Đồ Tháo Gỡ Vòng Lặp Này →</a>
+          <p class="cta-micro">Bảo hành 21 ngày chuyển hóa tế bào</p>
+        </div>
+
+        <div class="feedback-check">
+          <div class="feedback-check-eyebrow">Một câu trước khi bạn rời đi</div>
+          <div class="feedback-check-label">Kết quả này có đúng với bạn không?</div>
+          <div class="feedback-btns">
+            <button class="feedback-btn feedback-btn--yes" onclick="feedbackYes(this)">Đúng, tôi thấy mình trong đó</button>
+            <button class="feedback-btn" onclick="feedbackOpenModal()">Đúng một phần</button>
+            <button class="feedback-btn" onclick="feedbackOpenModal()">Chưa thấy chính xác</button>
+          </div>
+          <div class="feedback-thanks">Cảm ơn bạn — phản hồi này có ý nghĩa.</div>
+        </div>
+
+        <div class="other-groups">
+          <div class="other-groups-label">Tìm hiểu các nhóm khác</div>
+          <div class="other-groups-links">
+            <a href="insight.html">Cỗ Máy Không Tắt</a>
+            <a href="insight.html">Người Mang Bóng Tối</a>
+            <a href="insight.html">Nhà Tầm Nhìn Mắc Kẹt</a>
+            <a href="insight.html">Bản Vẽ Hoàn Hảo</a>
+          </div>
+        </div>
+
+      </div>
+    </div><!-- /result-4 -->
+
+
+
+
+    <!-- ── RESULT 5: BẢN VẼ HOÀN HẢO, CÔNG TRƯỜNG TRỐNG ── -->
+    <div class="result-page" id="result-5">
+      <div class="result-hero">
+        <div class="result-eyebrow">Kết quả chẩn đoán của bạn</div>
+        <div class="result-archetype">Bản Vẽ Hoàn Hảo,<br>Công Trường Trống</div>
+        <div class="result-tagline">Hội chứng Cầu Toàn Vô Hành · Perfectionism paralysis</div>
+      </div>
+
+      <div class="overlay-banner" id="overlay-5">
+        <p>"Điều bạn đang trải qua không phải là sự thất bại. Đây là Sụp đổ Hàm sóng Bắt buộc — vũ trụ đang giật sập cấu trúc cũ vì nó được xây trên tần số sai. Đây không phải điểm cuối. Đây là Điểm Kỳ Dị — khoảnh khắc mọi thứ cũ sụp đổ để nhường chỗ cho hệ điều hành mới."</p>
+      </div>
+
+      <div class="result-body">
+
+        <div class="result-section">
+          <div class="section-label">Nhận Diện</div>
+          <div class="mirror-text">
+            <p>Bạn có ý tưởng tốt. Kế hoạch rõ. Bạn biết mình muốn làm gì và tại sao nó sẽ work.</p>
+            <p>Nhưng nó vẫn chưa được phóng.</p>
+            <p>Tháng trước bạn nói cần thêm một tuần để chuẩn bị. Tháng này bạn đang chỉnh sửa lần thứ mười hai. Tuần sau bạn sẽ có một lý do mới — rất hợp lý — để chờ thêm.</p>
+            <p>Khác với người trì hoãn lười biếng: bạn làm rất nhiều. Bạn research, outline, chỉnh sửa, nghiên cứu thêm. Bạn không ngồi không — bạn đang bận rộn chuẩn bị. <em>Mãi mãi chuẩn bị.</em></p>
+            <p>Vấn đề không phải là bạn không làm. Vấn đề là bạn không phóng — không để thứ chưa hoàn hảo ra ngoài ánh sáng, nơi người khác có thể nhìn thấy và phán xét. Và sâu thẳm hơn: phán xét <em>bạn</em> qua nó.</p>
+          </div>
+        </div>
+
+        <div class="result-section">
+          <div class="section-label">Vòng Lặp Thần Kinh Của Bạn</div>
+          <div class="neural-loop">
+            <div class="loop-node">
+              <span class="loop-node-label">Trigger</span>
+              <span class="loop-node-text">Sắp ra mắt / sắp được nhìn thấy / sắp bị phán xét</span>
+            </div>
+            <div class="loop-arrow">↓</div>
+            <div class="loop-node">
+              <span class="loop-node-label">Brule</span>
+              <span class="loop-node-text">"Nếu nó không hoàn hảo, mọi người thấy mình không đủ giỏi"</span>
+            </div>
+            <div class="loop-arrow">↓</div>
+            <div class="loop-node">
+              <span class="loop-node-label">Hành vi</span>
+              <span class="loop-node-text">Tìm điểm cần cải thiện thêm — một lý do hợp lý để chờ</span>
+            </div>
+            <div class="loop-arrow">↓</div>
+            <div class="loop-node">
+              <span class="loop-node-label">Kết quả</span>
+              <span class="loop-node-text">Không bao giờ ra mắt — không bao giờ biết mình có đủ giỏi không</span>
+            </div>
+            <div class="loop-return">↺ Vòng lặp tiếp tục</div>
+          </div>
+        </div>
+
+        <div class="result-section">
+          <div class="section-label">Chẩn Đoán</div>
+          <div class="letter-text">
+            <p>Bạn không lười. Bạn không thiếu ý chí. Thực ra bạn làm việc rất chăm — chỉ là bạn làm việc trong bóng tối, nơi không ai có thể thấy và phán xét.</p>
+            <p>Cái bẫy hoàn hảo này không phải là đức tính. Đó là một hệ thống bảo vệ tinh vi: <em>nếu tôi không bao giờ thực sự ra mắt, tôi không bao giờ có thể thực sự thất bại.</em></p>
+            <p>Bạn đang trả một giá rất cao cho sự an toàn đó: tất cả những dự án chưa phóng, tất cả những người chưa được giúp đỡ, tất cả những phiên bản cuộc đời bạn có thể đang sống.</p>
+            <p>Và đây là sự thật tàn nhẫn nhất: không có phiên bản hoàn hảo nào cần được tạo ra trước khi bạn được quyền bắt đầu. Thứ đang giữ bạn lại không phải là thứ chưa đủ tốt trên màn hình — mà là định nghĩa của bạn về việc <em>bạn cần phải là ai</em> trước khi được quyền ra mắt.</p>
+          </div>
+        </div>
+
+        <div class="result-section">
+          <div class="section-label">Bước Tiếp Theo Của Bạn — 24 Giờ Tới</div>
+          <div class="practice-box">
+            <div class="practice-title">Micro-Practice</div>
+            <div class="practice-text">Lấy một thứ bạn đang "chuẩn bị" lâu nhất. Không chỉnh sửa thêm gì. Chia sẻ nó với <em>đúng một người</em> — không phải cả thế giới, chỉ một người bạn tin tưởng — ở trạng thái nó đang có ngay lúc này. Sau đó viết lại: <em>"Điều tồi tệ nhất có thể xảy ra là gì? Và nếu điều đó xảy ra, thì sao?"</em></div>
+            <div class="practice-why">Nhóm này bị mắc kẹt trong vòng lặp tưởng tượng thảm họa — não liên tục phóng chiếu worst case mà không bao giờ kiểm tra trong thực tế. Practice nhỏ này tạo ra bằng chứng thực tế để đối chiếu với thảm họa tưởng tượng.</div>
+          </div>
+        </div>
+
+        <div class="safety-net">
+          <div class="safety-net-label">Sẵn sàng thay đổi tận gốc?</div>
+          <div class="safety-net-question">
+            Tháo gỡ vòng lặp ngay — hoặc<br><em>khám sâu hơn 1-1 với tôi.</em>
+          </div>
+          <div class="safety-net-btns">
+            <a class="btn-safety-secondary" onclick="scrollToChat(event)">Vào Bước 02 — Khám 1-1 ↓</a>
+          </div>
+        </div>
+
+        <div class="result-ctas">
+          <a href="insight.html" class="cta-secondary">Đọc phân tích cơ chế đầy đủ về nhóm này</a>
+          <a href="https://www.quantumrebirth.io.vn/" class="cta-primary" target="_blank">Xem Phác Đồ Tháo Gỡ Vòng Lặp Này →</a>
+          <p class="cta-micro">Bảo hành 21 ngày chuyển hóa tế bào</p>
+        </div>
+
+        <div class="feedback-check">
+          <div class="feedback-check-eyebrow">Một câu trước khi bạn rời đi</div>
+          <div class="feedback-check-label">Kết quả này có đúng với bạn không?</div>
+          <div class="feedback-btns">
+            <button class="feedback-btn feedback-btn--yes" onclick="feedbackYes(this)">Đúng, tôi thấy mình trong đó</button>
+            <button class="feedback-btn" onclick="feedbackOpenModal()">Đúng một phần</button>
+            <button class="feedback-btn" onclick="feedbackOpenModal()">Chưa thấy chính xác</button>
+          </div>
+          <div class="feedback-thanks">Cảm ơn bạn — phản hồi này có ý nghĩa.</div>
+        </div>
+
+        <div class="other-groups">
+          <div class="other-groups-label">Tìm hiểu các nhóm khác</div>
+          <div class="other-groups-links">
+            <a href="insight.html">Cỗ Máy Không Tắt</a>
+            <a href="insight.html">Người Mang Bóng Tối</a>
+            <a href="insight.html">Nhà Tầm Nhìn Mắc Kẹt</a>
+            <a href="insight.html">Tù Nhân Thành Công</a>
+          </div>
+        </div>
+
+      </div>
+    </div><!-- /result-5 -->
+
+  </div><!-- /result -->
+
+
+  <!-- ═══════════════════════════════════════════════
+       BUOC 02 — KHAM 1-1 (shared chat UI)
+  ═══════════════════════════════════════════════ -->
+  <div id="buoc-02" style="display:none;">
+    <div id="buoc-02-inner">
+      <div class="buoc02-header" style="max-width:640px;margin:0 auto;padding:60px 20px 44px;">
+        <div class="buoc02-label">Bước 02</div>
+        <div class="buoc02-title">Khám 1-1</div>
+        <div class="buoc02-sub">
+          Kể cho tôi nghe về trường hợp cụ thể của bạn. Tôi sẽ đặt câu hỏi sâu hơn và đưa ra phác đồ cá nhân hóa — không phải chẩn đoán chung chung.
+        </div>
+      </div>
+
+      <div style="max-width:640px;margin:0 auto;padding:0 20px 100px;">
+        <div class="chat-window">
+          <div class="chat-messages" id="chat-messages">
+            <!-- Initial AI message injected by JS -->
+          </div>
+
+          <div class="chat-input-wrap">
+            <textarea
+              class="chat-input"
+              id="chat-input"
+              placeholder="Chia sẻ suy nghĩ của bạn — điều gì trong kết quả chẩn đoán chạm vào bạn nhất?"
+              rows="3"
+            ></textarea>
+            <button class="chat-send" onclick="sendChat()">Gửi →</button>
+          </div>
+        </div>
+
+        <p class="chat-notice">Chat 1-1 với AI được huấn luyện theo phương pháp James Identity · API đang trong giai đoạn phát triển</p>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ═══════════════════════════ FOOTER ═══════════════════════════ -->
+  <footer class="site-footer reveal">
+    <div class="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-8">
+      <a href="index.html" class="footer-logo">James.identity</a>
+      <nav class="flex gap-8">
+        <a href="about.html"      class="nav-link">About</a>
+        <a href="https://www.quantumrebirth.io.vn/" target="_blank" class="nav-link">QROS</a>
+        <a href="diagnostic.html" class="nav-link">Chẩn đoán</a>
+        <a href="insight.html"    class="nav-link">Insight</a>
+        <a href="academy.html"    class="nav-link">Academy</a>
+      </nav>
+      <p class="footer-copy">© 2026 James Trương</p>
+    </div>
+  </footer>
+
+
+  <!-- ═══════════════════════════ SCRIPTS ═══════════════════════════ -->
+  <script>
+    gsap.registerPlugin(ScrollTrigger);
+    gsap.utils.toArray('.reveal').forEach(function(el) {
+      gsap.fromTo(el,
+        { opacity: 0, y: 28 },
+        { opacity: 1, y: 0, duration: 0.85, ease: 'power4.out',
+          scrollTrigger: { trigger: el, start: 'top 88%', toggleActions: 'play none none none' }
+        }
+      );
+    });
+
+    var scores = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
+    var overlayActive = false;
+    var overlayTrack = null; // 1 = Crisis, 2 = Identity Dissolution
+    var q5Choice = null;
+    var currentQ = 1;
+    var TOTAL_Q = 7;
+    var selectedInCurrent = false;
+    var currentGroup = null;
+
+    // Q1: A→1, B→2, C→3, D→4, E→5
+    // Q2: A→1, B→5, C→3, D→4, E→2
+    // Q3: A→1, B→2, C→3, D→4, E→5
+    // Q4: A→1, B→2, C→3, D→4, E→5
+    // Q5: A→1, B→2, C→3, D→4, E→5
+    // Q6 (6A): overlay detection only (no score)
+    // Q7 (6B): overlay track only (no score)
+    var MAP = {
+      1: { A: 1, B: 2, C: 3, D: 4, E: 5 },
+      2: { A: 1, B: 5, C: 3, D: 4, E: 2 },
+      3: { A: 1, B: 2, C: 3, D: 4, E: 5 },
+      4: { A: 1, B: 2, C: 3, D: 4, E: 5 },
+      5: { A: 1, B: 2, C: 3, D: 4, E: 5 }
+    };
+
+    function startQuiz() {
+      showScreen('quiz');
+      document.getElementById('progress-bar-wrap').style.display = 'block';
+      updateProgress();
+    }
+
+    function showScreen(id) {
+      document.querySelectorAll('.screen').forEach(function(s) { s.classList.remove('active'); });
+      var el = document.getElementById(id);
+      if (el) el.classList.add('active');
+      window.scrollTo(0, 0);
+    }
+
+    function updateProgress() {
+      var pct = ((currentQ - 1) / TOTAL_Q) * 100;
+      document.getElementById('progress-bar-fill').style.width = pct + '%';
+    }
+
+    function selectOption(qNum, opt, el) {
+      el.closest('.options').querySelectorAll('.option').forEach(function(o) { o.classList.remove('selected'); });
+      el.classList.add('selected');
+
+      if (qNum === 7) {
+        // Q6B: overlay track detection
+        overlayTrack = (opt === 'A') ? 1 : 2;
+      } else if (qNum === 6) {
+        // Q6A: overlay state detection (no scoring)
+        overlayActive = (opt === 'B' || opt === 'C');
+      } else {
+        var grp = MAP[qNum][opt];
+        if (grp) {
+          scores[grp]++;
+          if (qNum === 5) q5Choice = grp;
+        }
+      }
+
+      var btn = document.getElementById('next' + qNum);
+      if (btn) btn.classList.add('visible');
+      selectedInCurrent = true;
+    }
+
+    function goNext(qNum) {
+      if (!selectedInCurrent) return;
+      selectedInCurrent = false;
+
+      // Q6A: conditionally show Q6B or go straight to processing
+      if (qNum === 6) {
+        document.getElementById('q6').classList.remove('active');
+        if (overlayActive) {
+          currentQ = 7;
+          document.getElementById('q7').classList.add('active');
+          updateProgress();
+        } else {
+          runProcessing();
+        }
+        window.scrollTo(0, 0);
+        return;
+      }
+
+      if (qNum === TOTAL_Q) { runProcessing(); return; }
+
+      document.getElementById('q' + qNum).classList.remove('active');
+      currentQ = qNum + 1;
+      document.getElementById('q' + currentQ).classList.add('active');
+      updateProgress();
+      window.scrollTo(0, 0);
+    }
+
+    var PROC_LINES = [
+      'Đang đọc dấu vân thần kinh của bạn...',
+      'Đang xác định cơ chế mắc kẹt...',
+      'Đang chuẩn bị chẩn đoán cá nhân...'
+    ];
+
+    function runProcessing() {
+      showScreen('processing');
+      document.getElementById('progress-bar-fill').style.width = '100%';
+      var i = 0;
+      var lineEl = document.getElementById('proc-line');
+      lineEl.textContent = PROC_LINES[0];
+      var interval = setInterval(function() {
+        i++;
+        if (i < PROC_LINES.length) {
+          lineEl.textContent = PROC_LINES[i];
+        } else {
+          clearInterval(interval);
+          currentGroup = calcResult();
+          setTimeout(function() { showScreen('gate'); }, 600);
+        }
+      }, 900);
+    }
+
+    var DISPOSABLE_DOMAINS = [
+      'mailinator.com','tempmail.com','guerrillamail.com','guerrillamail.net',
+      'guerrillamail.org','guerrillamail.biz','guerrillamail.de','sharklasers.com',
+      'guerrillamailblock.com','grr.la','guerrillamail.info','spam4.me',
+      'trashmail.com','trashmail.me','trashmail.net','trashmail.at','trashmail.io',
+      'dispostable.com','yopmail.com','yopmail.fr','cool.fr.nf','jetable.fr.nf',
+      'nospam.ze.tc','nomail.xl.cx','mega.zik.dj','speed.1s.fr','courriel.fr.nf',
+      'moncourrier.fr.nf','monemail.fr.nf','monmail.fr.nf','throwam.com',
+      'maildrop.cc','mailnull.com','spamgourmet.com','spamgourmet.net',
+      'spamgourmet.org','spamgourmet.com','spamspot.com','spamthis.co.uk',
+      'fakeinbox.com','mailnew.com','mailnull.com','mailseal.de','mailscrap.com',
+      'mailshell.com','mailsiphon.com','mailslap.com','mailslite.com',
+      'throwaway.email','throwam.com','temp-mail.org','temp-mail.ru',
+      'tempinbox.com','tempmail.net','tempr.email','tmail.com','tmailinator.com',
+      'discard.email','discardmail.com','discardmail.de','einrot.com',
+      'filzmail.com','garliclife.com','hatespam.org','ieatspam.eu','ieatspam.info',
+      'jetable.com','jetable.net','jetable.org','jetable.pp.ua','kasmail.com',
+      'koszmail.pl','kurzepost.de','lawlita.com','letthemeatspam.com',
+      'lhsdv.com','lifebyfood.com','linux.al','lol.ovpn.to','lolitka.de',
+      'lookugly.com','lortemail.dk','lr78.com','lroid.com','lukop.dk',
+      'm21.cc','maboard.com','mail-filter.com','mail-temporaire.fr',
+      'mail.by','mail2rss.org','mail333.com','mailbidon.com','mailbiz.biz',
+      'mailblocks.com','mailbucket.org','mailc.net','mailcat.biz','mailcatch.com',
+      'mailchop.com','mailde.org','mailde.de','mailde.info','maildu.de',
+      'mailed.in','maileimer.de','mailexpire.com','mailfa.tk','mailfall.com',
+      'mailfreeonline.com','mailguard.me','mailhazard.com','mailhazard.us',
+      'mailimate.com','mailin8r.com','mailinater.com','mailinator.net',
+      'mailinator.org','mailinator2.com','mailincubator.com','mailismagic.com',
+      'mailme.ir','mailme.lv','mailme24.com','mailmetrash.com','mailmoat.com',
+      'mailms.com','mailnobody.com','mailnoob.com','mailnull.com',
+      'mailplushero.com','mailproxsy.com','mailquack.com','mailrock.biz',
+      'mailsac.com','mailscrap.com','mailshiv.com','mailshut.com',
+      'mailsiphon.com','mailslap.com','mailslite.com','mailsnull.com'
+    ];
+
+    function isDisposableEmail(email) {
+      var domain = email.split('@')[1];
+      if (!domain) return true;
+      return DISPOSABLE_DOMAINS.indexOf(domain.toLowerCase()) !== -1;
+    }
+
+    function isValidEmailFormat(email) {
+      // Must have exactly one @, domain with at least one dot, no consecutive dots
+      var re = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+      if (!re.test(email)) return false;
+      var parts = email.split('@');
+      if (parts.length !== 2) return false;
+      var domain = parts[1];
+      if (domain.indexOf('..') !== -1) return false;
+      if (domain.charAt(0) === '.' || domain.charAt(domain.length - 1) === '.') return false;
+      return true;
+    }
+
+    function submitEmail(e) {
+      e.preventDefault();
+      var email = document.getElementById('email-input').value.trim().toLowerCase();
+      var errorEl = document.getElementById('gate-error');
+
+      if (!isValidEmailFormat(email)) {
+        errorEl.textContent = 'Email không hợp lệ — vui lòng kiểm tra lại.';
+        errorEl.style.display = 'block';
+        return;
+      }
+      if (isDisposableEmail(email)) {
+        errorEl.textContent = 'Vui lòng dùng email chính của bạn để nhận kết quả.';
+        errorEl.style.display = 'block';
+        return;
+      }
+
+      errorEl.style.display = 'none';
+      fetch('https://api.convertkit.com/v3/forms/9379202/subscribe', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json; charset=utf-8' },
+        body: JSON.stringify({ api_key: '4I3dpn2MTO5NrQKZQzAMQg', email: email })
+      }).catch(function() {});
+      showScreen('phong-kham');
+    }
+
+    var OVERLAY_TRACK1 = 'Điều bạn đang trải qua không phải ngẫu nhiên. Đây không phải bằng chứng bạn không đủ giỏi — đây là dữ liệu về cái gì đó trong hệ điều hành cần được thay thế. Và thứ cần thay thế đó có tên.';
+    var OVERLAY_TRACK2 = 'Tôi không có gì để phân tích hôm nay. Tôi chỉ muốn bạn biết rằng cái bạn đang cảm thấy — cái khó đặt tên đó — không phải là dấu hiệu bạn đang sụp đổ. Đây là Sụp đổ Hàm sóng Bắt buộc. Cấu trúc cũ đang giải thể vì nó được xây trên tần số sai. Đây không phải điểm cuối. Đây là Điểm Kỳ Dị — khoảnh khắc nhường chỗ cho hệ điều hành mới.';
+
+    function goToResult() {
+      document.querySelectorAll('.screen').forEach(function(s) { s.classList.remove('active'); });
+      document.getElementById('progress-bar-wrap').style.display = 'none';
+      document.getElementById('result').style.display = 'block';
+      document.getElementById('buoc-02').style.display = 'block';
+      document.querySelectorAll('.result-page').forEach(function(p) { p.classList.remove('active'); });
+      var page = document.getElementById('result-' + currentGroup);
+      if (page) page.classList.add('active');
+      if (overlayActive) {
+        var banner = document.getElementById('overlay-' + currentGroup);
+        if (banner) {
+          var msg = (overlayTrack === 1) ? OVERLAY_TRACK1 : OVERLAY_TRACK2;
+          var p = banner.querySelector('p');
+          if (p) p.textContent = msg;
+          banner.style.display = 'block';
+        }
+      }
+      setInitialChatMessage(currentGroup);
+      window.scrollTo(0, 0);
+    }
+
+    function calcResult() {
+      var max = 0, winner = 1;
+      for (var g in scores) {
+        if (scores[parseInt(g)] > max) { max = scores[parseInt(g)]; winner = parseInt(g); }
+      }
+      // Tiebreaker: Q5 self-report (Câu tự đánh giá được ưu tiên)
+      if (q5Choice && scores[q5Choice] === max) winner = q5Choice;
+      return winner;
+    }
+
+    function scrollToChat(e) {
+      if (e) e.preventDefault();
+      var el = document.getElementById('buoc-02');
+      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    var CHAT_OPENERS = {
+      1: 'Bạn vừa hoàn thành OS Audit và kết quả chỉ ra một cơ chế khá rõ ràng. Tôi muốn hiểu sâu hơn về <em>trường hợp cụ thể của bạn</em>.<br><br>Câu hỏi đầu tiên: Trong một tuần vừa qua, khoảnh khắc nào bạn cảm thấy rõ nhất cái vòng lặp "không thể dừng" đó?',
+      2: 'Kết quả cho thấy có một pattern rất đặc trưng trong cách bạn phản ứng với cơ hội. Tôi không muốn đưa ra phác đồ chung chung — tôi muốn hiểu <em>trường hợp cụ thể của bạn</em>.<br><br>Câu hỏi đầu tiên: Lần gần nhất bạn rút lui khỏi một cơ hội tốt là khi nào? Điều gì đã xảy ra?',
+      3: 'Bạn là người hiểu lý thuyết tốt hơn hầu hết mọi người. Nhưng câu hỏi quan trọng không phải là bạn biết gì — mà là <em>điều gì đang cản trở bạn áp dụng được nó</em>.<br><br>Câu hỏi đầu tiên: Bạn đang dùng công cụ nào để manifest / thiền / thực hành nội tâm? Và nó không work như thế nào với bạn cụ thể?',
+      4: 'Nhóm của bạn thường là những người khó nhất để chẩn đoán — vì từ bên ngoài mọi thứ trông ổn. Nhưng bạn đã biết điều gì đó không đúng từ lâu rồi.<br><br>Câu hỏi đầu tiên: Lần cuối cùng bạn <em>thực sự</em> cảm thấy thỏa mãn và đủ đầy — không phải sau khi đạt được gì — là khi nào?',
+      5: 'Tôi biết bạn có thứ gì đó đang chờ được phóng. Có thể là nhiều thứ.<br><br>Câu hỏi đầu tiên, đơn giản thôi: <em>Thứ bạn đang "chuẩn bị" lâu nhất là gì — và nó đã "gần xong" từ bao giờ?</em>'
+    };
+
+    function setInitialChatMessage(group) {
+      var container = document.getElementById('chat-messages');
+      var text = CHAT_OPENERS[group] || CHAT_OPENERS[1];
+      container.innerHTML = '';
+      chatHistory = [{ role: 'assistant', content: text.replace(/<[^>]+>/g, '') }];
+      var msgEl = document.createElement('div');
+      msgEl.className = 'chat-msg';
+      msgEl.innerHTML = '<div class="chat-avatar">J</div><div class="chat-bubble">' + text + '</div>';
+      container.appendChild(msgEl);
+    }
+
+    var chatHistory = [];
+
+    function sendChat() {
+      var input = document.getElementById('chat-input');
+      var text = input.value.trim();
+      if (!text || chatSending) return;
+
+      var container = document.getElementById('chat-messages');
+
+      var userMsg = document.createElement('div');
+      userMsg.className = 'chat-msg chat-msg--user';
+      userMsg.innerHTML = '<div class="chat-avatar" style="font-size:11px;font-family:var(--font-sans);">Bạn</div><div class="chat-bubble">' + text + '</div>';
+      container.appendChild(userMsg);
+      input.value = '';
+      container.scrollTop = container.scrollHeight;
+
+      chatHistory.push({ role: 'user', content: text });
+
+      // Typing indicator
+      var typingEl = document.createElement('div');
+      typingEl.className = 'chat-msg';
+      typingEl.id = 'chat-typing';
+      typingEl.innerHTML = '<div class="chat-avatar">J</div><div class="chat-bubble" style="opacity:0.5;font-style:italic;">...</div>';
+      container.appendChild(typingEl);
+      container.scrollTop = container.scrollHeight;
+
+      chatSending = true;
+      input.disabled = true;
+
+      fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          group: currentGroup,
+          messages: chatHistory.slice(-10)
+        })
+      })
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        var typing = document.getElementById('chat-typing');
+        if (typing) typing.remove();
+
+        var reply = data.reply || 'Xin lỗi, có lỗi xảy ra. Thử lại nhé.';
+        chatHistory.push({ role: 'assistant', content: reply });
+
+        var aiMsg = document.createElement('div');
+        aiMsg.className = 'chat-msg';
+        aiMsg.innerHTML = '<div class="chat-avatar">J</div><div class="chat-bubble">' + reply + '</div>';
+        container.appendChild(aiMsg);
+        container.scrollTop = container.scrollHeight;
+      })
+      .catch(function() {
+        var typing = document.getElementById('chat-typing');
+        if (typing) typing.remove();
+
+        var aiMsg = document.createElement('div');
+        aiMsg.className = 'chat-msg';
+        aiMsg.innerHTML = '<div class="chat-avatar">J</div><div class="chat-bubble">Kết nối bị gián đoạn — thử lại nhé.</div>';
+        container.appendChild(aiMsg);
+        container.scrollTop = container.scrollHeight;
+      })
+      .finally(function() {
+        chatSending = false;
+        input.disabled = false;
+        input.focus();
+      });
+    }
+
+    var chatSending = false;
+
+    document.addEventListener('DOMContentLoaded', function() {
+      var chatInput = document.getElementById('chat-input');
+      if (chatInput) {
+        chatInput.addEventListener('keydown', function(e) {
+          if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendChat(); }
+        });
+      }
+      document.getElementById('progress-bar-wrap').style.display = 'block';
+      updateProgress();
+    });
+    /* ── FEEDBACK MODAL FUNCTIONS ── */
+    function feedbackYes(btn) {
+      var section = btn.closest('.feedback-check');
+      section.querySelector('.feedback-btns').style.display = 'none';
+      section.querySelector('.feedback-thanks').style.display = 'block';
+    }
+
+    function feedbackOpenModal() {
+      document.getElementById('feedback-text').value = '';
+      document.getElementById('feedback-form-wrap').style.display = 'block';
+      document.getElementById('feedback-sent').style.display = 'none';
+      document.getElementById('feedback-modal-overlay').classList.add('open');
+      document.body.style.overflow = 'hidden';
+      setTimeout(function() { document.getElementById('feedback-text').focus(); }, 80);
+    }
+
+    function feedbackCloseModal() {
+      document.getElementById('feedback-modal-overlay').classList.remove('open');
+      document.body.style.overflow = '';
+    }
+
+    function feedbackSubmit() {
+      var text = document.getElementById('feedback-text').value.trim();
+      if (!text) return;
+      var activePage = document.querySelector('.result-page.active');
+      var archetype = activePage ? activePage.id : 'unknown';
+      document.getElementById('feedback-form-wrap').style.display = 'none';
+      document.getElementById('feedback-sent').style.display = 'block';
+      setTimeout(feedbackCloseModal, 2200);
+      fetch('https://script.google.com/macros/s/AKfycbwBEDcTxPG1AV-XEe51lvn3sUf3cxs3vc_5YVvDdHVSh4jqK02EBn7hsBl8T4GIP095/exec', {
+        method: 'POST',
+        body: JSON.stringify({ archetype: archetype, feedback: text })
+      }).catch(function() {});
+    }
+
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') feedbackCloseModal();
+    });
+  </script>
+
+  <!-- ── FEEDBACK MODAL ── -->
+  <div class="feedback-modal-overlay" id="feedback-modal-overlay" onclick="if(event.target===this)feedbackCloseModal()">
+    <div class="feedback-modal" role="dialog" aria-modal="true" aria-labelledby="feedback-modal-heading">
+      <button class="feedback-modal-close" onclick="feedbackCloseModal()" aria-label="Đóng">×</button>
+      <div class="feedback-modal-title" id="feedback-modal-heading">Tại sao kết quả có thể chưa hoàn toàn khớp</div>
+      <div class="feedback-modal-body">
+        <p>Ngay cả những công cụ tâm lý được nghiên cứu kỹ nhất thế giới cũng có giới hạn này. Đây không phải vấn đề riêng của hệ thống chẩn đoán này.</p>
+        <p><strong>Bạn không có quyền truy cập đầy đủ vào chính mình.</strong> Nghiên cứu Nisbett &amp; Wilson (1977) chỉ ra rằng con người thường không biết thực sự tại sao mình làm những gì mình làm. Khi trả lời quiz, phần lớn bạn đang kể câu chuyện về bản thân — không phải đọc dữ liệu thô từ hành vi thực tế.</p>
+        <p><strong>Bạn càng tự nhận thức cao, quiz càng khó đo được bạn.</strong> Các câu hỏi hành vi được thiết kế để bắt pattern ở người chưa nhận ra pattern của mình. Khi bạn đã có mức tự nhận thức cao, bạn không trả lời từ hành vi thực — bạn trả lời từ hiểu biết về bản thân. Hai thứ đó khác nhau.</p>
+        <p><strong>Tính cách không tồn tại dưới dạng hộp rời nhau.</strong> Bằng chứng nghiên cứu hiện tại cho thấy không ai hoàn toàn thuần một archetype — bạn có thể có 60% Nhóm 1, 30% Nhóm 4. Quiz buộc phải chọn một kết quả chính dù thực tế phức tạp hơn.</p>
+        <p>Về hệ thống này cụ thể: 5 archetype được xây từ quan sát thực tế — không phải nghiên cứu lâm sàng có kiểm soát. Nó có logic nội tại chặt chẽ, nhưng độ chính xác thực sự chỉ được biết khi có đủ dữ liệu từ người dùng thực. Phản hồi của bạn là một phần của quá trình đó.</p>
+      </div>
+      <div class="feedback-modal-divider"></div>
+      <div id="feedback-form-wrap">
+        <div class="feedback-modal-ask">Điều gì trong kết quả chưa đúng với bạn?</div>
+        <textarea class="feedback-modal-textarea" id="feedback-text" placeholder="Viết 1–2 câu — điều gì cụ thể chưa chính xác?" rows="3"></textarea>
+        <button class="feedback-modal-submit" onclick="feedbackSubmit()">Gửi — giúp cải thiện hệ thống</button>
+      </div>
+      <div class="feedback-modal-sent" id="feedback-sent">Cảm ơn bạn. Phản hồi này giúp hệ thống chính xác hơn.</div>
+    </div>
+  </div>
+
+</body>
+</html>

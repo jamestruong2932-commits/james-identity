@@ -1,0 +1,427 @@
+/* ═══════════════════════════════════════════════════════════════
+   JAMES IDENTITY — theme.css
+   Luxury Zen Design System
+   Palette: #F4F1EA · #3E2723 · #C5A880
+   ═══════════════════════════════════════════════════════════════ */
+
+@import url('https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400;1,500&display=swap');
+
+/* ─────────────────────────────────────────────
+   1. DESIGN TOKENS
+───────────────────────────────────────────── */
+:root {
+  /* Core palette */
+  --color-bg:       #F4F1EA;
+  --color-heading:  #3E2723;
+  --color-accent:   #C5A880;
+  --color-text:     #2B2B2B;
+  --color-muted:    #A8A39D;
+
+  /* Derived surfaces */
+  --color-card-bg:        rgba(253, 250, 244, 0.52);
+  --color-border-soft:    rgba(62, 39, 35, 0.08);
+  --color-border-gold:    rgba(197, 168, 128, 0.38);
+  --color-border-gold-hi: rgba(197, 168, 128, 0.70);
+  --color-accent-tint:    rgba(197, 168, 128, 0.07);
+  --color-accent-border:  rgba(197, 168, 128, 0.20);
+
+  /* Typography */
+  --font-serif: 'Playfair Display', Georgia, serif;
+  --font-sans:  'Inter', system-ui, sans-serif;
+  --font-text:  'EB Garamond', Georgia, serif;   /* main reading / body text */
+  --font-mono:  'Courier New', Courier, monospace;
+
+  /* Zen easing curves — no jank, no bounce */
+  --ease-zen:  cubic-bezier(0.22, 1, 0.36, 1);   /* power4.out */
+  --ease-out:  cubic-bezier(0.16, 1, 0.30, 1);   /* expo.out   */
+  --ease-soft: cubic-bezier(0.22, 1, 0.36, 1);   /* power4.out */
+
+  /* Duration */
+  --dur-fast:   0.25s;
+  --dur-base:   0.40s;
+  --dur-slow:   0.70s;
+  --dur-reveal: 0.80s;
+}
+
+/* ─────────────────────────────────────────────
+   2. RESET & BASE
+───────────────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 1.75;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  overflow-x: hidden;
+  position: relative;
+  min-height: 100%;
+}
+
+/* ─────────────────────────────────────────────
+   3. FIXED NAVIGATION — identical on all pages
+───────────────────────────────────────────── */
+.site-nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 100;
+  background: rgba(244, 241, 234, 0.88);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--color-border-soft);
+}
+
+.nav-logo {
+  font-family: var(--font-serif);
+  font-size: 1.25rem;
+  letter-spacing: 0.02em;
+  color: var(--color-heading);
+  text-decoration: none;
+  transition: opacity var(--dur-base) ease;
+}
+.nav-logo:hover { opacity: 0.70; }
+
+.nav-link {
+  font-family: var(--font-sans);
+  font-size: 0.72rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+  text-decoration: none;
+  position: relative;
+  padding-bottom: 2px;
+  transition: color var(--dur-base) ease;
+}
+.nav-link:hover    { color: var(--color-heading); }
+
+/* Active page indicator */
+.nav-link--active { color: var(--color-heading); }
+.nav-link--active::after {
+  content: '';
+  position: absolute;
+  bottom: -1px; left: 0; right: 0;
+  height: 1px;
+  background: var(--color-accent);
+  opacity: 0.65;
+}
+
+/* ─────────────────────────────────────────────
+   3b. HEADING SHARP RENDER
+───────────────────────────────────────────── */
+h1, h2, h3, h4, h5, h6 {
+  text-rendering: optimizeLegibility !important;
+  -webkit-font-smoothing: subpixel-antialiased !important;
+  -moz-osx-font-smoothing: auto !important;
+  text-shadow: 0 0 0.5px rgba(62, 39, 35, 0.1);
+}
+
+/* ─────────────────────────────────────────────
+   4. SITE FOOTER — identical on all pages
+───────────────────────────────────────────── */
+.site-footer {
+  padding: 4rem 1.5rem;
+  border-top: 1px solid var(--color-border-soft);
+}
+
+.footer-logo {
+  font-family: var(--font-serif);
+  font-size: 1.25rem;
+  letter-spacing: 0.02em;
+  color: var(--color-heading);
+  text-decoration: none;
+  transition: opacity var(--dur-base) ease;
+}
+.footer-logo:hover { opacity: 0.70; }
+
+.footer-copy {
+  font-family: var(--font-sans);
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+  color: var(--color-muted);
+}
+
+/* ─────────────────────────────────────────────
+   5. GLASSMORPHISM CARD
+───────────────────────────────────────────── */
+.card {
+  background: var(--color-card-bg);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--color-border-gold);
+  border-radius: 1rem;
+  transform: translateZ(0);
+  transition:
+    transform var(--dur-base) var(--ease-zen),
+    box-shadow var(--dur-base) var(--ease-zen),
+    border-color var(--dur-base) ease;
+  will-change: transform;
+}
+.card:hover {
+  transform: translateY(-7px) translateZ(0);
+  box-shadow: 0 22px 60px rgba(62, 39, 35, 0.09);
+  border-color: var(--color-border-gold-hi);
+}
+
+/* ─────────────────────────────────────────────
+   6. CTA BUTTON
+───────────────────────────────────────────── */
+.btn-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 14px 44px;
+  border: 1px solid var(--color-heading);
+  color: var(--color-heading);
+  font-family: var(--font-sans);
+  font-size: 0.75rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  text-decoration: none;
+  background: transparent;
+  cursor: pointer;
+  transition:
+    background-color var(--dur-base) ease,
+    color var(--dur-base) ease,
+    transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275),
+    box-shadow 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+.btn-cta:hover {
+  background-color: var(--color-heading);
+  color: var(--color-bg);
+  transform: scale(1.08) translateY(-2px);
+  box-shadow: 0 10px 20px rgba(197, 168, 128, 0.2);
+}
+.btn-cta:active {
+  transform: scale(0.95);
+  box-shadow: none;
+}
+
+/* ─────────────────────────────────────────────
+   7. SCROLL-REVEAL — initial hidden state
+      GSAP animates from this state to visible.
+───────────────────────────────────────────── */
+.reveal {
+  opacity: 0;
+  transform: translateY(28px);
+}
+
+/* ─────────────────────────────────────────────
+   8. INTRO QUOTE
+───────────────────────────────────────────── */
+.intro-quote {
+  border-left: 2px solid var(--color-accent);
+  padding-left: 2rem;
+}
+
+/* ─────────────────────────────────────────────
+   9. PHILOSOPHY LIST
+───────────────────────────────────────────── */
+.phi-item {
+  padding: 2.5rem 0;
+  border-bottom: 1px solid var(--color-border-soft);
+}
+.phi-item:first-child {
+  border-top: 1px solid var(--color-border-soft);
+}
+
+.phi-formula {
+  display: inline-block;
+  margin-top: 1rem;
+  padding: 0.35rem 0.9rem;
+  background: var(--color-accent-tint);
+  border: 1px solid var(--color-accent-border);
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  color: var(--color-accent);
+  letter-spacing: 0.08em;
+}
+
+/* ─────────────────────────────────────────────
+   10. AUDIENCE TABS
+───────────────────────────────────────────── */
+.group-tab {
+  padding: 0.45rem 1.1rem;
+  border: 1px solid rgba(197, 168, 128, 0.35);
+  background: transparent;
+  color: var(--color-muted);
+  font-family: var(--font-sans);
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  cursor: pointer;
+  transition:
+    border-color var(--dur-base) ease,
+    color var(--dur-base) ease,
+    background-color var(--dur-base) ease;
+}
+.group-tab:hover {
+  border-color: var(--color-accent);
+  color: var(--color-heading);
+}
+.group-tab.active {
+  background: var(--color-heading);
+  border-color: var(--color-heading);
+  color: var(--color-bg);
+}
+
+/* ─────────────────────────────────────────────
+   11. GROUP PANELS (audience section)
+───────────────────────────────────────────── */
+.group-panel { display: none; }
+
+.group-panel.active {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  animation: zenFadeUp var(--dur-slow) var(--ease-out) both;
+}
+
+/* ─────────────────────────────────────────────
+   12. AWARENESS BAR
+───────────────────────────────────────────── */
+.awareness-track {
+  height: 2px;
+  background: var(--color-border-soft);
+  border-radius: 999px;
+  overflow: hidden;
+}
+.awareness-fill {
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    rgba(197, 168, 128, 0.45),
+    var(--color-accent)
+  );
+  border-radius: 999px;
+}
+
+/* ─────────────────────────────────────────────
+   13. DIAGNOSIS BLOCK
+───────────────────────────────────────────── */
+.diagnosis-block {
+  padding: 1.25rem 1.5rem;
+  background: var(--color-accent-tint);
+  border: 1px solid var(--color-accent-border);
+}
+
+/* ─────────────────────────────────────────────
+   14. BACKGROUND GRID — Diamond Grid, applied to
+       all pages. Dark sections overlay it.
+───────────────────────────────────────────── */
+body::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  pointer-events: none;
+  background-image:
+    repeating-linear-gradient(
+      45deg,
+      rgba(220, 100, 140, 0.05) 0px, rgba(220, 100, 140, 0.05) 1px,
+      transparent 1px, transparent 60px
+    ),
+    repeating-linear-gradient(
+      -45deg,
+      rgba(220, 100, 140, 0.05) 0px, rgba(220, 100, 140, 0.05) 1px,
+      transparent 1px, transparent 60px
+    );
+  background-size: 60px 60px;
+}
+
+/* ─────────────────────────────────────────────
+   15. LIGHT BEAMS — Chạy dọc đường lưới
+───────────────────────────────────────────── */
+#page-beams {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  overflow: hidden;
+  will-change: transform;
+}
+.pg-beam {
+  position: absolute;
+  width: 1px;
+  height: 300%;
+  left: 50%;
+  background: linear-gradient(
+    to bottom,
+    transparent 0%,
+    rgba(197, 168, 128, 0.16) 32%,
+    rgba(197, 168, 128, 0.26) 50%,
+    rgba(197, 168, 128, 0.16) 68%,
+    transparent 100%
+  );
+  transform-origin: 50% 0;
+  filter: blur(1px);
+  opacity: 0;
+}
+@keyframes beamFlow {
+  0%   { transform: rotate(45deg) translateX(-130vw); opacity: 0; }
+  8%   { opacity: 1; }
+  92%  { opacity: 1; }
+  100% { transform: rotate(45deg) translateX(130vw);  opacity: 0; }
+}
+.pg-beam:nth-child(1) { animation: beamFlow 22s linear infinite;        top: 15%; }
+.pg-beam:nth-child(2) { animation: beamFlow 28s linear infinite;        top: 42%; animation-delay: -9s;  }
+.pg-beam:nth-child(3) { animation: beamFlow 18s linear infinite;        top: 66%; animation-delay: -15s; }
+.pg-beam:nth-child(4) { animation: beamFlow 24s linear infinite;        top: 28%; animation-delay: -5s;  }
+.pg-beam:nth-child(5) { animation: beamFlow 32s linear infinite;        top: 80%; animation-delay: -21s; }
+
+/* ─────────────────────────────────────────────
+   16. KEYFRAMES — Zen quality, no jank
+───────────────────────────────────────────── */
+
+/* Panel switch fade-up */
+@keyframes zenFadeUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0);    }
+}
+
+/* ─────────────────────────────────────────────
+   15. RESPONSIVE
+───────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .group-panel.active {
+    grid-template-columns: 1fr;
+  }
+  .phi-grid {
+    grid-template-columns: 1fr !important;
+    gap: 0.5rem !important;
+  }
+
+  /* ── NAV MOBILE ── */
+  .nav-desktop { display: none; }
+  .site-nav > div {
+    padding-left: 1.25rem;
+    padding-right: 1.25rem;
+  }
+  .site-nav nav {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+  }
+  .nav-link {
+    font-size: 13px;
+    letter-spacing: 0.10em;
+  }
+
+  .site-footer {
+    padding: 3rem 1.25rem;
+  }
+
+  /* body::before đã là absolute toàn cục — không cần override */
+}

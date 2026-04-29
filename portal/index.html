@@ -1,0 +1,1517 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>James Identity — Tái Sinh Nhân Dạng Lượng Tử</title>
+
+  <!-- Google Fonts — thêm weight 900 cho Playfair Display Black -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700;1,900&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,400&family=Montserrat:wght@100;200;300;400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet" />
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- James Identity Theme -->
+  <link rel="stylesheet" href="theme.css" />
+
+  <!-- Lenis Smooth Scroll -->
+  <script src="https://unpkg.com/lenis@1.1.14/dist/lenis.min.js"></script>
+
+  <!-- GSAP + ScrollTrigger -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            cream:        '#F4F1EA',
+            'brown-deep': '#3E2723',
+            'gold-sand':  '#C5A880',
+            charcoal:     '#2B2B2B',
+            'warm-stone': '#89837f',
+          },
+          fontFamily: {
+            serif: ['"Playfair Display"', 'Georgia', 'serif'],
+            sans:  ['Inter', 'system-ui', 'sans-serif'],
+          },
+        },
+      },
+    }
+  </script>
+
+  <style>
+    /* ══ HERO LAYOUT — Centered ══ */
+    #hero {
+      min-height: 120vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* ══ TEXT REVEAL MASK ══ */
+    .mask {
+      display: block;
+      overflow: hidden;
+      line-height: 1.28;
+    }
+
+    /* ══ HERO DISPLAY HEADING ══ */
+    .hero-title {
+      font-family: 'Playfair Display', serif;
+      font-weight: 900;
+      font-size: clamp(2.6rem, 7.5vw, 8rem);
+      line-height: 1.2;
+      letter-spacing: -0.03em;
+      color: #3E2723;
+      text-align: center;
+      padding-top: 0.12em;
+      padding-bottom: 0.12em;
+    }
+    .hero-title .gold { color: #C5A880; }
+
+    /* ══ VERTICAL DECORATIVE TEXT ══ */
+    .v-text {
+      writing-mode: vertical-rl;
+      text-orientation: mixed;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.62rem;
+      letter-spacing: 0.26em;
+      text-transform: uppercase;
+      color: #A8A39D;
+      user-select: none;
+    }
+
+    /* ══ ORNAMENTAL CIRCLE ══ */
+    .hero-orb {
+      position: absolute;
+      width: min(300px, 32vw);
+      aspect-ratio: 1;
+      border: 1px solid rgba(197, 168, 128, 0.20);
+      border-radius: 50%;
+      right: 3.5rem;
+      top: 50%;
+      transform: translateY(-52%);
+      pointer-events: none;
+    }
+    .hero-orb::before {
+      content: '';
+      position: absolute;
+      inset: 22px;
+      border: 1px solid rgba(197, 168, 128, 0.10);
+      border-radius: 50%;
+    }
+    .hero-orb::after {
+      content: '';
+      position: absolute;
+      inset: 50%;
+      width: 6px; height: 6px;
+      margin: -3px 0 0 -3px;
+      background: rgba(197, 168, 128, 0.35);
+      border-radius: 50%;
+    }
+
+    /* ══ STATS BENTO GRID SECTION ══ */
+    .stats-bento-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.75rem;
+    }
+    /* Bento card base — GlassCard pattern */
+    .sbc {
+      position: relative;
+      padding: 2.5rem 2.75rem;
+      border-radius: 1.25rem;
+      overflow: hidden;
+      background: rgba(253, 251, 247, 0.36);
+      border: 1px solid rgba(139, 115, 85, 0.20);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      box-shadow: 0 4px 24px rgba(62, 39, 35, 0.05), inset 0 1px 0 rgba(255,255,255,0.65);
+      transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease, background 0.3s ease;
+      cursor: default;
+    }
+    .sbc--wide { grid-column: span 2; }
+    .sbc:hover {
+      transform: translateY(-3px);
+      background: rgba(253, 251, 247, 0.54);
+      box-shadow: 0 12px 40px rgba(62, 39, 35, 0.08), inset 0 1px 0 rgba(255,255,255,0.65);
+      border-color: rgba(139, 115, 85, 0.38);
+    }
+    /* Dot pattern (on hover) */
+    .sbc__dot-bg {
+      position: absolute; inset: 0;
+      background-image: radial-gradient(circle at center, rgba(139,115,85,0.055) 1px, transparent 1px);
+      background-size: 4px 4px;
+      opacity: 0;
+      transition: opacity 0.35s ease;
+      pointer-events: none;
+    }
+    .sbc:hover .sbc__dot-bg { opacity: 1; }
+    /* Top row */
+    .sbc__top {
+      display: flex; align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1rem;
+    }
+    .sbc__icon {
+      width: 2rem; height: 2rem;
+      border-radius: 0.5rem;
+      display: flex; align-items: center; justify-content: center;
+      background: rgba(139, 115, 85, 0.10);
+      transition: background 0.3s ease;
+    }
+    .sbc:hover .sbc__icon { background: rgba(139, 115, 85, 0.18); }
+    .sbc__badge {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.58rem; letter-spacing: 0.09em; text-transform: uppercase;
+      padding: 0.18rem 0.55rem; border-radius: 0.375rem;
+      background: rgba(139, 115, 85, 0.09);
+      color: rgba(139, 115, 85, 0.80);
+      backdrop-filter: blur(4px);
+      transition: background 0.3s ease;
+    }
+    .sbc:hover .sbc__badge { background: rgba(139, 115, 85, 0.16); }
+    /* Body */
+    .sbc__num {
+      font-family: 'Cormorant Garamond', 'Playfair Display', serif;
+      font-size: clamp(2.2rem, 3.2vw, 3.2rem);
+      font-weight: 600; color: #8B7355;
+      letter-spacing: -0.01em; line-height: 1;
+      display: flex; align-items: baseline; gap: 0.4rem;
+    }
+    .sbc__unit {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.58rem; letter-spacing: 0.20em;
+      text-transform: uppercase;
+      color: rgba(139, 115, 85, 0.55); font-weight: 400;
+    }
+    .sbc__title {
+      font-family: 'Cormorant Garamond', 'Playfair Display', serif;
+      font-size: 1.25rem; font-weight: 600;
+      color: #2A2A2A; margin-top: 0.5rem;
+      line-height: 1.2; letter-spacing: 0.01em;
+    }
+    .sbc__desc {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.85rem; color: #7A756F;
+      margin-top: 0.5rem; line-height: 1.6;
+    }
+    /* Footer */
+    .sbc__footer {
+      display: flex; align-items: center;
+      justify-content: space-between; margin-top: 1.2rem;
+    }
+    .sbc__tags { display: flex; gap: 0.4rem; flex-wrap: wrap; }
+    .sbc__tag {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.56rem; padding: 0.20rem 0.52rem;
+      border-radius: 0.35rem;
+      background: rgba(139, 115, 85, 0.08);
+      color: rgba(139, 115, 85, 0.75);
+      backdrop-filter: blur(4px);
+      transition: background 0.2s ease;
+    }
+    .sbc__tag:hover { background: rgba(139, 115, 85, 0.15); }
+    .sbc__cta {
+      font-family: 'Inter', sans-serif; font-size: 0.60rem;
+      color: rgba(139, 115, 85, 0.65);
+      opacity: 0; transition: opacity 0.3s ease;
+      letter-spacing: 0.06em; white-space: nowrap;
+    }
+    .sbc:hover .sbc__cta { opacity: 1; }
+    /* Gradient border (on hover) */
+    .sbc__grad-border {
+      position: absolute; inset: 0; border-radius: inherit;
+      padding: 1px;
+      background: linear-gradient(135deg, rgba(197,168,128,0.32), transparent 50%, rgba(197,168,128,0.16));
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: destination-out;
+      mask-composite: exclude;
+      opacity: 0; transition: opacity 0.3s ease; pointer-events: none;
+    }
+    .sbc:hover .sbc__grad-border { opacity: 1; }
+    /* Responsive */
+    @media (max-width: 768px) {
+      .stats-bento-grid { grid-template-columns: 1fr; }
+      .sbc--wide { grid-column: 1; }
+    }
+
+    /* ══ GLOW ORB ══ */
+    .glow-orb {
+      position: absolute;
+      top: 38%;
+      left: 50%;
+      width: clamp(260px, 36vw, 480px);
+      aspect-ratio: 1;
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      background: radial-gradient(
+        circle at center,
+        rgba(197, 168, 128, 0.75) 0%,
+        rgba(197, 168, 128, 0.30) 38%,
+        rgba(197, 168, 128, 0.08) 62%,
+        transparent 75%
+      );
+      filter: blur(42px);
+      pointer-events: none;
+      will-change: transform;
+      z-index: 2;
+      transition: background 0.8s ease;
+    }
+    .glow-orb-inner {
+      position: absolute;
+      top: 38%;
+      left: 50%;
+      width: clamp(80px, 11vw, 150px);
+      aspect-ratio: 1;
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      background: radial-gradient(
+        circle at center,
+        rgba(244, 241, 234, 0.90) 0%,
+        rgba(197, 168, 128, 0.55) 42%,
+        transparent 68%
+      );
+      filter: blur(16px);
+      pointer-events: none;
+      will-change: transform;
+      z-index: 3;
+      transition: background 0.8s ease;
+    }
+
+    /* ══ SECTION LABEL ══ */
+    .sec-label {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: #A8A39D;
+    }
+
+    /* ══ MANIFESTO — Left / Right Split ══ */
+    #manifesto {
+      padding: clamp(6rem, 12vh, 10rem) 0;
+      overflow: hidden;
+    }
+    .manifesto-title {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: clamp(1.5rem, 5vw, 4.5rem);
+      font-weight: 700;
+      font-style: italic;
+      line-height: 1.22;
+      display: block;
+    }
+    .manifesto-la {
+      font-weight: 700;
+      color: #C5A880;
+      font-size: 1.1em;
+    }
+
+    /* ══ BENTO GRID ══ */
+    .bento-grid {
+      display: grid;
+      grid-template-columns: 1.65fr 1fr;
+      grid-template-rows: 1fr 1fr;
+      gap: 0.75rem;
+    }
+    .bento-1 { grid-column: 1; grid-row: 1 / 3; min-height: 500px; }
+    .bento-2 { grid-column: 2; grid-row: 1; }
+    .bento-3 { grid-column: 2; grid-row: 2; }
+
+    /* ══ BENTO GLASSMORPHISM — GlassCard pattern ══ */
+    .bento-card {
+      background: rgba(253, 251, 247, 0.36);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid rgba(139, 115, 85, 0.20);
+      box-shadow: 0 8px 32px rgba(62, 39, 35, 0.06), inset 0 1px 0 rgba(255,255,255,0.65);
+      border-radius: 1.5rem;
+      position: relative;
+      overflow: hidden;
+      transition: border-color 0.4s ease, box-shadow 0.4s ease, background 0.4s ease;
+    }
+    .bento-card:hover {
+      background: rgba(253, 251, 247, 0.52);
+      border-color: rgba(139, 115, 85, 0.38);
+      box-shadow: 0 16px 52px rgba(62, 39, 35, 0.10), inset 0 1px 0 rgba(255,255,255,0.65);
+    }
+
+    /* ══ ORACLE PARTICLE CANVAS ══ */
+    #oracleCanvas {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 0;
+      border-radius: inherit;
+      opacity: 0.40;
+    }
+
+    /* ══ BENTO CTA LINK ══ */
+    .bento-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.72rem;
+      font-weight: 500;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: #C5A880;
+      text-decoration: none;
+      padding: 0.65rem 1.4rem;
+      border: 1px solid rgba(197, 168, 128, 0.55);
+      transition: gap 0.3s ease, background-color 0.3s ease,
+                  color 0.3s ease, border-color 0.3s ease;
+    }
+    .bento-cta:hover {
+      gap: 1rem;
+      background-color: #C5A880;
+      border-color: #C5A880;
+      color: #F4F1EA;
+    }
+
+    /* ══ LIQUID BUTTON ══ */
+    /* Default: dark hero → cream button */
+    .liquid-btn {
+      position: relative;
+      overflow: hidden;
+      display: inline-flex;
+      align-items: center;
+      gap: 0;
+      padding: 0;
+      border: 1.5px solid rgba(244, 241, 234, 0.80);
+      background: transparent;
+      cursor: pointer;
+      color: #F4F1EA;
+      transition: color 0.55s ease, border-color 0.55s ease;
+    }
+
+    /* CTA section nền kem → button nâu đậm */
+    #cta-section .liquid-btn {
+      border-color: rgba(62, 39, 35, 0.70);
+      color: #3E2723;
+    }
+    #cta-section .liquid-fill { background: #3E2723; }
+    #cta-section .liquid-btn:hover { color: #F4F1EA; }
+    .liquid-fill {
+      position: absolute;
+      width: 260%;
+      aspect-ratio: 1;
+      background: #F4F1EA;
+      border-radius: 50%;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%) scale(0);
+      transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+      pointer-events: none;
+      will-change: transform;
+    }
+    .liquid-btn:hover .liquid-fill {
+      transform: translate(-50%, -50%) scale(1);
+    }
+    .liquid-btn:hover { color: #3E2723; }
+
+    /* Light hero → dark button */
+    #hero.hero-light .liquid-btn {
+      border-color: rgba(62, 39, 35, 0.85);
+      color: #3E2723;
+    }
+    #hero.hero-light .liquid-fill { background: #3E2723; }
+    #hero.hero-light .liquid-btn:hover { color: #F4F1EA; }
+    .liquid-btn .btn-inner {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 1.1rem 3rem;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.75rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+    }
+
+    /* ══ HORIZONTAL RULE ══ */
+    .rule {
+      width: 2.5rem;
+      height: 1px;
+      background: #C5A880;
+      opacity: 0.55;
+    }
+
+    /* ══ REVEAL STATE ══ */
+    .reveal { opacity: 0; transform: translateY(28px); }
+
+    /* ══════════════════════════════════════
+       DARK HERO + PARTICLE SYSTEM
+       Chuyển đổi từ particle-hero.tsx (21st.dev)
+       → Palette: #0D0A07 bg · #C5A880 gold particles
+    ══════════════════════════════════════ */
+
+    /* Override hero to dark — background transparent, overlay via ::before */
+    #hero { background: transparent; }
+
+    /* Dark overlay nằm trên diamond grid, giữ độ sâu cho hero */
+    #hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      background: rgba(13, 10, 7, 0.97);
+      pointer-events: none;
+    }
+
+    /* Heading cream on dark */
+    .hero-title { color: #F4F1EA; }
+
+    /* Section label + muted text override for dark bg */
+    #hero .sec-label           { color: rgba(197, 168, 128, 0.55); }
+    #hero .v-text              { color: rgba(244, 241, 234, 0.30); }
+    #hero .hero-stats          { border-color: rgba(244, 241, 234, 0.07); }
+    #hero .stat-item           { border-color: rgba(244, 241, 234, 0.07); }
+    #hero .stat-num            { color: #F4F1EA; }
+    #hero .stat-lbl            { color: rgba(244, 241, 234, 0.38); }
+    #hero .scroll-line         { background: rgba(244, 241, 234, 0.25); }
+
+    /* Hero orb on dark bg — slightly brighter gold */
+    #hero .hero-orb            { border-color: rgba(197, 168, 128, 0.28); }
+    #hero .hero-orb::before    { border-color: rgba(197, 168, 128, 0.14); }
+
+    /* Particle canvas — fills entire hero, above dark overlay */
+    #particleCanvas {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 1;
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    /* Spotlight container */
+    .particle-spotlight {
+      pointer-events: none;
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+      z-index: 1;
+    }
+
+    /* Single spotlight beam */
+    .spotlight-beam {
+      border-radius: 0 0 50% 50%;
+      position: absolute;
+      left: 0; right: 0;
+      margin: 0 auto;
+      top: 0;
+      width: 28em;
+      height: max(55em, 90vh);
+      background-image: conic-gradient(
+        from 0deg at 50% -5%,
+        transparent 45%,
+        rgba(197, 168, 128, .15) 49%,
+        rgba(197, 168, 128, .25) 50%,
+        rgba(197, 168, 128, .15) 51%,
+        transparent 55%
+      );
+      transform-origin: 50% 0;
+      filter: blur(18px) opacity(0.5);
+      z-index: 1;
+    }
+
+    /* Accent lines container */
+    .particle-lines {
+      pointer-events: none;
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+    }
+    .acc-h {
+      position: absolute;
+      left: 0; right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(197,168,128,.13), transparent);
+      opacity: 0;
+      animation: accIn 2s ease-out forwards;
+    }
+    .acc-v {
+      position: absolute;
+      top: 0; bottom: 0;
+      width: 1px;
+      background: rgba(197, 168, 128, .09);
+      opacity: 0;
+      animation: accIn 2s ease-out forwards;
+    }
+
+    /* Gold toggle dot */
+    .gold-toggle {
+      position: absolute;
+      top: 1.6rem;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 0.9rem;
+      height: 0.9rem;
+      border-radius: 50%;
+      background: #0D0A07;
+      box-shadow: 0 0 0.75rem 0 #C5A880;
+      cursor: pointer;
+      transition: box-shadow 0.8s ease-in-out, background 0.8s ease;
+      z-index: 20;
+    }
+    .gold-toggle:hover {
+      box-shadow: -0.2rem 0.1rem 0.25rem 0 rgba(197,168,128,0.7);
+    }
+
+    /* ══ NAV — ẩn ban đầu, slide-in khi đến Stats section ══ */
+    .site-nav {
+      opacity: 0;
+      pointer-events: none;
+      position: fixed;
+      z-index: 1000;
+      transform: translateY(-20px);
+    }
+
+    /* Light mode override (toggled via JS) */
+    #hero.hero-light                   { background: #F4F1EA; }
+    #hero.hero-light::before           { background: transparent; }
+    #hero.hero-light .hero-title       { color: #3E2723; }
+    #hero.hero-light .sec-label        { color: #A8A39D; }
+    #hero.hero-light .v-text           { color: #A8A39D; }
+    #hero.hero-light .gold-toggle      { background: #F4F1EA; box-shadow: 0 0 0.75rem 0 #3E2723; }
+    #hero.hero-light #hero-sub         { color: #A8A39D !important; }
+    #hero.hero-light .glow-orb {
+      background: radial-gradient(
+        circle at center,
+        rgba(197, 168, 128, 0.95) 0%,
+        rgba(197, 168, 128, 0.60) 35%,
+        rgba(197, 168, 128, 0.25) 60%,
+        rgba(197, 168, 128, 0.06) 78%,
+        transparent 90%
+      );
+      filter: blur(28px);
+      width: clamp(320px, 44vw, 580px);
+    }
+    #hero.hero-light .glow-orb-inner {
+      background: radial-gradient(
+        circle at center,
+        rgba(255, 245, 220, 1.00) 0%,
+        rgba(197, 168, 128, 0.75) 38%,
+        rgba(197, 168, 128, 0.20) 65%,
+        transparent 80%
+      );
+      filter: blur(10px);
+    }
+
+    /* Keyframes */
+    @keyframes spotlightSpin {
+      0%   { transform: rotateZ(0deg) scale(1);    filter: blur(18px) opacity(0.50); }
+      20%  { transform: rotateZ(-1deg) scale(1.2); filter: blur(20px) opacity(0.60); }
+      40%  { transform: rotateZ(2deg) scale(1.3);  filter: blur(16px) opacity(0.40); }
+      60%  { transform: rotateZ(-2deg) scale(1.2); filter: blur(18px) opacity(0.60); }
+      80%  { transform: rotateZ(1deg) scale(1.1);  filter: blur(16px) opacity(0.40); }
+      100% { transform: rotateZ(0deg) scale(1);    filter: blur(18px) opacity(0.50); }
+    }
+    @keyframes accIn {
+      from { opacity: 0; transform: scale(0); }
+      to   { opacity: 1; transform: scale(1); }
+    }
+
+    /* ══ RESPONSIVE ══ */
+    @media (max-width: 900px) {
+      #hero { grid-template-columns: 1fr; }
+      .hero-orb { display: none; }
+      .hero-right { display: none; }
+      .hero-stats { flex-wrap: wrap; }
+      .stat-item { flex: 0 0 50%; border-bottom: 1px solid rgba(62,39,35,0.08); }
+      .bento-grid { grid-template-columns: 1fr; grid-template-rows: auto; }
+      .bento-1, .bento-2, .bento-3 { grid-column: 1; grid-row: auto; min-height: auto; }
+      .manifesto-title { font-size: clamp(1.6rem, 7vw, 3rem); }
+      #bento-2, #bento-3 {
+        padding: 1.25rem;
+        justify-content: flex-start;
+      }
+      #bento-2 .mb-6 { margin-bottom: 0.75rem; }
+      #bento-2 .mt-4 { margin-top: 0.5rem; }
+      #bento-2 .bento-cta,
+      #bento-3 .bento-cta {
+        margin-top: 2rem;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- ══════════════════════════════════════
+       NAV
+  ══════════════════════════════════════ -->
+  <header class="site-nav">
+    <div class="max-w-6xl mx-auto px-6 py-5 flex items-center justify-between">
+      <a href="index.html" class="nav-logo">James.identity</a>
+      <nav class="flex gap-8">
+        <a href="about.html"      class="nav-link">About</a>
+        <a href="https://www.quantumrebirth.io.vn/" target="_blank" class="nav-link">QROS</a>
+        <a href="diagnostic.html" class="nav-link">Chẩn đoán</a>
+        <a href="insight.html"    class="nav-link">Insight</a>
+        <a href="academy.html"    class="nav-link">Academy</a>
+      </nav>
+    </div>
+  </header>
+
+
+  <!-- ── Light Beams (behind all content, runs on non-hero sections) ── -->
+  <div id="page-beams" aria-hidden="true">
+    <div class="pg-beam"></div>
+    <div class="pg-beam"></div>
+    <div class="pg-beam"></div>
+    <div class="pg-beam"></div>
+    <div class="pg-beam"></div>
+  </div>
+
+
+  <!-- ══════════════════════════════════════
+       HERO — 120vh · Asymmetric Grid
+  ══════════════════════════════════════ -->
+  <section id="hero">
+
+    <!-- ── Particle canvas (z-index 0, behind everything) ── -->
+    <canvas id="particleCanvas"></canvas>
+
+    <!-- ── Spotlight beams (3 cones, gold, from 21st.dev pattern) ── -->
+    <div class="particle-spotlight">
+      <div class="spotlight-beam" style="transform:rotate(20deg); animation:spotlightSpin 17s ease-in-out infinite"></div>
+      <div class="spotlight-beam" style="transform:rotate(-20deg);animation:spotlightSpin 14s ease-in-out infinite"></div>
+      <div class="spotlight-beam" style="transform:rotate(0deg);  animation:spotlightSpin 21s ease-in-out infinite reverse"></div>
+    </div>
+
+    <!-- ── Accent grid lines ── -->
+    <div class="particle-lines">
+      <div class="acc-h" style="top:22%;animation-delay:2.2s"></div>
+      <div class="acc-h" style="top:48%;animation-delay:2.6s"></div>
+      <div class="acc-h" style="top:74%;animation-delay:3.0s"></div>
+      <div class="acc-v" style="left:22%;animation-delay:1.9s"></div>
+      <div class="acc-v" style="right:22%;animation-delay:1.9s"></div>
+    </div>
+
+    <!-- ── Gold toggle dot (click to switch dark ↔ light mode) ── -->
+    <div class="gold-toggle" id="goldToggle" title="Toggle light / dark"></div>
+
+    <!-- ── Glow Orb (nằm phía sau text, mouse-follow) ── -->
+    <div class="glow-orb"       id="glowOrb"></div>
+    <div class="glow-orb-inner" id="glowOrbInner"></div>
+
+    <!-- ── Main Content — Centered ── -->
+    <div class="flex flex-col items-center text-center relative z-10 px-6"
+         style="width:100%;max-width:52rem;margin:0 auto;padding-top:6rem;padding-bottom:4rem">
+
+      <!-- Eyebrow -->
+      <p class="sec-label mb-10" id="hero-eyebrow" style="opacity:0;transform:translateY(14px)">
+        Quantum Rebirth OS &nbsp;·&nbsp; James Identity &nbsp;·&nbsp; 2026
+      </p>
+
+      <!-- Heading — Blur-to-Focus, text reveal mask -->
+      <h1 class="hero-title mb-10">
+        <span class="mask"><span class="tl block">Tái Sinh</span></span>
+        <span class="mask"><span class="tl block">Nhân Dạng</span></span>
+        <span class="mask"><span class="tl gold block"><em>Lượng Tử</em></span></span>
+      </h1>
+
+      <!-- Subtitle -->
+      <p class="font-sans text-base leading-loose mb-10"
+         id="hero-sub"
+         style="color:rgba(244,241,234,0.52);opacity:0;transform:translateY(18px);max-width:26rem">
+        Không thêm thứ gì vào con người cũ.<br/>
+        Và để nó được chết đi.
+      </p>
+
+      <!-- CTA -->
+      <div id="hero-cta" style="opacity:0;transform:translateY(18px)">
+        <a href="diagnostic.html" class="liquid-btn" id="btn-main">
+          <div class="liquid-fill"></div>
+          <span class="btn-inner">
+            Bắt đầu Chẩn đoán
+            <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+              <path d="M5 12h14M12 5l7 7-7 7"/>
+            </svg>
+          </span>
+        </a>
+      </div>
+
+      <!-- Scroll hint -->
+      <div class="flex flex-col items-center gap-3 mt-14" id="hero-scroll" style="opacity:0">
+        <span class="sec-label">scroll</span>
+        <div style="width:1px;height:36px;background:#A8A39D;opacity:0.30"></div>
+      </div>
+
+    </div>
+
+
+  </section>
+
+
+  <!-- ══════════════════════════════════════
+       STATS BENTO GRID — 4 chỉ số cốt lõi
+  ══════════════════════════════════════ -->
+  <section id="stats" class="py-16 px-8" style="border-top:1px solid rgba(62,39,35,0.08)">
+    <div class="max-w-6xl mx-auto">
+
+      <div class="stats-bento-grid">
+
+        <!-- Card 1 — 21 Ngày (wide) -->
+        <div class="sbc sbc--wide reveal" id="sbc-1">
+          <div class="sbc__dot-bg"></div>
+          <div class="sbc__top">
+            <div class="sbc__icon">
+              <svg width="16" height="16" fill="none" stroke="#C5A880" stroke-width="1.5" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+            </div>
+            <span class="sbc__badge">Live</span>
+          </div>
+          <div class="sbc__body">
+            <div class="sbc__num"><span class="sbc__count" data-target="21">0</span><span class="sbc__unit">Ngày</span></div>
+            <p class="sbc__title">Hành Trình Tái Sinh</p>
+            <p class="sbc__desc">Lộ trình 21 ngày · 7 module chuyển hóa danh tính từ gốc rễ — không phải thêm thói quen, thay đổi người vận hành.</p>
+          </div>
+          <div class="sbc__footer">
+            <div class="sbc__tags">
+              <span class="sbc__tag">#Quantum</span>
+              <span class="sbc__tag">#Rebirth</span>
+              <span class="sbc__tag">#21 Ngày</span>
+            </div>
+            <span class="sbc__cta">Khám phá →</span>
+          </div>
+          <div class="sbc__grad-border"></div>
+        </div>
+
+        <!-- Card 2 — 5 Nhóm -->
+        <div class="sbc reveal" id="sbc-2">
+          <div class="sbc__dot-bg"></div>
+          <div class="sbc__top">
+            <div class="sbc__icon">
+              <svg width="16" height="16" fill="none" stroke="#C5A880" stroke-width="1.5" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg>
+            </div>
+            <span class="sbc__badge">AI</span>
+          </div>
+          <div class="sbc__body">
+            <div class="sbc__num"><span class="sbc__count" data-target="5">0</span><span class="sbc__unit">Nhóm</span></div>
+            <p class="sbc__title">Máy Lọc Tần Số AI</p>
+            <p class="sbc__desc">5 nhóm chẩn đoán xác định Brule đang điều khiển từ tầng tiềm thức.</p>
+          </div>
+          <div class="sbc__footer">
+            <div class="sbc__tags">
+              <span class="sbc__tag">#Oracle</span>
+              <span class="sbc__tag">#Diagnostic</span>
+            </div>
+            <span class="sbc__cta">Chẩn đoán →</span>
+          </div>
+          <div class="sbc__grad-border"></div>
+        </div>
+
+        <!-- Card 3 — 6 Trụ Cột (wide) -->
+        <div class="sbc sbc--wide reveal" id="sbc-3">
+          <div class="sbc__dot-bg"></div>
+          <div class="sbc__top">
+            <div class="sbc__icon">
+              <svg width="16" height="16" fill="none" stroke="#C5A880" stroke-width="1.5" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+            </div>
+            <span class="sbc__badge">Science</span>
+          </div>
+          <div class="sbc__body">
+            <div class="sbc__num"><span class="sbc__count" data-target="6">0</span><span class="sbc__unit">Trụ Cột</span></div>
+            <p class="sbc__title">Nền Tảng Khoa Học</p>
+            <p class="sbc__desc">Neuroplasticity · Epigenetics · HeartMath · Lượng Tử · Trồi Sinh · Triết Học Đông Phương — 6 trụ cột dưới mọi công cụ chuyển hóa.</p>
+          </div>
+          <div class="sbc__footer">
+            <div class="sbc__tags">
+              <span class="sbc__tag">#Neuro</span>
+              <span class="sbc__tag">#Quantum</span>
+              <span class="sbc__tag">#Science</span>
+            </div>
+            <span class="sbc__cta">The Wisdom →</span>
+          </div>
+          <div class="sbc__grad-border"></div>
+        </div>
+
+        <!-- Card 4 — 4 Dự Án -->
+        <div class="sbc reveal" id="sbc-4">
+          <div class="sbc__dot-bg"></div>
+          <div class="sbc__top">
+            <div class="sbc__icon">
+              <svg width="16" height="16" fill="none" stroke="#C5A880" stroke-width="1.5" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>
+            </div>
+            <span class="sbc__badge">Ecosystem</span>
+          </div>
+          <div class="sbc__body">
+            <div class="sbc__num"><span class="sbc__count" data-target="4">0</span><span class="sbc__unit">Dự Án</span></div>
+            <p class="sbc__title">Hệ Sinh Thái</p>
+            <p class="sbc__desc">4 cánh cửa, một hệ điều hành — mỗi dự án là một tầng tiếp cận khác nhau vào cùng sự chuyển hóa.</p>
+          </div>
+          <div class="sbc__footer">
+            <div class="sbc__tags">
+              <span class="sbc__tag">#Identity</span>
+              <span class="sbc__tag">#Shift</span>
+            </div>
+            <span class="sbc__cta">Xem tất cả →</span>
+          </div>
+          <div class="sbc__grad-border"></div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ══════════════════════════════════════
+       MANIFESTO — Text Reveal on Scroll
+  ══════════════════════════════════════ -->
+  <section id="manifesto" style="border-top:1px solid rgba(62,39,35,0.08)">
+    <div class="max-w-6xl mx-auto px-8">
+
+      <p class="reveal mb-10"
+         style="font-family:'Inter',sans-serif;font-size:0.85rem;font-weight:500;
+                letter-spacing:0.45em;text-transform:uppercase;color:#C5A880">
+        Tuyên Ngôn
+      </p>
+
+      <div class="manifesto-block">
+        <!-- Tất cả căn trái -->
+        <p class="manifesto-title ml-left" style="color:#1A1A1A">Thế giới không phản hồi</p>
+        <p class="manifesto-title ml-left" style="color:#1A1A1A">những gì bạn làm</p>
+        <p class="manifesto-title ml-left" style="color:#8B7355;margin-top:0.3em">Nó phản hồi</p>
+        <p class="manifesto-title ml-left" style="color:#8B7355">Người bạn <em class="manifesto-la">"là"</em></p>
+      </div>
+
+      <!-- CTA căn phải -->
+      <div class="reveal mt-12 flex justify-end">
+        <a href="about.html" class="btn-cta">
+          Tìm hiểu ngay
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+            <path d="M5 12h14M12 5l7 7-7 7"/>
+          </svg>
+        </a>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ══════════════════════════════════════
+       ECOSYSTEM — Bento Grid
+  ══════════════════════════════════════ -->
+  <section id="ecosystem" class="py-32 px-8" style="border-top:1px solid rgba(62,39,35,0.08)">
+    <div class="max-w-6xl mx-auto">
+
+      <!-- Section header (asymmetric) -->
+      <div class="flex items-end justify-between mb-16 flex-wrap gap-8">
+        <div>
+          <p class="sec-label reveal mb-3">Hệ sinh thái</p>
+          <h2 class="reveal"
+              style="font-family:'Playfair Display',serif;font-size:clamp(2.2rem,5.5vw,4.5rem);font-weight:700;color:#3E2723;line-height:1.25;letter-spacing:-0.025em">
+            Ba cánh cửa<br/><em style="color:#C5A880;font-style:italic">chuyển hóa.</em>
+          </h2>
+        </div>
+        <p class="reveal font-sans text-sm max-w-xs text-right leading-relaxed hidden md:block" style="color:#A8A39D">
+          Mỗi cánh cửa là một tầng.<br/>
+          Chỉ cần bước vào đúng cánh cửa của bạn.
+        </p>
+      </div>
+
+      <!-- Bento Grid -->
+      <div class="bento-grid">
+
+        <!-- Card 1 — The Oracle (tall, dominant) -->
+        <div class="card bento-card bento-1 p-10 md:p-14 flex flex-col justify-between" id="bento-1">
+          <canvas id="oracleCanvas"></canvas>
+          <div class="relative" style="z-index:1">
+            <div class="flex items-center justify-between mb-8">
+              <span class="sec-label">01</span>
+              <div class="rule"></div>
+            </div>
+            <p class="font-sans text-xs tracking-widest uppercase mb-3" style="color:#C5A880;letter-spacing:0.18em">AI Frequency Filter</p>
+            <h3 style="font-family:'Playfair Display',serif;font-size:clamp(2rem,4vw,3.25rem);font-weight:700;color:#3E2723;line-height:1.1;letter-spacing:-0.025em">
+              The<br/>Oracle
+            </h3>
+            <p class="font-sans text-sm leading-loose mt-6 max-w-sm" style="color:#2B2B2B">
+              Máy lọc tần số AI — đọc mã nguồn thần kinh và xác định chính xác Brule nào đang điều khiển bạn từ bên dưới ý thức. Không đoán mò.
+            </p>
+          </div>
+          <div class="flex items-end justify-between mt-auto pt-8 relative" style="z-index:1">
+            <a href="diagnostic.html" class="bento-cta">
+              Bắt đầu Chẩn đoán
+              <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </a>
+          </div>
+        </div>
+
+        <!-- Card 2 — The Wisdom -->
+        <div class="card bento-card bento-2 p-8 flex flex-col justify-between" id="bento-2">
+          <div>
+            <div class="flex items-center justify-between mb-6">
+              <span class="sec-label">02</span>
+              <div class="rule"></div>
+            </div>
+            <h3 style="font-family:'Playfair Display',serif;font-size:1.85rem;font-weight:700;color:#3E2723;line-height:1.15;letter-spacing:-0.02em">
+              The Wisdom
+            </h3>
+            <p class="font-sans text-sm leading-loose mt-4" style="color:#2B2B2B">
+              Kho kiến thức Neuro-Quantum — research được chắt lọc thành ngôn ngữ sống, không phải lý thuyết.
+            </p>
+          </div>
+          <a href="/blog" class="bento-cta mt-8">
+            Khám phá Insights
+            <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </a>
+        </div>
+
+        <!-- Card 3 — The Transformation -->
+        <div class="card bento-card bento-3 p-8 flex flex-col justify-between" id="bento-3">
+          <div>
+            <div class="flex items-center justify-between mb-6">
+              <span class="sec-label">03</span>
+              <div class="rule"></div>
+            </div>
+            <h3 style="font-family:'Playfair Display',serif;font-size:1.85rem;font-weight:700;color:#3E2723;line-height:1.15;letter-spacing:-0.02em">
+              The Transformation
+            </h3>
+            <p class="font-sans text-sm leading-loose mt-4" style="color:#2B2B2B">
+              Quantum Rebirth OS — lộ trình 21 ngày tái lập danh tính. Không thêm thói quen. Thay đổi người vận hành.
+            </p>
+          </div>
+          <div class="flex items-center justify-between mt-8">
+            <a href="/academy" class="bento-cta">
+              Vào Academy
+              <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </a>
+            <span class="font-sans text-xs" style="color:#C5A880;letter-spacing:0.12em;text-transform:uppercase">21 Ngày</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ══════════════════════════════════════
+       CLOSING CTA — Liquid Button
+  ══════════════════════════════════════ -->
+  <section id="cta-section" class="py-40 text-center px-8" style="border-top:1px solid rgba(62,39,35,0.08)">
+    <div class="max-w-4xl mx-auto">
+
+      <p class="sec-label reveal mb-10">Bắt đầu</p>
+
+      <div class="overflow-hidden mb-6">
+        <h2 class="cta-reveal"
+            style="font-family:'Playfair Display',serif;font-size:clamp(2.5rem,7.5vw,7rem);font-weight:900;color:#3E2723;line-height:1.25;letter-spacing:-0.035em;display:block">
+          Đây là lúc
+        </h2>
+      </div>
+      <div class="overflow-hidden mb-6">
+        <h2 class="cta-reveal"
+            style="font-family:'Playfair Display',serif;font-size:clamp(2.5rem,7.5vw,7rem);font-weight:900;color:#C5A880;font-style:italic;line-height:1.25;letter-spacing:-0.035em;display:block">
+          con người cũ
+        </h2>
+      </div>
+      <div class="overflow-hidden mb-16">
+        <h2 class="cta-reveal"
+            style="font-family:'Playfair Display',serif;font-size:clamp(2.5rem,7.5vw,7rem);font-weight:900;color:#3E2723;line-height:1.25;letter-spacing:-0.035em;display:block">
+          dừng lại.
+        </h2>
+      </div>
+
+      <div class="reveal">
+        <a href="https://www.quantumrebirth.io.vn/" target="_blank" id="btn-cta-large"
+           style="display:inline-flex;align-items:center;gap:0.75rem;
+                  font-family:'Inter',sans-serif;font-size:0.78rem;font-weight:500;
+                  letter-spacing:0.18em;text-transform:uppercase;
+                  color:#3E2723;text-decoration:none;border:none;background:none;">
+          BẮT ĐẦU TÁI SINH
+          <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+            <path d="M5 12h14M12 5l7 7-7 7"/>
+          </svg>
+        </a>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ══════════════════════════════════════
+       FOOTER
+  ══════════════════════════════════════ -->
+  <footer class="site-footer reveal">
+    <div class="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-8">
+      <a href="index.html" class="footer-logo">James.identity</a>
+      <nav class="flex gap-10">
+        <a href="index.html" class="nav-link">Trang chủ</a>
+        <a href="about.html" class="nav-link">About</a>
+        <a href="#"          class="nav-link">Liên hệ</a>
+      </nav>
+      <p class="footer-copy">© 2026 James Trương</p>
+    </div>
+  </footer>
+
+
+  <!-- ══════════════════════════════════════
+       SCRIPTS
+  ══════════════════════════════════════ -->
+  <script>
+    gsap.registerPlugin(ScrollTrigger);
+
+    /* ─────────────────────────────────────
+       LENIS SMOOTH SCROLL
+    ───────────────────────────────────── */
+    const lenis = new Lenis({
+      duration: 1.3,
+      easing: t => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      smooth: true,
+    });
+
+    function raf(time) { lenis.raf(time); requestAnimationFrame(raf); }
+    requestAnimationFrame(raf);
+
+    /* Connect Lenis to GSAP ScrollTrigger */
+    lenis.on('scroll', ScrollTrigger.update);
+    gsap.ticker.add(time => lenis.raf(time * 1000));
+    gsap.ticker.lagSmoothing(0);
+
+
+    /* ─────────────────────────────────────
+       NAV — Hiện khi đến đầu #ecosystem
+       (Bento Grid), ẩn khi lướt ngược lên
+    ───────────────────────────────────── */
+    var nav = document.querySelector('.site-nav');
+
+    ScrollTrigger.create({
+      trigger: '#stats',
+      start: 'top 85%',
+      onEnter: function() {
+        gsap.to(nav, { opacity: 1, y: 0, duration: 0.55, ease: 'power3.out', overwrite: true });
+        nav.style.pointerEvents = 'auto';
+      },
+      onLeaveBack: function() {
+        gsap.to(nav, { opacity: 0, y: -20, duration: 0.35, ease: 'power3.in', overwrite: true });
+        nav.style.pointerEvents = 'none';
+      },
+    });
+
+
+    /* ─────────────────────────────────────
+       STATS BENTO — Counter + Reveal
+    ───────────────────────────────────── */
+    ScrollTrigger.create({
+      trigger: '#stats',
+      start: 'top 80%',
+      once: true,
+      onEnter: function() {
+        document.querySelectorAll('.sbc__count').forEach(function(el) {
+          var target = parseInt(el.dataset.target, 10);
+          var proxy  = { val: 0 };
+          gsap.to(proxy, {
+            val: target,
+            duration: 1.8,
+            ease: 'power2.out',
+            onUpdate: function() { el.textContent = Math.round(proxy.val); },
+          });
+        });
+      },
+    });
+
+
+    /* ─────────────────────────────────────
+       GLOW ORB — Mouse Follow
+       Orb lớn lag 1.4s, orb nhỏ lag 0.8s
+       → tạo chiều sâu layered
+    ───────────────────────────────────── */
+    (function() {
+      var orb      = document.getElementById('glowOrb');
+      var orbInner = document.getElementById('glowOrbInner');
+      var heroEl   = document.getElementById('hero');
+
+      var orbX  = gsap.quickTo(orb,      'x', { duration: 1.6, ease: 'power4.out' });
+      var orbY  = gsap.quickTo(orb,      'y', { duration: 1.6, ease: 'power4.out' });
+      var orbX2 = gsap.quickTo(orbInner, 'x', { duration: 0.9, ease: 'power4.out' });
+      var orbY2 = gsap.quickTo(orbInner, 'y', { duration: 0.9, ease: 'power4.out' });
+
+      heroEl.addEventListener('mousemove', function(e) {
+        var rect = heroEl.getBoundingClientRect();
+        var dx = (e.clientX - rect.left  - rect.width  / 2) * 0.20;
+        var dy = (e.clientY - rect.top   - rect.height / 2) * 0.20;
+        orbX(dx);
+        orbY(dy);
+        orbX2(dx * 1.4);
+        orbY2(dy * 1.4);
+      });
+
+      heroEl.addEventListener('mouseleave', function() {
+        gsap.to([orb, orbInner], { x: 0, y: 0, duration: 2.4, ease: 'power4.out' });
+      });
+    })();
+
+
+    /* ─────────────────────────────────────
+       HERO LOAD SEQUENCE
+    ───────────────────────────────────── */
+    const heroTL = gsap.timeline({ delay: 0.15 });
+
+    /* Text reveal: lines slide up from mask */
+    heroTL.from('.tl', {
+      yPercent: 108,
+      stagger: 0.13,
+      duration: 1.5,
+      ease: 'power4.out',
+    });
+
+    /* Sequential hero elements */
+    heroTL
+      .to('#hero-eyebrow', { opacity: 1, y: 0, duration: 0.7, ease: 'power4.out' }, '-=0.9')
+      .to('#hero-sub',     { opacity: 1, y: 0, duration: 0.7, ease: 'power4.out' }, '-=0.55')
+      .to('#hero-cta',    { opacity: 1, y: 0, duration: 0.6, ease: 'power4.out' }, '-=0.45')
+      .to('#hero-scroll', { opacity: 1,        duration: 0.8, ease: 'power4.out' }, '-=0.5');
+
+
+    /* ─────────────────────────────────────
+       HERO ORB — Parallax on scroll
+    ───────────────────────────────────── */
+    gsap.to('#hero-orb', {
+      yPercent: -28,
+      ease: 'none',
+      scrollTrigger: {
+        trigger: '#hero',
+        start: 'top top',
+        end: 'bottom top',
+        scrub: 1.4,
+      },
+    });
+
+
+    /* ─────────────────────────────────────
+       MANIFESTO — Text Reveal on scroll
+    ───────────────────────────────────── */
+    gsap.fromTo('.ml-left',
+      { x: -60, opacity: 0 },
+      { x: 0, opacity: 1, stagger: 0.15, duration: 1.1, ease: 'expo.out',
+        scrollTrigger: { trigger: '.manifesto-block', start: 'top 82%' } }
+    );
+
+    /* Manifesto subtle parallax offset */
+    gsap.to('#manifesto', {
+      yPercent: -4,
+      ease: 'none',
+      scrollTrigger: {
+        trigger: '#manifesto',
+        start: 'top bottom',
+        end: 'bottom top',
+        scrub: 1,
+      },
+    });
+
+
+    /* ─────────────────────────────────────
+       BENTO GRID — Float-up + Scale, then stagger cards
+    ───────────────────────────────────── */
+    gsap.set('.bento-grid', { opacity: 0, y: 44, scale: 0.97 });
+    gsap.set('.bento-card', { opacity: 0, y: 20, scale: 0.94 });
+
+    ScrollTrigger.create({
+      trigger: '.bento-grid',
+      start: 'top 82%',
+      once: true,
+      onEnter: function() {
+        var tl = gsap.timeline();
+        tl.to('.bento-grid', { opacity: 1, y: 0, scale: 1, duration: 0.9, ease: 'expo.out' })
+          .to('.bento-card', {
+            opacity: 1, y: 0, scale: 1,
+            duration: 1.0, ease: 'expo.out',
+            stagger: 0.10,
+          }, '-=0.5');
+      },
+    });
+
+
+    /* ─────────────────────────────────────
+       ORACLE CARD — Particle Canvas
+       Hover → particles accelerate 3.5×
+    ───────────────────────────────────── */
+    (function() {
+      var canvas = document.getElementById('oracleCanvas');
+      if (!canvas) return;
+      var ctx       = canvas.getContext('2d');
+      var card      = document.getElementById('bento-1');
+      var targetMult = 1;
+      var speedMult  = 1;
+      var particles  = [];
+
+      function resize() {
+        canvas.width  = card.offsetWidth;
+        canvas.height = card.offsetHeight;
+        initParticles();
+      }
+
+      function initParticles() {
+        var count = Math.floor((canvas.width * canvas.height) / 4800);
+        particles = [];
+        for (var i = 0; i < count; i++) {
+          particles.push({
+            x:         Math.random() * canvas.width,
+            y:         Math.random() * canvas.height,
+            baseSpeed: Math.random() * 0.30 + 0.10,
+            opacity:   Math.random() * 0.55 + 0.20,
+            size:      Math.random() * 1.6 + 0.5,
+          });
+        }
+      }
+
+      function animate() {
+        speedMult += (targetMult - speedMult) * 0.05;
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        particles.forEach(function(p) {
+          p.y -= p.baseSpeed * speedMult;
+          if (p.y < 0) { p.y = canvas.height; p.x = Math.random() * canvas.width; }
+          var r = 128 + Math.floor(Math.random() * 22);
+          var g = 106 + Math.floor(Math.random() * 18);
+          var b = 76  + Math.floor(Math.random() * 16);
+          ctx.fillStyle = 'rgba(' + r + ',' + g + ',' + b + ',' + p.opacity + ')';
+          ctx.fillRect(p.x, p.y, p.size * 0.38, p.size * 2.2);
+        });
+        requestAnimationFrame(animate);
+      }
+
+      card.addEventListener('mouseenter', function() { targetMult = 3.5; });
+      card.addEventListener('mouseleave', function() { targetMult = 1;   });
+
+      resize();
+      animate();
+      window.addEventListener('resize', resize);
+    })();
+
+
+    /* ─────────────────────────────────────
+       CLOSING CTA — Text reveal on scroll
+    ───────────────────────────────────── */
+    gsap.from('.cta-reveal', {
+      yPercent: 108,
+      stagger: 0.12,
+      duration: 1.3,
+      ease: 'power4.out',
+      clearProps: 'transform',
+      scrollTrigger: {
+        trigger: '#cta-section',
+        start: 'top 75%',
+      },
+    });
+
+
+    /* ─────────────────────────────────────
+       GENERIC SCROLL REVEAL (.reveal)
+    ───────────────────────────────────── */
+    gsap.utils.toArray('.reveal').forEach(function(el) {
+      gsap.fromTo(el,
+        { opacity: 0, y: 28 },
+        {
+          opacity: 1, y: 0,
+          duration: 0.85,
+          ease: 'power4.out',
+          scrollTrigger: {
+            trigger: el,
+            start: 'top 88%',
+            toggleActions: 'play none none none',
+          },
+        }
+      );
+    });
+
+
+    /* ─────────────────────────────────────
+       PARTICLE CANVAS ANIMATION
+       Chuyển đổi từ particle-hero.tsx (21st.dev)
+       Particles: gold #C5A880 spectrum, float upward, fade out
+       Toggle: dark ↔ light hero mode
+    ───────────────────────────────────── */
+    (function() {
+      var canvas = document.getElementById('particleCanvas');
+      var ctx    = canvas.getContext('2d');
+      var hero   = document.getElementById('hero');
+      var particles = [];
+      var heroMode  = 'dark'; /* 'dark' | 'light' */
+      var mouseX = 0.5, mouseY = 0.5; /* normalised 0-1 */
+
+      hero.addEventListener('mousemove', function(e) {
+        var r = hero.getBoundingClientRect();
+        mouseX = (e.clientX - r.left)  / r.width;
+        mouseY = (e.clientY - r.top)   / r.height;
+      });
+
+      /* ── Resize canvas to match hero dimensions ── */
+      function resize() {
+        canvas.width  = hero.offsetWidth;
+        canvas.height = hero.offsetHeight;
+        initParticles();
+      }
+
+      /* ── Create a single gold particle ── */
+      function createParticle() {
+        var p = {
+          x: 0, y: 0, speed: 0, size: 0, opacity: 1,
+          fadeDelay: 0, fadeStart: 0, fadingOut: false,
+
+          reset: function() {
+            this.x         = Math.random() * canvas.width;
+            this.y         = Math.random() * canvas.height;
+            this.speed     = Math.random() * 0.10 + 0.02;
+            this.size      = Math.random() * 2.2 + 0.6;
+            this.opacity   = 1;
+            this.fadeDelay = Math.random() * 1800 + 500;
+            this.fadeStart = Date.now() + this.fadeDelay;
+            this.fadingOut = false;
+          },
+
+          update: function() {
+            this.y -= this.speed;
+            /* Subtle drift toward mouse — creates gentle swirl */
+            this.x += (mouseX * canvas.width  - this.x) * 0.00025;
+            this.y += (mouseY * canvas.height  - this.y) * 0.00015;
+            if (this.y < 0) this.reset();
+            if (!this.fadingOut && Date.now() > this.fadeStart) this.fadingOut = true;
+            if (this.fadingOut) {
+              this.opacity -= 0.003;
+              if (this.opacity <= 0) this.reset();
+            }
+          },
+
+          draw: function(ctx) {
+            var r, g, b, a;
+            if (heroMode === 'dark') {
+              /* Gold-amber spectrum: C5A880 core ± variation */
+              r = 187 + Math.floor(Math.random() * 30);
+              g = 135 + Math.floor(Math.random() * 55);
+              b = 75  + Math.floor(Math.random() * 75);
+              a = this.opacity;
+            } else {
+              /* Light mode: deep brown #3E2723 trên nền kem */
+              r = 52  + Math.floor(Math.random() * 20);
+              g = 32  + Math.floor(Math.random() * 14);
+              b = 28  + Math.floor(Math.random() * 12);
+              a = this.opacity * 0.72;
+            }
+            ctx.fillStyle = 'rgba(' + r + ',' + g + ',' + b + ',' + a + ')';
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, this.size * 0.7, 0, Math.PI * 2);
+            ctx.fill();
+          }
+        };
+
+        p.reset();
+        p.y         = Math.random() * canvas.height; /* scatter across full height initially */
+        p.fadeDelay = Math.random() * 1800 + 500;
+        p.fadeStart = Date.now() + p.fadeDelay;
+        p.fadingOut = false;
+        return p;
+      }
+
+      function initParticles() {
+        var count = Math.floor((canvas.width * canvas.height) / 7000);
+        particles = [];
+        for (var i = 0; i < count; i++) particles.push(createParticle());
+      }
+
+      function animate() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        particles.forEach(function(p) { p.update(); p.draw(ctx); });
+        requestAnimationFrame(animate);
+      }
+
+      /* Init */
+      resize();
+      animate();
+      window.addEventListener('resize', resize);
+
+      /* ── Gold toggle: dark ↔ light mode ── */
+      var toggle = document.getElementById('goldToggle');
+      var subEl  = document.getElementById('hero-sub');
+
+      toggle.addEventListener('click', function() {
+        heroMode = heroMode === 'dark' ? 'light' : 'dark';
+        hero.classList.toggle('hero-light', heroMode === 'light');
+        if (heroMode === 'light') {
+          subEl.style.color = '#A8A39D';
+        } else {
+          subEl.style.color = 'rgba(244,241,234,0.52)';
+        }
+      });
+
+      toggle.addEventListener('mouseenter', function() {
+        this.style.boxShadow = heroMode === 'dark'
+          ? '-0.2rem 0.1rem 0.2rem 0 rgba(197,168,128,0.8)'
+          : '-0.2rem 0.1rem 0.2rem 0 rgba(62,39,35,0.5)';
+      });
+      toggle.addEventListener('mouseleave', function() {
+        this.style.boxShadow = heroMode === 'dark'
+          ? '0 0 0.75rem 0 #C5A880'
+          : '0 0 0.75rem 0 #3E2723';
+      });
+    })();
+
+
+    /* ─────────────────────────────────────
+       LIQUID + MAGNETIC BUTTONS
+       - Liquid fill expands from cursor center (CSS)
+       - Magnetic pull via GSAP quickTo
+    ───────────────────────────────────── */
+    /* Hover + lift effect cho CTA text link */
+    var ctaLarge = document.getElementById('btn-cta-large');
+    if (ctaLarge) {
+      ctaLarge.style.transition = 'transform 0.4s cubic-bezier(0.175,0.885,0.32,1.275), box-shadow 0.4s cubic-bezier(0.175,0.885,0.32,1.275), background-color 0.3s ease';
+      ctaLarge.addEventListener('mouseenter', function() {
+        this.style.transform = 'scale(1.08) translateY(-2px)';
+        this.style.boxShadow = '0 10px 20px rgba(197,168,128,0.35)';
+      });
+      ctaLarge.addEventListener('mouseleave', function() {
+        this.style.transform = 'scale(1) translateY(0)';
+        this.style.boxShadow = 'none';
+      });
+      ctaLarge.addEventListener('mousedown', function() {
+        this.style.transform = 'scale(0.95)';
+        this.style.boxShadow = 'none';
+      });
+      ctaLarge.addEventListener('mouseup', function() {
+        this.style.transform = 'scale(1.08) translateY(-2px)';
+        this.style.boxShadow = '0 10px 20px rgba(197,168,128,0.35)';
+      });
+    }
+
+    document.querySelectorAll('.liquid-btn').forEach(function(btn) {
+      var xTo   = gsap.quickTo(btn, 'x', { duration: 0.45, ease: 'power4.out' });
+      var yTo   = gsap.quickTo(btn, 'y', { duration: 0.45, ease: 'power4.out' });
+      var inside = false;
+      var RADIUS = 140;
+
+      document.addEventListener('mousemove', function(e) {
+        var r   = btn.getBoundingClientRect();
+        var cx  = r.left + r.width  / 2;
+        var cy  = r.top  + r.height / 2;
+        var dx  = e.clientX - cx;
+        var dy  = e.clientY - cy;
+        var dist = Math.sqrt(dx * dx + dy * dy);
+
+        if (dist < RADIUS) {
+          var pull = (1 - dist / RADIUS) * 0.42;
+          xTo(dx * pull);
+          yTo(dy * pull);
+          inside = true;
+        } else if (inside) {
+          inside = false;
+          gsap.to(btn, { x: 0, y: 0, duration: 0.75, ease: 'expo.out' });
+        }
+      });
+    });
+  </script>
+
+</body>
+</html>

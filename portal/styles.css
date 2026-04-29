@@ -1,0 +1,239 @@
+/* ═══════════════════════════════════════════════
+   JAMES IDENTITY — Shared Design System
+   Import này sau Tailwind CDN, trước các style inline.
+   ═══════════════════════════════════════════════ */
+
+/* ─── CSS Custom Properties ─── */
+:root {
+  --bg-color:      #F4F1EA;
+  --heading-color: #3E2723;
+  --accent-color:  #C5A880;
+  --text-color:    #2B2B2B;
+
+  /* Extended palette */
+  --muted-color:   #A8A39D;
+  --card-bg:       rgba(253, 250, 244, 0.52);
+  --border-soft:   rgba(62, 39, 35, 0.08);
+  --border-gold:   rgba(197, 168, 128, 0.38);
+  --border-gold-hover: rgba(197, 168, 128, 0.70);
+
+  /* Typography scale */
+  --font-serif: 'Playfair Display', Georgia, serif;
+  --font-sans:  'Inter', system-ui, sans-serif;
+  --font-text:  'EB Garamond', Georgia, serif;   /* main reading / body text */
+
+  /* Transitions */
+  --transition-base: 0.4s ease;
+  --transition-cubic: 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+/* ─── Base Typography ─── */
+body {
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overflow-x: hidden;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-serif);
+  color: var(--heading-color);
+  line-height: 1.3;
+  font-weight: 600;
+  padding-top: 0.1em;
+  padding-bottom: 0.1em;
+  overflow: visible;
+  text-rendering: optimizeLegibility !important;
+  -webkit-font-smoothing: subpixel-antialiased !important;
+  -moz-osx-font-smoothing: auto !important;
+  text-shadow: 0 0 0.5px rgba(62, 39, 35, 0.1);
+}
+
+/* Safe class cho heading tiếng Việt — đảm bảo dấu không bị cắt */
+.ji-heading-vn,
+.playfair-safe-padding {
+  line-height: 1.35;
+  padding-top: 0.15em;
+  padding-bottom: 0.15em;
+  overflow: visible;
+}
+
+/* ─── Reusable Utility Classes ─── */
+
+/* Layout */
+.ji-container {
+  max-width: 64rem;   /* 1024px — matches max-w-5xl */
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+}
+
+/* Section spacing */
+.ji-section {
+  padding-top: 8rem;
+  padding-bottom: 8rem;
+  border-top: 1px solid var(--border-soft);
+}
+
+/* Section label (01 — Title) */
+.ji-label {
+  font-family: var(--font-sans);
+  font-size: 0.72rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--muted-color);
+  display: block;
+  margin-bottom: 1rem;
+}
+
+/* Serif heading */
+.ji-heading {
+  font-family: var(--font-serif);
+  color: var(--heading-color);
+  line-height: 1.3;
+  font-weight: 600;
+  text-rendering: optimizeLegibility !important;
+  -webkit-font-smoothing: subpixel-antialiased !important;
+  -moz-osx-font-smoothing: auto !important;
+  text-shadow: 0 0 0.5px rgba(62, 39, 35, 0.1);
+}
+
+/* Gold accent text */
+.ji-accent {
+  color: var(--accent-color);
+}
+
+/* Muted body text */
+.ji-muted {
+  color: var(--muted-color);
+  font-family: var(--font-sans);
+  font-size: 0.875rem;
+  line-height: 1.85;
+}
+
+/* Thin gold divider line */
+.ji-divider {
+  width: 2rem;
+  height: 1px;
+  background-color: var(--accent-color);
+  opacity: 0.7;
+  margin-bottom: 5rem;
+}
+
+/* ─── Glassmorphism Card ─── */
+.ji-card {
+  background: var(--card-bg);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid var(--border-gold);
+  transition: transform var(--transition-cubic),
+              box-shadow var(--transition-cubic),
+              border-color var(--transition-base);
+  will-change: transform;
+}
+.ji-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 20px 60px rgba(62, 39, 35, 0.09);
+  border-color: var(--border-gold-hover);
+}
+
+/* ─── CTA Button ─── */
+.ji-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 14px 44px;
+  border: 1px solid var(--heading-color);
+  color: var(--heading-color);
+  font-family: var(--font-sans);
+  font-size: 0.75rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  text-decoration: none;
+  background: transparent;
+  cursor: pointer;
+  transition: background-color var(--transition-base),
+              color var(--transition-base),
+              transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275),
+              box-shadow 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+.ji-btn:hover {
+  background-color: var(--heading-color);
+  color: var(--bg-color);
+  transform: scale(1.08) translateY(-2px);
+  box-shadow: 0 10px 20px rgba(197, 168, 128, 0.2);
+}
+.ji-btn:active {
+  transform: scale(0.95);
+  box-shadow: none;
+}
+
+/* ─── Fixed Navigation ─── */
+.ji-nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 100;
+  background: rgba(244, 241, 234, 0.88);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border-soft);
+}
+.ji-nav a {
+  text-decoration: none;
+  font-family: var(--font-sans);
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted-color);
+  transition: color 0.3s ease;
+}
+.ji-nav a:hover  { color: var(--heading-color); }
+.ji-nav a.active { color: var(--heading-color); }
+
+/* ─── Blockquote ─── */
+.ji-quote {
+  border-left: 2px solid var(--accent-color);
+  padding-left: 2rem;
+  font-family: var(--font-serif);
+  font-style: italic;
+  color: var(--text-color);
+  line-height: 1.9;
+}
+
+/* ─── Inline code / formula ─── */
+.ji-formula {
+  display: inline-block;
+  padding: 0.35rem 0.9rem;
+  background: rgba(197, 168, 128, 0.08);
+  border: 1px solid rgba(197, 168, 128, 0.25);
+  font-family: 'Courier New', monospace;
+  font-size: 0.82rem;
+  color: var(--accent-color);
+  letter-spacing: 0.08em;
+}
+
+/* ─── Hero heading lines — margin-based spacing, chống clip dấu thanh ─── */
+.hero-line {
+  display: block;
+  margin-bottom: 1.1em;
+  padding-top: 0.1em;
+  padding-bottom: 0.1em;
+  overflow: visible;
+  white-space: nowrap !important;
+}
+
+#hero-headline {
+  font-size: clamp(0.9rem, 5vw, 4.5rem) !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: flex-start;
+}
+
+/* ─── Scroll-reveal start state ─── */
+.ji-reveal {
+  opacity: 0;
+  transform: translateY(28px);
+}
