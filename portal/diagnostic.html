@@ -1930,6 +1930,7 @@
       var text = CHAT_OPENERS[group] || CHAT_OPENERS[1];
       container.innerHTML = '';
       chatHistory = [{ role: 'assistant', content: text.replace(/<[^>]+>/g, '') }];
+      chatTurnCount = 0;
       var msgEl = document.createElement('div');
       msgEl.className = 'chat-msg';
       msgEl.innerHTML = '<div class="chat-avatar">J</div><div class="chat-bubble">' + text + '</div>';
@@ -1937,6 +1938,8 @@
     }
 
     var chatHistory = [];
+    var chatTurnCount = 0;
+    var chatSending = false;
 
     function sendChat() {
       var input = document.getElementById('chat-input');
@@ -1953,8 +1956,8 @@
       container.scrollTop = container.scrollHeight;
 
       chatHistory.push({ role: 'user', content: text });
+      chatTurnCount++;
 
-      // Typing indicator
       var typingEl = document.createElement('div');
       typingEl.className = 'chat-msg';
       typingEl.id = 'chat-typing';
@@ -1970,7 +1973,8 @@
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           group: currentGroup,
-          messages: chatHistory.slice(-10)
+          messages: chatHistory.slice(-14),
+          turnCount: chatTurnCount
         })
       })
       .then(function(r) { return r.json(); })
@@ -1985,6 +1989,11 @@
         aiMsg.className = 'chat-msg';
         aiMsg.innerHTML = '<div class="chat-avatar">J</div><div class="chat-bubble">' + reply + '</div>';
         container.appendChild(aiMsg);
+
+        if (data.showCta) {
+          showChatCta(container);
+        }
+
         container.scrollTop = container.scrollHeight;
       })
       .catch(function() {
@@ -2004,7 +2013,15 @@
       });
     }
 
-    var chatSending = false;
+    function showChatCta(container) {
+      if (document.getElementById('chat-cta-block')) return;
+      var ctaEl = document.createElement('div');
+      ctaEl.id = 'chat-cta-block';
+      ctaEl.style.cssText = 'margin-top:28px;padding:24px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:12px;text-align:center;';
+      ctaEl.innerHTML = '<p style="font-size:13px;color:var(--color-muted);margin:0 0 16px;">Sẵn sàng tháo gỡ vòng lặp có cấu trúc?</p>'
+        + '<a href="https://www.quantumrebirth.io.vn/" target="_blank" style="display:inline-block;padding:14px 28px;background:var(--color-accent);color:#000;font-weight:700;font-size:14px;letter-spacing:0.04em;border-radius:8px;text-decoration:none;">Xem Quantum Rebirth OS →</a>';
+      container.parentNode.insertBefore(ctaEl, container.nextSibling);
+    }
 
     document.addEventListener('DOMContentLoaded', function() {
       var chatInput = document.getElementById('chat-input');

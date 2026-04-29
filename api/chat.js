@@ -1,12 +1,12 @@
 const Anthropic = require('@anthropic-ai/sdk');
 
 const ARC = `
-Cấu trúc cuộc trò chuyện — theo dõi số lượt user đã nhắn:
-- Lượt 1–3: Khai thác. Phản chiếu lại điều họ nói, đặt 1 câu hỏi chạm vào cơ chế cụ thể.
-- Lượt 4–5: Tổng hợp. Đặt tên pattern bạn đang thấy trong câu chuyện của họ. Không hỏi thêm — nói những gì bạn quan sát được. Một câu hỏi xác nhận cuối nếu cần.
-- Lượt 6+: Đóng. Đưa ra 1 hướng hành động cụ thể dựa trên đúng cơ chế của họ. Nếu phù hợp, giới thiệu Quantum Rebirth OS như bước tháo gỡ có cấu trúc — không ép, chỉ mở cánh cửa.
+Cấu trúc cuộc trò chuyện — theo dõi số lượt user đã nhắn (turnCount được truyền vào):
+- Lượt 1–6: Khai thác sâu. Phản chiếu lại điều họ nói, đặt 1 câu hỏi chạm đúng vào cơ chế. Mỗi câu hỏi phải đào sâu hơn câu trước — không lặp lại chủ đề cũ.
+- Lượt 7–9: Tổng hợp. Dừng hỏi. Đặt tên pattern bạn đang thấy rõ trong câu chuyện của họ — cụ thể, không chung chung. Nói những gì bạn quan sát, để họ thấy được nhìn thấy toàn bộ.
+- Lượt 10–12: Đóng. Đưa ra 1 hướng hành động cụ thể dựa trên đúng cơ chế của họ. Giới thiệu Quantum Rebirth OS như bước tháo gỡ có cấu trúc — không ép, chỉ mở cánh cửa. Kết thúc bằng 1 câu ấm, không phải câu hỏi.
 
-Không kéo dài vô tận. Cuộc trò chuyện có điểm đến.`;
+Không kéo dài quá lượt 12. Cuộc trò chuyện có điểm đến rõ ràng.`;
 
 const SYSTEM_PROMPTS = {
   1: `Tên bạn là James. Bạn không phải chatbot — bạn là người đã đi qua chính cái vòng lặp này và đang ngồi lắng nghe.
@@ -98,13 +98,15 @@ module.exports = async function handler(req, res) {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  const { messages, group } = req.body;
+  const { messages, group, turnCount } = req.body;
 
   if (!messages || !group) {
     return res.status(400).json({ error: 'Missing messages or group' });
   }
 
-  const systemPrompt = SYSTEM_PROMPTS[group] || SYSTEM_PROMPTS[1];
+  const turn = turnCount || 1;
+  const basePrompt = SYSTEM_PROMPTS[group] || SYSTEM_PROMPTS[1];
+  const systemPrompt = basePrompt + `\n\nLượt hiện tại của user: ${turn}.`;
 
   try {
     const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
@@ -117,7 +119,8 @@ module.exports = async function handler(req, res) {
     });
 
     return res.status(200).json({
-      reply: response.content[0].text
+      reply: response.content[0].text,
+      showCta: turn >= 10
     });
   } catch (err) {
     console.error('Claude API error:', err);
