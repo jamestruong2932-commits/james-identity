@@ -1,152 +1,549 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="vi">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Insight — The Wisdom · James Identity</title>
+  <title>Insight — OS Audit · James Identity</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=Inter:wght@300;400;500&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet" />
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="theme.css" />
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
   <script>
     tailwind.config = {
-      theme: {
-        extend: {
-          colors: {
-            cream: '#F4F1EA', 'brown-deep': '#3E2723',
-            'gold-sand': '#C5A880', charcoal: '#2B2B2B', 'warm-stone': '#89837f',
-          },
-          fontFamily: {
-            serif: ['"Playfair Display"', 'Georgia', 'serif'],
-            sans:  ['Inter', 'system-ui', 'sans-serif'],
-          },
-        },
-      },
+      theme: { extend: {
+        colors: { cream:'#F4F1EA','brown-deep':'#3E2723','gold-sand':'#C5A880',charcoal:'#2B2B2B','warm-stone':'#89837f' },
+        fontFamily: { serif:['"Playfair Display"','Georgia','serif'], sans:['Inter','system-ui','sans-serif'] }
+      }}
     }
   </script>
+  <style>
+    /* ── Article styles ──────────────────────────────────────────── */
+    .insight-article{padding:80px 0 88px}
+    .article-inner{max-width:700px;margin:0 auto;padding:0 28px}
+    .article-back-bar{max-width:700px;margin:0 auto;padding:32px 28px 0}
+    .article-back{font-family:var(--font-sans);font-size:11px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--color-muted);text-decoration:none;border-bottom:1px solid var(--color-border-gold);padding-bottom:2px;transition:color .2s}
+    .article-back:hover{color:var(--color-heading)}
+    .article-tag{font-family:var(--font-sans);font-size:10.5px;font-weight:500;letter-spacing:.24em;text-transform:uppercase;color:var(--color-accent);margin-bottom:20px}
+    .article-title{font-family:var(--font-serif);font-size:clamp(26px,4vw,40px);font-weight:700;line-height:1.2;color:var(--color-heading);margin-bottom:10px}
+    .article-mechanism{font-family:var(--font-sans);font-size:12px;letter-spacing:.05em;color:var(--color-muted);margin-bottom:44px;line-height:1.7}
+    .article-body{font-family:'EB Garamond',Georgia,serif;font-size:18.5px;line-height:1.88;color:#4A413C}
+    .article-body p{margin-bottom:26px}
+    .article-body p:last-child{margin-bottom:0}
+    .article-body em{font-style:italic;color:var(--color-heading)}
+    .article-body strong{font-weight:600;color:var(--color-heading);font-style:normal}
+    .article-closing{font-family:var(--font-sans);font-size:14px;line-height:1.85;color:var(--color-muted);font-style:italic;border-left:2px solid var(--color-border-gold);padding-left:20px;margin-top:32px}
+    .overlay-intro{display:none;background:var(--color-accent-tint);border-left:3px solid var(--color-accent);padding:24px 28px;margin-bottom:40px;border-radius:0 4px 4px 0}
+    .overlay-intro p{font-family:'EB Garamond',Georgia,serif;font-size:17px;line-height:1.9;color:var(--color-heading);font-style:italic;margin-bottom:10px}
+    .overlay-intro p:last-child{margin-bottom:0}
+    .loop-map{margin:52px 0;padding:30px 28px 28px;background:rgba(62,39,35,.02);border:1px solid var(--color-border-gold)}
+    .loop-map-label{font-family:var(--font-sans);font-size:10px;font-weight:500;letter-spacing:.22em;text-transform:uppercase;color:var(--color-muted);margin-bottom:20px}
+    .loop-map svg{width:100%;max-width:340px;display:block;margin:0 auto}
+    .article-cta{margin-top:56px;padding-top:36px;border-top:1px solid var(--color-border-soft)}
+    .cta-eyebrow{font-family:var(--font-sans);font-size:10px;font-weight:500;letter-spacing:.22em;text-transform:uppercase;color:var(--color-muted);margin-bottom:12px}
+    .cta-question{font-family:var(--font-serif);font-size:19px;font-weight:400;font-style:italic;color:var(--color-heading);line-height:1.5;margin-bottom:26px}
+    .cta-btns{display:flex;align-items:center;gap:28px;flex-wrap:wrap}
+    .btn-ip{font-family:var(--font-sans);font-size:12px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;background:var(--color-heading);color:var(--color-bg);padding:13px 28px;text-decoration:none;display:inline-block;transition:opacity .2s,transform .2s}
+    .btn-ip:hover{opacity:.78;transform:translateY(-1px)}
+    .btn-is{font-family:var(--font-sans);font-size:12px;letter-spacing:.06em;color:var(--color-accent);text-decoration:none;border-bottom:1px solid var(--color-border-gold-hi);padding-bottom:2px;transition:color .2s,border-color .2s}
+    .btn-is:hover{color:var(--color-heading);border-color:rgba(197,168,128,.9)}
+    /* ── Footer CTA ──────────────────────────────────────────────── */
+    .ifcta{padding:88px 28px;text-align:center}
+    .ifcta-eyebrow{font-family:var(--font-sans);font-size:10.5px;font-weight:500;letter-spacing:.24em;text-transform:uppercase;color:var(--color-accent);margin-bottom:24px}
+    .ifcta h2{font-family:var(--font-serif);font-size:clamp(24px,4vw,38px);font-weight:700;line-height:1.25;color:var(--color-heading);margin-bottom:16px}
+    .ifcta h2 em{font-style:italic;color:var(--color-accent)}
+    .ifcta p{font-family:var(--font-sans);font-size:15px;color:var(--color-muted);line-height:1.8;max-width:420px;margin:0 auto 36px}
+
+    /* ── Footer ──────────────────────────────────────────────────── */
+    .site-footer{padding:64px 28px 48px;border-top:1px solid var(--color-border-soft);text-align:center}
+    .footer-inner{max-width:700px;margin:0 auto}
+    .footer-brand{font-family:var(--font-serif);font-size:18px;font-weight:700;color:var(--color-heading);margin-bottom:10px}
+    .footer-tagline{font-family:var(--font-sans);font-size:12px;letter-spacing:.08em;color:var(--color-muted);margin-bottom:24px}
+    .footer-nav{display:flex;justify-content:center;gap:32px;margin-bottom:24px}
+    .footer-nav a{font-family:var(--font-sans);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--color-muted);text-decoration:none;transition:color .2s}
+    .footer-nav a:hover{color:var(--color-heading)}
+    .footer-copy{font-family:var(--font-sans);font-size:11px;color:var(--color-muted);opacity:.55}
+    /* ── Foundational Insights row ───────────────────────────────── */
+    .foundational-section{padding:80px 0 60px;border-bottom:1px solid var(--color-border-soft)}
+    .foundational-inner{max-width:800px;margin:0 auto}
+    .foundational-header{padding:0 28px;margin-bottom:44px;text-align:center}
+    .foundational-eyebrow{font-family:var(--font-sans);font-size:10.5px;font-weight:500;letter-spacing:.24em;text-transform:uppercase;color:var(--color-accent);margin-bottom:14px}
+    .foundational-title{font-family:var(--font-serif);font-size:clamp(22px,3vw,32px);font-weight:700;color:var(--color-heading);margin-bottom:10px}
+    .foundational-desc{font-family:var(--font-sans);font-size:14px;color:var(--color-muted);line-height:1.8}
+    .foundational-row{display:flex;flex-direction:column;gap:10px;padding:0 28px}
+    .foundational-card{border:1px solid var(--color-border-gold);background:var(--color-accent-tint);padding:18px 24px;text-decoration:none;display:grid;grid-template-columns:60px 1fr auto;grid-template-areas:"num group lnk" "num title lnk" "num desc  lnk";column-gap:20px;align-items:center;transition:border-color .25s,background .2s,transform .2s}
+    .foundational-card:hover{border-color:var(--color-border-gold-hi);background:rgba(197,168,128,.07);transform:translateX(4px)}
+    .card-num{grid-area:num;font-family:var(--font-serif);font-size:34px;font-weight:900;color:var(--color-border-gold-hi);line-height:1;letter-spacing:-.02em;align-self:center}
+    .card-group{grid-area:group;font-family:var(--font-sans);font-size:9.5px;font-weight:500;letter-spacing:.2em;text-transform:uppercase;color:var(--color-accent);align-self:end;padding-bottom:3px}
+    .card-title{grid-area:title;font-family:var(--font-serif);font-size:15.5px;font-weight:700;color:var(--color-heading);line-height:1.3;align-self:center}
+    .card-desc{grid-area:desc;font-family:var(--font-sans);font-size:12px;line-height:1.7;color:var(--color-muted);align-self:start;padding-top:3px}
+    .card-link{grid-area:lnk;font-family:var(--font-sans);font-size:13px;color:var(--color-accent);align-self:center;white-space:nowrap;padding-left:16px}
+    /* ── Archive section ─────────────────────────────────────────── */
+    .archive-section{padding:80px 0;border-bottom:1px solid var(--color-border-soft)}
+    .archive-inner{max-width:700px;margin:0 auto;padding:0 28px}
+    .archive-eyebrow{font-family:var(--font-sans);font-size:10.5px;font-weight:500;letter-spacing:.24em;text-transform:uppercase;color:var(--color-accent);margin-bottom:16px}
+    .archive-title{font-family:var(--font-serif);font-size:clamp(20px,3vw,30px);font-weight:700;color:var(--color-heading);margin-bottom:40px}
+    .archive-placeholder{border:1px dashed rgba(197,168,128,.45);padding:44px 32px;text-align:center}
+    .archive-placeholder p{font-family:'EB Garamond',Georgia,serif;font-size:17px;line-height:1.9;color:var(--color-muted);font-style:italic}
+    /* ── Reveal animation ────────────────────────────────────────── */
+    @media(max-width:640px){
+      .article-inner,.article-back-bar{padding-left:20px;padding-right:20px}
+      .article-body{font-size:17px}
+      .loop-map{padding:22px 16px}
+      .cta-btns{flex-direction:column;align-items:flex-start}
+      .foundational-row{flex-direction:row;overflow-x:auto;scroll-snap-type:x mandatory;gap:14px;padding:4px 20px 20px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+      .foundational-row::-webkit-scrollbar{display:none}
+      .foundational-card{flex:0 0 228px;scroll-snap-align:start;display:flex;flex-direction:column;padding:22px 18px 18px;transform:none!important}
+      .foundational-card:hover{transform:translateY(-2px)!important}
+      .card-num{font-size:44px;margin-bottom:16px;align-self:auto}
+      .card-group{padding-bottom:0;margin-bottom:6px;align-self:auto}
+      .card-title{font-size:15px;margin-bottom:8px;align-self:auto}
+      .card-desc{flex:1;padding-top:0;align-self:auto}
+      .card-link{margin-top:14px;text-align:right;padding-left:0;align-self:auto}
+    }
+    .reveal{opacity:1;transform:none}
+    .js .reveal{opacity:0;transform:translateY(28px)}
+  </style>
 </head>
 <body>
-
-  <div id="page-beams" aria-hidden="true">
-    <div class="pg-beam"></div><div class="pg-beam"></div>
-    <div class="pg-beam"></div><div class="pg-beam"></div>
-    <div class="pg-beam"></div>
-  </div>
-
+  <script>document.documentElement.classList.add('js')</script>
+  <svg style="display:none"><defs><marker id="ag" markerWidth="8" markerHeight="7" refX="8" refY="3.5" orient="auto" markerUnits="userSpaceOnUse"><polygon points="0 0,8 3.5,0 7" fill="#C5A880" opacity=".85"/></marker></defs></svg>
+  <div id="page-beams" aria-hidden="true"><div class="pg-beam"></div><div class="pg-beam"></div><div class="pg-beam"></div><div class="pg-beam"></div><div class="pg-beam"></div></div>
   <header class="site-nav">
     <div class="max-w-6xl mx-auto px-6 py-5 flex items-center justify-between">
       <a href="index.html" class="nav-logo">James.identity</a>
       <nav class="flex gap-8">
-        <a href="about.html"      class="nav-link nav-desktop">About</a>
+        <a href="about.html" class="nav-link">About</a>
         <a href="https://www.quantumrebirth.io.vn/" target="_blank" class="nav-link nav-desktop">QROS</a>
         <a href="diagnostic.html" class="nav-link">Chẩn đoán</a>
-        <a href="insight.html"    class="nav-link nav-link--active">Insight</a>
-        <a href="academy.html"    class="nav-link">Academy</a>
+        <a href="insight.html" class="nav-link nav-link--active">Insight</a>
+        <a href="academy.html" class="nav-link nav-desktop">Academy</a>
       </nav>
     </div>
   </header>
 
+<main>
 
-  <section class="min-h-screen flex flex-col justify-center px-6 pt-24 pb-32"
-           style="border-bottom:1px solid rgba(62,39,35,0.08)">
-    <div class="max-w-4xl mx-auto w-full">
+  <!-- ══════════════════════════════════════════
+       INDEX VIEW (danh sách cards)
+  ══════════════════════════════════════════ -->
+  <div id="idx-view">
 
-      <p class="font-sans text-xs tracking-widest uppercase mb-6 reveal"
-         style="color:#C5A880;letter-spacing:0.22em">
-        Kho Kiến Thức
-      </p>
+    <section class="flex flex-col justify-center px-6 pt-24 pb-20" style="border-bottom:1px solid var(--color-border-soft)">
+      <div class="max-w-4xl mx-auto w-full">
+        <h1 class="font-serif mb-5 reveal" style="font-size:clamp(3rem,8vw,7rem);font-weight:900;color:var(--color-heading);line-height:.95;letter-spacing:-.03em">The<br/><em style="color:var(--color-accent)">Wisdom</em></h1>
+        <p class="font-sans text-base leading-loose max-w-xl reveal" style="color:var(--color-muted)">Mỗi người đang kẹt theo một cách riêng.<br/>Nhưng những vòng lặp bên dưới thì chỉ có vài kiểu —<br/>và tất cả đều đã được đặt tên.</p>
+      </div>
+    </section>
 
-      <h1 class="font-serif mb-8 reveal"
-          style="font-size:clamp(3rem,8vw,7rem);font-weight:900;color:#3E2723;line-height:0.95;letter-spacing:-0.03em">
-        The<br/><em style="color:#C5A880">Wisdom</em>
-      </h1>
-
-      <p class="font-sans text-base leading-loose max-w-xl mb-4 reveal" style="color:#A8A39D">
-        Neuro-Quantum research được chắt lọc thành ngôn ngữ sống.<br />
-        Không phải lý thuyết. Không phải động lực ngắn hạn.<br />
-        Là kiến thức bạn thực sự có thể dùng để thay đổi cách vận hành.
-      </p>
-      <p class="font-sans text-sm mb-12 reveal" style="color:#C5A880">
-        — Các bài viết đang được chuẩn bị.
-      </p>
-
-    </div>
-  </section>
-
-
-  <section class="py-32 px-6" style="border-bottom:1px solid rgba(62,39,35,0.08)">
-    <div class="max-w-4xl mx-auto">
-      <p class="font-sans text-xs tracking-widest uppercase mb-4 reveal" style="color:#A8A39D">Chủ đề</p>
-      <h2 class="font-serif text-3xl md:text-4xl text-brown-deep mb-16 reveal" style="line-height:1.15">
-        6 Trụ Cột<br /><em style="color:#C5A880">Khoa Học.</em>
-      </h2>
-
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div class="card reveal p-8 flex flex-col">
-          <span class="font-sans text-xl mb-5">🧠</span>
-          <h3 class="font-serif text-lg text-brown-deep mb-3">Neuroplasticity</h3>
-          <p class="font-sans text-sm leading-loose flex-grow" style="color:#A8A39D">Não bộ thay đổi cấu trúc theo trải nghiệm — Bruce Lipton, Joe Dispenza.</p>
+    <!-- ── The Foundational Insights ── -->
+    <section class="foundational-section">
+      <div class="foundational-inner">
+        <div class="foundational-header reveal">
+          <p class="foundational-eyebrow">The Foundational Insights</p>
+          <h2 class="foundational-title">Nhận Diện Mã Độc</h2>
+          <p class="foundational-desc">6 kiểu vòng lặp phổ biến nhất — mỗi người đang kẹt theo một cách riêng, nhưng những vòng lặp bên dưới thì chỉ có vài kiểu.</p>
         </div>
-        <div class="card reveal p-8 flex flex-col">
-          <span class="font-sans text-xl mb-5">🧬</span>
-          <h3 class="font-serif text-lg text-brown-deep mb-3">Epigenetics</h3>
-          <p class="font-sans text-sm leading-loose flex-grow" style="color:#A8A39D">Môi trường và cảm xúc điều khiển biểu hiện gen — không phải DNA cố định.</p>
-        </div>
-        <div class="card reveal p-8 flex flex-col">
-          <span class="font-sans text-xl mb-5">💛</span>
-          <h3 class="font-serif text-lg text-brown-deep mb-3">HeartMath</h3>
-          <p class="font-sans text-sm leading-loose flex-grow" style="color:#A8A39D">Trường điện từ của tim lớn gấp 60× não — coherence tim-não thay đổi thực tại.</p>
-        </div>
-        <div class="card reveal p-8 flex flex-col">
-          <span class="font-sans text-xl mb-5">⚛️</span>
-          <h3 class="font-serif text-lg text-brown-deep mb-3">Vật Lý Lượng Tử</h3>
-          <p class="font-sans text-sm leading-loose flex-grow" style="color:#A8A39D">Penrose-Hameroff: ý thức là đặc tính cơ bản của vũ trụ, không phải sản phẩm của não.</p>
-        </div>
-        <div class="card reveal p-8 flex flex-col">
-          <span class="font-sans text-xl mb-5">🌀</span>
-          <h3 class="font-serif text-lg text-brown-deep mb-3">Emergent Systems</h3>
-          <p class="font-sans text-sm leading-loose flex-grow" style="color:#A8A39D">Trồi sinh — kết quả không phải do hành động mà do điều kiện được thiết kế.</p>
-        </div>
-        <div class="card reveal p-8 flex flex-col">
-          <span class="font-sans text-xl mb-5">☯️</span>
-          <h3 class="font-serif text-lg text-brown-deep mb-3">Triết Học Đông Phương</h3>
-          <p class="font-sans text-sm leading-loose flex-grow" style="color:#A8A39D">Vô Vi, Bình Yên Nền Tảng — hành động không kháng cự, không gồng mình.</p>
+        <div class="foundational-row">
+          <a href="insight.html?a=1" class="foundational-card">
+            <div class="card-num">01</div>
+            <div class="card-group">Cỗ Máy</div>
+            <h3 class="card-title">Vòng Lặp Giá Trị Điều Kiện</h3>
+            <p class="card-desc">Giá trị bản thân gắn liền với năng suất — dừng lại đồng nghĩa với nguy hiểm.</p>
+            <div class="card-link">Đọc bài →</div>
+          </a>
+          <a href="insight.html?a=2" class="foundational-card">
+            <div class="card-num">02</div>
+            <div class="card-group">Bóng Tối</div>
+            <h3 class="card-title">Giao Thức Tự Trừng Phạt</h3>
+            <p class="card-desc">Tiềm thức vận hành niềm tin "tôi không xứng đáng" — thành công trở thành mối đe dọa.</p>
+            <div class="card-link">Đọc bài →</div>
+          </a>
+          <a href="insight.html?a=3" class="foundational-card">
+            <div class="card-num">03</div>
+            <div class="card-group">Tầm Nhìn</div>
+            <h3 class="card-title">Vòng Lặp Chuẩn Bị Vô Tận</h3>
+            <p class="card-desc">Hành động = rủi ro danh tính — não giữ bạn trong trạng thái "sắp làm" vĩnh viễn.</p>
+            <div class="card-link">Đọc bài →</div>
+          </a>
+          <a href="insight.html?a=4" class="foundational-card">
+            <div class="card-num">04</div>
+            <div class="card-group">Tù Nhân</div>
+            <h3 class="card-title">Bẫy Phiên Bản Cũ</h3>
+            <p class="card-desc">Thành công theo kịch bản không còn là của mình — trống rỗng dù đủ điều kiện.</p>
+            <div class="card-link">Đọc bài →</div>
+          </a>
+          <a href="insight.html?a=5" class="foundational-card">
+            <div class="card-num">05</div>
+            <div class="card-group">Bản Vẽ</div>
+            <h3 class="card-title">Mã Chờ Điều Kiện Hoàn Hảo</h3>
+            <p class="card-desc">Hành động bị trì hoãn vĩnh viễn — "đủ tốt" là ngưỡng không có địa chỉ cố định.</p>
+            <div class="card-link">Đọc bài →</div>
+          </a>
+          <a href="insight.html?a=6" class="foundational-card">
+            <div class="card-num">06</div>
+            <div class="card-group">Kiến Trúc Sư</div>
+            <h3 class="card-title">Sụp Đổ Hàm Sóng Bắt Buộc</h3>
+            <p class="card-desc">HĐH cũ đã đến giới hạn thiết kế — không phải sự sụp đổ, mà là điều kiện của sự trưởng thành.</p>
+            <div class="card-link">Đọc bài →</div>
+          </a>
         </div>
       </div>
+    </section>
+
+    <!-- ── The Archive ── -->
+    <section class="archive-section">
+      <div class="archive-inner">
+        <p class="archive-eyebrow reveal">The Archive</p>
+        <h2 class="archive-title reveal">Latest Insights</h2>
+        <div class="archive-placeholder reveal">
+          <p>Coming Soon: Deep dives into the Quantum system</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Footer CTA ── -->
+    <section class="ifcta reveal">
+      <div class="ifcta-inner">
+        <p class="ifcta-eyebrow">Bạn đã thấy mã độc.</p>
+        <h2>Bây giờ là lúc <em>ghi đè</em> nó.</h2>
+        <p>Quantum Rebirth OS không dạy bạn thêm thứ mới. Nó giúp bạn tháo gỡ thứ đã cài sẵn — để bạn không còn phải chiến đấu với chính mình mỗi ngày.</p>
+        <a href="https://www.quantumrebirth.io.vn/" target="_blank" class="btn-ip">Khám phá Quantum Rebirth OS →</a>
+      </div>
+    </section>
+
+  </div><!-- /#idx-view -->
+
+
+  <!-- ══════════════════════════════════════════
+       ARTICLE VIEW (ẩn mặc định, JS bật lên)
+  ══════════════════════════════════════════ -->
+  <div id="art-view" style="display:none">
+
+    <div class="article-back-bar">
+      <a href="insight.html" class="article-back">← Insight</a>
     </div>
-  </section>
 
+    <!-- ── Bài 1 ── -->
+    <article id="art-1" class="insight-article" style="display:none">
+      <div class="article-inner">
+        <div class="overlay-intro">
+          <p>Có những khoảnh khắc mà cơ thể đến trước. Trước khi bạn kịp hiểu tại sao, ngực đã thắt lại rồi.</p>
+          <p>Bạn vừa trải qua một khoảnh khắc như thế — hoặc đang ở trong nó. Tôi không cần biết chi tiết. Tôi chỉ muốn bạn biết rằng cái bạn đang cảm thấy không phải là dấu hiệu của sự yếu đuối. Nó là dấu hiệu của một hệ thống đã vận hành ở mức tối đa quá lâu — và bây giờ đang cần một điều gì đó khác. Đọc tiếp. Từ từ thôi.</p>
+        </div>
+        <div class="article-tag reveal">Nhóm 01 · Cỗ Máy Không Tắt Được</div>
+        <h2 class="article-title reveal">Vòng Lặp Giá Trị<br/>Điều Kiện</h2>
+        <p class="article-mechanism reveal">Cơ chế: Giá trị bản thân gắn liền với năng suất — dừng lại đồng nghĩa với nguy hiểm</p>
+        <div class="article-body reveal">
+          <p>Có một buổi chiều Chủ nhật mà bạn sẽ nhớ mãi — không phải vì nó đặc biệt, mà vì nó giống hệt trăm buổi chiều Chủ nhật trước đó. Bạn ngồi đó, không có deadline nào, không có cuộc họp nào, và thay vì cảm thấy nhẹ nhõm, bạn lại thấy bồn chồn. Tay tự nhiên cầm điện thoại lên. Mở email kiểm tra. Nghĩ đến cái task còn dở. Và dù không ai yêu cầu bạn làm gì, bạn vẫn tìm cách lấp đầy khoảng trống đó bằng thứ gì đó — bất cứ thứ gì — có vẻ như là đang làm được việc.</p>
+          <p>Bạn không phải người nghiện công việc theo nghĩa người ta hay nói. Bạn không thích làm việc hơn nghỉ ngơi. Bạn chỉ không biết cách ngồi yên mà không cảm thấy như mình đang lãng phí đi điều gì đó quan trọng.</p>
+        </div>
+        <div class="loop-map reveal">
+          <div class="loop-map-label">Cơ chế vòng lặp · Nhóm 01</div>
+          <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+            <rect x="10" y="15" width="110" height="44" rx="4" fill="none" stroke="#C5A880" stroke-width="1.2"/><text x="65" y="33" text-anchor="middle" font-family="Inter,sans-serif" font-size="10" fill="#3E2723" font-weight="500">Tôi có giá trị</text><text x="65" y="48" text-anchor="middle" font-family="Inter,sans-serif" font-size="10" fill="#3E2723" font-weight="500">khi làm được việc</text>
+            <rect x="200" y="15" width="110" height="44" rx="4" fill="none" stroke="#C5A880" stroke-width="1.2"/><text x="255" y="33" text-anchor="middle" font-family="Inter,sans-serif" font-size="10" fill="#3E2723" font-weight="500">Làm việc</text><text x="255" y="48" text-anchor="middle" font-family="Inter,sans-serif" font-size="10" fill="#3E2723" font-weight="500">không ngừng</text>
+            <rect x="200" y="145" width="110" height="44" rx="4" fill="none" stroke="#C5A880" stroke-width="1.2"/><text x="255" y="163" text-anchor="middle" font-family="Inter,sans-serif" font-size="10" fill="#3E2723" font-weight="500">Dừng lại →</text><text x="255" y="178" text-anchor="middle" font-family="Inter,sans-serif" font-size="10" fill="#3E2723" font-weight="500">lo âu bùng lên</text>
+            <rect x="10" y="145" width="110" height="44" rx="4" fill="none" stroke="#C5A880" stroke-width="1.2"/><text x="65" y="163" text-anchor="middle" font-family="Inter,sans-serif" font-size="10" fill="#3E2723" font-weight="500">Giá trị bị</text><text x="65" y="178" text-anchor="middle" font-family="Inter,sans-serif" font-size="10" fill="#3E2723" font-weight="500">đe dọa</text>
+            <line x1="120" y1="37" x2="192" y2="37" stroke="#C5A880" stroke-width="1.4" marker-end="url(#ag)"/><line x1="255" y1="59" x2="255" y2="137" stroke="#C5A880" stroke-width="1.4" marker-end="url(#ag)"/><line x1="200" y1="167" x2="128" y2="167" stroke="#C5A880" stroke-width="1.4" marker-end="url(#ag)"/><line x1="65" y1="145" x2="65" y2="67" stroke="#C5A880" stroke-width="1.4" marker-end="url(#ag)"/>
+            <text x="160" y="105" text-anchor="middle" font-family="Inter,sans-serif" font-size="8.5" fill="#C5A880" opacity=".5" letter-spacing="2">VÒNG LẶP</text>
+          </svg>
+        </div>
+        <div class="article-body reveal">
+          <p>Cái vòng lặp này không bắt đầu từ hôm nay. Nó đã ở đó từ rất lâu — từ cái lần đầu tiên bạn được khen vì chăm chỉ, từ cái thời điểm bạn nhận ra rằng nỗ lực là thứ duy nhất bạn kiểm soát được trong một thế giới không mấy dễ đoán. Làm việc không chỉ là làm việc — nó trở thành ngôn ngữ bạn dùng để nói với thế giới rằng: <em>tôi có giá trị.</em></p>
+          <p>Nhiều người nghĩ vấn đề của bạn là thiếu cân bằng — rằng chỉ cần lập lịch sinh hoạt hợp lý là xong. Họ không sai hoàn toàn, nhưng họ đang chữa triệu chứng thay vì chữa nguồn gốc. Bạn có thể cài đặt mọi ứng dụng quản lý thời gian trên thế giới này — nhưng nếu phần mềm bên trong vẫn đang chạy câu lệnh "nghỉ ngơi = nguy hiểm", thì mọi thứ bên ngoài chỉ là ảo giác kiểm soát.</p>
+          <p>Theo Dr. Bruce Lipton, nhà sinh học tế bào từng giảng dạy tại Stanford, 95% hành vi của chúng ta không đến từ ý thức mà từ các chương trình tiềm thức được cài đặt trước năm 7 tuổi. Nếu trong những năm đó bạn học được — dù không ai nói ra thành lời — rằng tình yêu và sự chấp nhận gắn liền với thành tích, thì não bạn sẽ mã hoá điều đó như một quy luật sống còn. Không phải lựa chọn. Không phải thói quen. Là <strong>chương trình</strong>.</p>
+          <p>Điều bạn cần không phải là làm ít đi. Bạn cần làm một điều khác trước: học cách nhận ra giá trị của mình ngay cả khi bạn không làm gì cả — không phải như một bài tập self-help, mà như một sự thật cần được nhắc lại đủ nhiều lần cho đến khi phần mềm bên trong tin vào nó.</p>
+        </div>
+        <div class="article-closing reveal">Câu hỏi để bắt đầu: <em>Nếu ngày mai bạn không hoàn thành được bất kỳ task nào, không giúp được ai, không tạo ra bất kỳ kết quả nào — bạn vẫn là người đáng được trân trọng không?</em> Không cần trả lời ngay. Chỉ cần ngồi với câu hỏi đó một lúc.</div>
+        <div class="article-cta reveal">
+          <div class="cta-eyebrow">Muốn tháo gỡ vòng lặp này?</div>
+          <p class="cta-question">Khi nào bạn lần cuối cùng cho phép mình nghỉ ngơi<br/>mà không cảm thấy có lỗi?</p>
+          <div class="cta-btns">
+            <a href="https://www.quantumrebirth.io.vn/" target="_blank" class="btn-ip">Quantum Rebirth OS →</a>
+            <a href="diagnostic.html" class="btn-is">Làm lại OS Audit ↗</a>
+          </div>
+        </div>
+      </div>
+    </article>
 
-  <footer class="site-footer reveal">
-    <div class="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-8">
-      <a href="index.html" class="footer-logo">James.identity</a>
-      <nav class="flex gap-8">
-        <a href="about.html"      class="nav-link">About</a>
-        <a href="https://www.quantumrebirth.io.vn/" target="_blank" class="nav-link">QROS</a>
-        <a href="diagnostic.html" class="nav-link">Chẩn đoán</a>
-        <a href="insight.html"    class="nav-link">Insight</a>
-        <a href="academy.html"    class="nav-link">Academy</a>
-      </nav>
-      <p class="footer-copy">© 2026 James Trương</p>
-    </div>
-  </footer>
+    <!-- ── Bài 2 ── -->
+    <article id="art-2" class="insight-article" style="display:none">
+      <div class="article-inner">
+        <div class="overlay-intro">
+          <p>Đôi khi cái bóng tối bên trong không im lặng. Nó nói to. Và hôm nay là một trong những ngày như vậy với bạn.</p>
+          <p>Tôi viết bài này không phải cho người đang ổn — mà cho người đang đứng ở một điểm mà mọi thứ trong đầu đang rất ồn ào. Bạn không cần phải giả vờ ổn ngay bây giờ. Bạn chỉ cần tiếp tục đọc.</p>
+        </div>
+        <div class="article-tag reveal">Nhóm 02 · Người Mang Bóng Tối</div>
+        <h2 class="article-title reveal">Giao Thức<br/>Tự Trừng Phạt</h2>
+        <p class="article-mechanism reveal">Cơ chế: Tiềm thức vận hành niềm tin "tôi không xứng đáng" — thành công trở thành mối đe dọa</p>
+        <div class="article-body reveal">
+          <p>Bạn không hay nói về nó. Thực ra, bạn gần như không bao giờ nói về nó — vì có những thứ, khi được nói thành lời, cảm giác như chúng trở nên thật hơn, và bạn không chắc mình muốn điều đó. Nhưng ở đâu đó bên trong, có một giọng nói quen thuộc vẫn thỉnh thoảng xuất hiện. Khi bạn vừa làm được điều gì đó tốt, nó nói: <em>"Chưa đủ."</em> Khi ai đó khen bạn, nó nói: <em>"Họ không biết thật sự bạn là ai."</em> Khi mọi thứ đang diễn ra thuận lợi, nó thì thầm: <em>"Đợi đó, rồi sẽ có chuyện thôi."</em></p>
+          <p>Bạn đã quen với giọng nói đó đến mức đôi khi bạn không còn nhận ra nó nữa — bạn chỉ cảm thấy nặng hơn một chút, xa cách hơn một chút, hoặc tự dưng muốn phá vỡ thứ gì đó đang diễn ra tốt đẹp mà không hiểu tại sao.</p>
+          <p>Đây không phải trầm cảm, không phải bi quan, và chắc chắn không phải vì bạn yếu đuối. Đây là một loại mã độc tinh vi hơn nhiều — một loại mà thế giới tự phát triển bản thân hiếm khi nói đến, vì nó không được giải quyết bằng thêm gratitude journal hay thêm affirmation buổi sáng.</p>
+        </div>
+        <div class="loop-map reveal">
+          <div class="loop-map-label">Cơ chế vòng lặp · Nhóm 02</div>
+          <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+            <rect x="10" y="15" width="110" height="44" rx="4" fill="none" stroke="#C5A880" stroke-width="1.2"/><text x="65" y="33" text-anchor="middle" font-family="Inter,sans-serif" font-size="10" fill="#3E2723" font-weight="500">Tôi không</text><text x="65" y="48" text-anchor="middle" font-family="Inter,sans-serif" font-size="10" fill="#3E2723" font-weight="500">xứng đáng</text>
+            <rect x="200" y="15" width="110" height="44" rx="4" fill="none" stroke="#C5A880" stroke-width="1.2"/><text x="255" y="33" text-anchor="middle" font-family="Inter,sans-serif" font-size="10" fill="#3E2723" font-weight="500">Thành công</text><text x="255" y="48" text-anchor="middle" font-family="Inter,sans-serif" font-size="10" fill="#3E2723" font-weight="500">xuất hiện</text>
+            <rect x="200" y="145" width="110" height="44" rx="4" fill="none" stroke="#C5A880" stroke-width="1.2"/><text x="255" y="163" text-anchor="middle" font-family="Inter,sans-serif" font-size="10" fill="#3E2723" font-weight="500">Vô thức</text><text x="255" y="178" text-anchor="middle" font-family="Inter,sans-serif" font-size="10" fill="#3E2723" font-weight="500">tự phá vỡ</text>
+            <rect x="10" y="145" width="110" height="44" rx="4" fill="none" stroke="#C5A880" stroke-width="1.2"/><text x="65" y="163" text-anchor="middle" font-family="Inter,sans-serif" font-size="10" fill="#3E2723" font-weight="500">Niềm tin cũ</text><text x="65" y="178" text-anchor="middle" font-family="Inter,sans-serif" font-size="10" fill="#3E2723" font-weight="500">được xác nhận</text>
+            <line x1="120" y1="37" x2="192" y2="37" stroke="#C5A880" stroke-width="1.4" marker-end="url(#ag)"/><line x1="255" y1="59" x2="255" y2="137" stroke="#C5A880" stroke-width="1.4" marker-end="url(#ag)"/><line x1="200" y1="167" x2="128" y2="167" stroke="#C5A880" stroke-width="1.4" marker-end="url(#ag)"/><line x1="65" y1="145" x2="65" y2="67" stroke="#C5A880" stroke-width="1.4" marker-end="url(#ag)"/>
+            <text x="160" y="105" text-anchor="middle" font-family="Inter,sans-serif" font-size="8.5" fill="#C5A880" opacity=".5" letter-spacing="2">VÒNG LẶP</text>
+          </svg>
+        </div>
+        <div class="article-body reveal">
+          <p>Người ta thường nghĩ vấn đề ở đây là thiếu tự tin, và rằng cứ tích lũy thêm thành tích thì giọng nói đó sẽ im. Nhưng bạn và tôi đều biết điều đó không đúng — vì bạn đã có thành tích, và giọng nói vẫn còn đó. Thành tích không bịt được một lỗ hổng được tạo ra bởi điều khác hoàn toàn.</p>
+          <p>Nghiên cứu về trị liệu tập trung vào schema của Jeffrey Young cho thấy một trong những "bản đồ nội tâm" phổ biến nhất là cái ông gọi là <strong>schema Tự Trừng Phạt</strong> — một niềm tin hoạt động ở tầng vô thức rằng bản thân mình về cơ bản là có lỗi, và bất kỳ sự trừng phạt hay thất bại nào cũng đều là điều mình xứng đáng nhận. Schema này không hình thành từ sự kiện đơn lẻ — nó được xây dựng theo thời gian, từ những câu nói tưởng như vô hại, từ những lần bạn cảm thấy tình yêu thương bị rút lại khi bạn mắc sai lầm.</p>
+          <p>Điều quan trọng nhất bạn cần hiểu: <em>nó không phải là sự thật về bạn.</em> Nó là một chương trình bảo vệ — một cách mà hệ thần kinh của một đứa trẻ đã học để sống sót. Chương trình đó đã từng có lý do để tồn tại. Nhưng bạn không còn là đứa trẻ đó nữa, và môi trường đó không còn là thực tại của bạn nữa.</p>
+        </div>
+        <div class="article-closing reveal">Câu hỏi để bắt đầu: <em>Nếu một người bạn thân kể cho bạn nghe về những điều bạn đang tự trách mình — bạn sẽ nói gì với họ?</em> Thử nói điều đó với chính mình, để xem cái khoảng cách giữa cách bạn đối xử với người khác và cách bạn đối xử với chính mình đang lớn đến mức nào.</div>
+        <div class="article-cta reveal">
+          <div class="cta-eyebrow">Muốn tháo gỡ vòng lặp này?</div>
+          <p class="cta-question">Bạn sẽ nói gì với người bạn thân nhất<br/>nếu họ đang mang những gì bạn đang mang?</p>
+          <div class="cta-btns">
+            <a href="https://www.quantumrebirth.io.vn/" target="_blank" class="btn-ip">Quantum Rebirth OS →</a>
+            <a href="diagnostic.html" class="btn-is">Làm lại OS Audit ↗</a>
+          </div>
+        </div>
+      </div>
+    </article>
 
+    <!-- ── Bài 3 ── -->
+    <article id="art-3" class="insight-article" style="display:none">
+      <div class="article-inner">
+        <div class="overlay-intro">
+          <p>Kết quả của bạn cho thấy bạn đang ở một điểm đặc biệt — bạn thấy rõ hơn hầu hết, nhưng khoảng cách giữa tầm nhìn và hành động đang trở nên đau hơn bình thường. Đây không phải lúc để thêm một kế hoạch mới. Đây là lúc để hiểu tại sao bản đồ của bạn lớn hơn chân của bạn.</p>
+        </div>
+        <div class="article-tag reveal">Nhóm 03 · Nhà Tầm Nhìn Mắc Kẹt</div>
+        <h2 class="article-title reveal">Vòng Lặp Chuẩn Bị<br/>Vô Tận</h2>
+        <p class="article-mechanism reveal">Cơ chế: Hành động = rủi ro danh tính — não giữ bạn trong trạng thái "sắp làm" vĩnh viễn</p>
+        <div class="loop-map reveal">
+          <div class="loop-map-label">Cơ chế vòng lặp · Nhóm 03</div>
+          <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+            <rect x="10" y="15" width="110" height="44" rx="4" fill="none" stroke="#C5A880" stroke-width="1.2"/><text x="65" y="33" text-anchor="middle" font-family="Inter,sans-serif" font-size="10" fill="#3E2723" font-weight="500">Ý tưởng sáng</text><text x="65" y="48" text-anchor="middle" font-family="Inter,sans-serif" font-size="10" fill="#3E2723" font-weight="500">rõ trong đầu</text>
+            <rect x="200" y="15" width="110" height="44" rx="4" fill="none" stroke="#C5A880" stroke-width="1.2"/><text x="255" y="33" text-anchor="middle" font-family="Inter,sans-serif" font-size="10" fill="#3E2723" font-weight="500">Chuẩn bị</text><text x="255" y="48" text-anchor="middle" font-family="Inter,sans-serif" font-size="10" fill="#3E2723" font-weight="500">thêm lần nữa</text>
+            <rect x="200" y="145" width="110" height="44" rx="4" fill="none" stroke="#C5A880" stroke-width="1.2"/><text x="255" y="163" text-anchor="middle" font-family="Inter,sans-serif" font-size="10" fill="#3E2723" font-weight="500">Sợ thực tế</text><text x="255" y="178" text-anchor="middle" font-family="Inter,sans-serif" font-size="10" fill="#3E2723" font-weight="500">phá vỡ tiềm năng</text>
+            <rect x="10" y="145" width="110" height="44" rx="4" fill="none" stroke="#C5A880" stroke-width="1.2"/><text x="65" y="163" text-anchor="middle" font-family="Inter,sans-serif" font-size="10" fill="#3E2723" font-weight="500">Không ra tay</text><text x="65" y="178" text-anchor="middle" font-family="Inter,sans-serif" font-size="10" fill="#3E2723" font-weight="500">— vẫn "an toàn"</text>
+            <line x1="120" y1="37" x2="192" y2="37" stroke="#C5A880" stroke-width="1.4" marker-end="url(#ag)"/><line x1="255" y1="59" x2="255" y2="137" stroke="#C5A880" stroke-width="1.4" marker-end="url(#ag)"/><line x1="200" y1="167" x2="128" y2="167" stroke="#C5A880" stroke-width="1.4" marker-end="url(#ag)"/><line x1="65" y1="145" x2="65" y2="67" stroke="#C5A880" stroke-width="1.4" marker-end="url(#ag)"/>
+            <text x="160" y="105" text-anchor="middle" font-family="Inter,sans-serif" font-size="8.5" fill="#C5A880" opacity=".5" letter-spacing="2">VÒNG LẶP</text>
+          </svg>
+        </div>
+        <div class="article-body reveal">
+          <p>Bạn thấy rõ hơn hầu hết mọi người. Trong khi người khác còn đang loay hoay với hiện tại, bạn đã nhìn thấy ba bước tiếp theo, năm bước tiếp theo, đôi khi là cả hành trình. Bạn có những ý tưởng mà khi bạn giải thích, người nghe gật đầu và nói "hay đấy" — rồi không có gì xảy ra, không phải vì ý tưởng không tốt, mà vì lần nào bạn cũng dừng lại ở một điểm nào đó trước khi thực sự bắt đầu.</p>
+          <p>Notebook của bạn đầy. Tài liệu Google Docs của bạn có hàng chục file chưa hoàn chỉnh. Bạn đã nghiên cứu đủ để trở thành chuyên gia về mười lĩnh vực khác nhau — nhưng kết quả ra bên ngoài thì không phản ánh điều đó. Và điều khó chịu nhất không phải là bạn không làm được — mà là bạn biết mình hoàn toàn có thể làm được, nhưng lại cứ không làm.</p>
+          <p>Người ta hay gọi đây là procrastination, và đưa ra đủ loại giải pháp: chia nhỏ mục tiêu, dùng Pomodoro, tìm accountability partner. Bạn đã thử hết. Nó work một thời gian, rồi thôi. Vì procrastination chỉ là tên gọi của triệu chứng — không phải tên gọi của thứ đang tạo ra triệu chứng đó.</p>
+          <p>Điều thực sự đang xảy ra tinh vi hơn nhiều. Bộ não của bạn đã học được một phương trình: <em>hành động = khả năng thất bại = mất đi hình ảnh về con người mà mình có thể là</em>. Chừng nào bạn còn trong giai đoạn chuẩn bị, bạn vẫn còn là người "có tiềm năng". Khi bạn thực sự bước ra và thực thi, tiềm năng đó phải đối mặt với thực tế. Và bộ não coi đó là rủi ro — không phải rủi ro về thành công hay thất bại, mà là rủi ro về <em>danh tính</em>.</p>
+          <p>Nhà tâm lý học Carol Dweck, qua nghiên cứu nhiều thập kỷ về mindset, chỉ ra rằng những người gắn giá trị bản thân với năng lực bẩm sinh — thay vì với quá trình học hỏi — thường phản ứng với thách thức bằng cách rút lui, không phải tiến lên. Không phải vì họ sợ thất bại, mà vì họ sợ rằng thất bại sẽ chứng minh điều họ thầm lo lắng nhất: có lẽ mình không thực sự tài giỏi như mình nghĩ.</p>
+          <p>Tôi gọi đây là <strong>Vòng Lặp Chuẩn Bị Vô Tận</strong>: một cơ chế bảo vệ mà não dùng để giữ bạn trong trạng thái "sắp làm" — đủ gần để cảm thấy đang tiến lên, đủ xa để không bao giờ thực sự đối mặt với kết quả thật. Nó không phải lười biếng. Nó là một chiến lược rất thông minh của một hệ thần kinh đang cố bảo vệ bạn khỏi thứ mà nó coi là nguy hiểm.</p>
+          <p>Nhưng đây là điều tôi muốn bạn nghe: phiên bản đầy tiềm năng trong đầu bạn sẽ không bao giờ trở thành thật nếu nó không được thử thách bởi thực tế. Tầm nhìn mà không có tiếp đất không phải là tầm nhìn — nó là giấc mơ ban ngày. Và bạn sinh ra không phải để ngủ với mắt mở.</p>
+        </div>
+        <div class="article-closing reveal">Câu hỏi để bắt đầu: <em>Bước nhỏ nhất mà bạn có thể làm ngay hôm nay — không phải bước "đúng", không phải bước "hoàn hảo", mà chỉ là một bước có thể quan sát được kết quả trong vòng 48 giờ — là gì?</em> Chỉ một bước đó thôi.</div>
+        <div class="article-cta reveal">
+          <div class="cta-eyebrow">Muốn tháo gỡ vòng lặp này?</div>
+          <p class="cta-question">Tầm nhìn của bạn không thiếu sức mạnh.<br/>Nó chỉ đang chờ được tiếp đất.</p>
+          <div class="cta-btns">
+            <a href="https://www.quantumrebirth.io.vn/" target="_blank" class="btn-ip">Quantum Rebirth OS →</a>
+            <a href="diagnostic.html" class="btn-is">Làm lại OS Audit ↗</a>
+          </div>
+        </div>
+      </div>
+    </article>
 
-  <script>
-    gsap.registerPlugin(ScrollTrigger);
-    gsap.utils.toArray('.reveal').forEach(function(el) {
-      gsap.fromTo(el,
-        { opacity: 0, y: 28 },
-        { opacity: 1, y: 0, duration: 0.85, ease: 'power4.out',
-          scrollTrigger: { trigger: el, start: 'top 88%', toggleActions: 'play none none none' }
-        }
-      );
+    <!-- ── Bài 4 ── -->
+    <article id="art-4" class="insight-article" style="display:none">
+      <div class="article-inner">
+        <div class="overlay-intro">
+          <p>Kết quả của bạn chỉ ra một điều khó để thừa nhận: bạn đang thành công theo một kịch bản mà bạn không còn viết nữa. Cái trống rỗng bạn đang cảm thấy không phải là vô lý — nó là dấu hiệu rằng có phần nào đó của bạn đang cố gọi bạn về lại chính mình.</p>
+        </div>
+        <div class="article-tag reveal">Nhóm 04 · Tù Nhân Thành Công</div>
+        <h2 class="article-title reveal">Bẫy Phiên Bản Cũ</h2>
+        <p class="article-mechanism reveal">Cơ chế: Thành công theo kịch bản không còn là của mình — trống rỗng dù đủ điều kiện</p>
+        <div class="loop-map reveal">
+          <div class="loop-map-label">Cơ chế vòng lặp · Nhóm 04</div>
+          <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+            <rect x="10" y="15" width="110" height="44" rx="4" fill="none" stroke="#C5A880" stroke-width="1.2"/><text x="65" y="33" text-anchor="middle" font-family="Inter,sans-serif" font-size="10" fill="#3E2723" font-weight="500">Thành công</text><text x="65" y="48" text-anchor="middle" font-family="Inter,sans-serif" font-size="10" fill="#3E2723" font-weight="500">phiên bản cũ</text>
+            <rect x="200" y="15" width="110" height="44" rx="4" fill="none" stroke="#C5A880" stroke-width="1.2"/><text x="255" y="33" text-anchor="middle" font-family="Inter,sans-serif" font-size="10" fill="#3E2723" font-weight="500">Kỳ vọng</text><text x="255" y="48" text-anchor="middle" font-family="Inter,sans-serif" font-size="10" fill="#3E2723" font-weight="500">tiếp tục leo cao</text>
+            <rect x="200" y="145" width="110" height="44" rx="4" fill="none" stroke="#C5A880" stroke-width="1.2"/><text x="255" y="163" text-anchor="middle" font-family="Inter,sans-serif" font-size="10" fill="#3E2723" font-weight="500">Trống rỗng</text><text x="255" y="178" text-anchor="middle" font-family="Inter,sans-serif" font-size="10" fill="#3E2723" font-weight="500">dù đủ điều kiện</text>
+            <rect x="10" y="145" width="110" height="44" rx="4" fill="none" stroke="#C5A880" stroke-width="1.2"/><text x="65" y="163" text-anchor="middle" font-family="Inter,sans-serif" font-size="10" fill="#3E2723" font-weight="500">Thêm mục tiêu</text><text x="65" y="178" text-anchor="middle" font-family="Inter,sans-serif" font-size="10" fill="#3E2723" font-weight="500">để lấp đầy</text>
+            <line x1="120" y1="37" x2="192" y2="37" stroke="#C5A880" stroke-width="1.4" marker-end="url(#ag)"/><line x1="255" y1="59" x2="255" y2="137" stroke="#C5A880" stroke-width="1.4" marker-end="url(#ag)"/><line x1="200" y1="167" x2="128" y2="167" stroke="#C5A880" stroke-width="1.4" marker-end="url(#ag)"/><line x1="65" y1="145" x2="65" y2="67" stroke="#C5A880" stroke-width="1.4" marker-end="url(#ag)"/>
+            <text x="160" y="105" text-anchor="middle" font-family="Inter,sans-serif" font-size="8.5" fill="#C5A880" opacity=".5" letter-spacing="2">VÒNG LẶP</text>
+          </svg>
+        </div>
+        <div class="article-body reveal">
+          <p>Nhìn từ bên ngoài, cuộc sống của bạn không có gì để phàn nàn. Bạn có công việc tốt, hoặc doanh nghiệp đang chạy, hoặc thu nhập đủ để người khác gật đầu tán thưởng. Bạn đã làm được những thứ mà trước đây bạn nói mình muốn làm. Và chính vì vậy, cái cảm giác trống rỗng thỉnh thoảng xuất hiện trong ngực mới khó lý giải đến vậy — vì bạn không có lý do hợp lý nào để cảm thấy như thế.</p>
+          <p>Bạn đã thử tự nhủ mình phải biết ơn hơn. Bạn đã đọc về những người khó khăn hơn mình. Bạn biết về mặt lý trí rằng mình may mắn. Nhưng biết và cảm thấy là hai thứ khác nhau — và phần cảm thấy thì vẫn có lúc nhìn vào thứ mình đã xây dựng với con mắt của một người đang nhìn vào ngôi nhà của người khác.</p>
+          <p>Đây là loại mã độc khó nhận ra nhất, vì nó ẩn sau thành công. Người ta thường nghĩ vấn đề là bạn cần thêm — thêm thành tích, thêm mục tiêu lớn hơn, thêm thứ để theo đuổi. Thế là bạn leo cao hơn. Và cái cảm giác trống rỗng vẫn ở đó, chỉ ở một vị trí cao hơn một chút.</p>
+          <p>Điều thực sự đang xảy ra là thế này: bạn đã đạt được những gì bạn muốn — nhưng là những gì <em>phiên bản cũ</em> của bạn muốn, được định nghĩa bởi những tiêu chuẩn của người khác, trong một giai đoạn cuộc đời mà bạn không còn là chính mình nữa. Danh tính bạn đang vận hành hiện tại đã được viết ra từ nhiều năm trước — khi bạn cần chứng minh điều gì đó, khi bạn đang chạy khỏi điều gì đó, khi định nghĩa "thành công" của bạn được tạo ra bởi nỗi sợ nhiều hơn là bởi khát vọng thật sự.</p>
+          <p>Nhà tâm lý học Dan McAdams, người nghiên cứu về narrative identity tại Northwestern University, cho rằng mỗi người chúng ta sống theo một câu chuyện về chính mình — và khi cuộc sống thực tế không còn khớp với câu chuyện đó nữa, chúng ta cảm thấy mất phương hướng ngay cả khi mọi thứ bên ngoài đang "tốt". Bạn không trống rỗng vì thiếu thành tích. Bạn trống rỗng vì câu chuyện bạn đang sống không còn là câu chuyện của bạn nữa.</p>
+          <p>Tôi gọi đây là <strong>Bẫy Phiên Bản Cũ</strong>: khi bạn tiếp tục vận hành theo một danh tính và một bộ định nghĩa thành công đã lỗi thời, không còn phản ánh con người bạn thực sự muốn là — và mỗi ngày tiếp tục đi theo hướng đó là một ngày bạn đi xa hơn khỏi chính mình.</p>
+          <p>Điều tôi muốn nói với bạn không phải là "hãy từ bỏ tất cả những gì bạn đã xây dựng". Mà là: có lẽ đã đến lúc viết lại câu chuyện — không phải xóa đi những chương cũ, mà để những chương cũ là nền tảng cho một câu chuyện mới, được chính bạn viết ra lần này, từ một nơi rõ ràng hơn trong lòng.</p>
+        </div>
+        <div class="article-closing reveal">Câu hỏi để bắt đầu: <em>Nếu không ai biết và không ai phán xét, bạn muốn dành ba năm tới để xây dựng điều gì?</em> Không phải điều bạn "nên" muốn. Điều bạn thực sự muốn.</div>
+        <div class="article-cta reveal">
+          <div class="cta-eyebrow">Muốn tháo gỡ vòng lặp này?</div>
+          <p class="cta-question">Câu chuyện phiên bản cũ đã đưa bạn đến đây.<br/>Câu chuyện tiếp theo — bạn tự viết.</p>
+          <div class="cta-btns">
+            <a href="https://www.quantumrebirth.io.vn/" target="_blank" class="btn-ip">Quantum Rebirth OS →</a>
+            <a href="diagnostic.html" class="btn-is">Làm lại OS Audit ↗</a>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <!-- ── Bài 5 ── -->
+    <article id="art-5" class="insight-article" style="display:none">
+      <div class="article-inner">
+        <div class="overlay-intro">
+          <p>Kết quả của bạn cho thấy bạn đang đứng trước một công trường rất rõ ràng trong đầu — và đứng im. Không phải vì thiếu năng lực. Mà vì một phần nào đó bên trong bạn đang bảo vệ bạn khỏi khoảng cách giữa bản vẽ và thực tế. Đây là lúc để hiểu cơ chế đó — không phải để đánh bại nó, mà để ngừng để nó chạy trong bóng tối.</p>
+        </div>
+        <div class="article-tag reveal">Nhóm 05 · Bản Vẽ Hoàn Hảo, Công Trường Trống</div>
+        <h2 class="article-title reveal">Mã Chờ Điều Kiện<br/>Hoàn Hảo</h2>
+        <p class="article-mechanism reveal">Cơ chế: Hành động bị trì hoãn vĩnh viễn — "đủ tốt" là ngưỡng không có địa chỉ cố định</p>
+        <div class="loop-map reveal">
+          <div class="loop-map-label">Cơ chế vòng lặp · Nhóm 05</div>
+          <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+            <rect x="10" y="15" width="110" height="44" rx="4" fill="none" stroke="#C5A880" stroke-width="1.2"/><text x="65" y="33" text-anchor="middle" font-family="Inter,sans-serif" font-size="10" fill="#3E2723" font-weight="500">Tiêu chuẩn</text><text x="65" y="48" text-anchor="middle" font-family="Inter,sans-serif" font-size="10" fill="#3E2723" font-weight="500">phải hoàn hảo</text>
+            <rect x="200" y="15" width="110" height="44" rx="4" fill="none" stroke="#C5A880" stroke-width="1.2"/><text x="255" y="33" text-anchor="middle" font-family="Inter,sans-serif" font-size="10" fill="#3E2723" font-weight="500">Chưa đủ điều</text><text x="255" y="48" text-anchor="middle" font-family="Inter,sans-serif" font-size="10" fill="#3E2723" font-weight="500">kiện để bắt đầu</text>
+            <rect x="200" y="145" width="110" height="44" rx="4" fill="none" stroke="#C5A880" stroke-width="1.2"/><text x="255" y="163" text-anchor="middle" font-family="Inter,sans-serif" font-size="10" fill="#3E2723" font-weight="500">Nghiên cứu,</text><text x="255" y="178" text-anchor="middle" font-family="Inter,sans-serif" font-size="10" fill="#3E2723" font-weight="500">tinh chỉnh thêm</text>
+            <rect x="10" y="145" width="110" height="44" rx="4" fill="none" stroke="#C5A880" stroke-width="1.2"/><text x="65" y="163" text-anchor="middle" font-family="Inter,sans-serif" font-size="10" fill="#3E2723" font-weight="500">Không ra tay</text><text x="65" y="178" text-anchor="middle" font-family="Inter,sans-serif" font-size="10" fill="#3E2723" font-weight="500">— tiềm năng nguyên vẹn</text>
+            <line x1="120" y1="37" x2="192" y2="37" stroke="#C5A880" stroke-width="1.4" marker-end="url(#ag)"/><line x1="255" y1="59" x2="255" y2="137" stroke="#C5A880" stroke-width="1.4" marker-end="url(#ag)"/><line x1="200" y1="167" x2="128" y2="167" stroke="#C5A880" stroke-width="1.4" marker-end="url(#ag)"/><line x1="65" y1="145" x2="65" y2="67" stroke="#C5A880" stroke-width="1.4" marker-end="url(#ag)"/>
+            <text x="160" y="105" text-anchor="middle" font-family="Inter,sans-serif" font-size="8.5" fill="#C5A880" opacity=".5" letter-spacing="2">VÒNG LẶP</text>
+          </svg>
+        </div>
+        <div class="article-body reveal">
+          <p>Trong đầu bạn, mọi thứ rất rõ ràng. Bạn thấy nó — cái version hoàn chỉnh của điều bạn muốn tạo ra, kết quả bạn muốn đạt được, con người bạn muốn trở thành. Nó đẹp. Nó logic. Nó được nghĩ kỹ từ đầu đến cuối. Và chính vì nó quá rõ ràng trong đầu, việc nhìn vào thực tế hiện tại — thô ráp, chưa hoàn chỉnh, còn thiếu quá nhiều thứ — lại càng khiến bạn chần chừ hơn.</p>
+          <p>Bạn muốn bắt đầu khi mọi thứ đã sẵn sàng. Khi bạn có đủ kiến thức, đủ nguồn lực, đủ thời gian, đủ sự tự tin. Khi điều kiện đủ tốt để những gì bạn làm ra xứng đáng với hình ảnh trong đầu. Vấn đề là "đủ" không bao giờ đến — không phải vì thực tế quá tệ, mà vì cột mốc "đủ" cứ tự động dịch chuyển mỗi khi bạn gần chạm tới nó.</p>
+          <p>Người xung quanh thường nói với bạn rằng hãy "cứ làm đi", rằng "done is better than perfect". Bạn biết điều đó. Bạn đã nghe nó đủ nhiều lần để có thể nói lại cho người khác nghe. Nhưng biết và làm được là hai chuyện — và mỗi lần bạn cố ép mình "cứ làm đi", có thứ gì đó bên trong phản kháng lại, và bạn lại quay về bản vẽ, lại tinh chỉnh thêm, lại nghiên cứu thêm một chút nữa.</p>
+          <p>Thứ đang giữ bạn lại không phải là cầu toàn theo nghĩa thông thường. Đó là một cơ chế bảo vệ sâu hơn: nếu bạn không bắt đầu, bạn không thể thất bại. Và nếu bạn không thể thất bại, bạn được bảo toàn — cả thứ quan trọng hơn thành công hay thất bại: <em>hình ảnh về con người mình có thể là</em>. Một khi bạn ra tay và kết quả không bằng bản vẽ trong đầu, bạn phải đối mặt với khoảng cách giữa con người bạn nghĩ mình là và con người bạn thực sự đang là. Và bộ não của bạn, vốn rất giỏi bảo vệ sự ổn định tâm lý, coi khoảng cách đó là mối đe dọa.</p>
+          <p>Brené Brown, qua hơn hai mươi năm nghiên cứu về tổn thương và lòng can đảm, nhận ra rằng cầu toàn không phải là mục tiêu cao đẹp — nó là một chiếc áo giáp mà chúng ta mặc để tránh khỏi sự phán xét, kể cả sự phán xét của chính mình. Cầu toàn không nói: "Tôi muốn làm tốt." Nó nói: "Tôi sợ bị thấy là không đủ tốt."</p>
+          <p>Tôi gọi đây là <strong>Mã Chờ Điều Kiện Hoàn Hảo</strong>: một vòng lặp mà trong đó hành động bị trì hoãn vô thời hạn vì não đã cài điều kiện "phải đủ tốt trước khi bắt đầu" — và "đủ tốt" là một ngưỡng không có địa chỉ cố định.</p>
+          <p>Thứ tôi muốn chia sẻ với bạn không phải là "hạ thấp tiêu chuẩn". Tiêu chuẩn cao là điều tốt — nhưng chỉ khi nó phục vụ quá trình, không phải khi nó trở thành cái cớ để tránh quá trình. Bản vẽ đẹp nhất chưa bao giờ tự xây được công trình. Và công trình thô ráp đầu tiên, dù xa với bản vẽ đến đâu, luôn dạy cho bạn nhiều hơn tất cả những giờ ngồi thiết kế cộng lại.</p>
+        </div>
+        <div class="article-closing reveal">Câu hỏi để bắt đầu: <em>Nếu kết quả của bạn chỉ cần đủ tốt để có ích cho một người — chỉ một người thôi — thì bạn có thể bắt đầu hôm nay không?</em> Không phải cho thế giới. Chỉ cho một người.</div>
+        <div class="article-cta reveal">
+          <div class="cta-eyebrow">Muốn tháo gỡ vòng lặp này?</div>
+          <p class="cta-question">Bản vẽ trong đầu bạn đủ tốt rồi.<br/>Công trình đầu tiên đang chờ bạn đặt viên gạch đầu tiên.</p>
+          <div class="cta-btns">
+            <a href="https://www.quantumrebirth.io.vn/" target="_blank" class="btn-ip">Quantum Rebirth OS →</a>
+            <a href="diagnostic.html" class="btn-is">Làm lại OS Audit ↗</a>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <!-- ── Bài 6 ── -->
+    <article id="art-6" class="insight-article" style="display:none">
+      <div class="article-inner">
+        <div class="overlay-intro">
+          <p>Điều bạn đang cảm thấy không phải là sự sụp đổ theo nghĩa tiêu cực. Đây là khoảnh khắc mà một thứ gì đó cũ hơn trong bạn đang được giải thể để nhường chỗ cho thứ thật hơn.</p>
+          <p>Bạn không cần phải hiểu nó ngay bây giờ. Chỉ cần tiếp tục đọc.</p>
+        </div>
+        <div class="article-tag reveal">Nhóm 06 · Kiến Trúc Sư Đang Thức Tỉnh</div>
+        <h2 class="article-title reveal">Sụp Đổ Hàm Sóng<br/>Bắt Buộc</h2>
+        <p class="article-mechanism reveal">Cơ chế: Hệ điều hành cũ đã chạy đến giới hạn thiết kế — sự rõ ràng lạnh lùng xuất hiện như điều kiện bắt buộc của sự trưởng thành</p>
+        <div class="loop-map reveal">
+          <div class="loop-map-label">Cơ chế vòng lặp · Nhóm 06</div>
+          <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+            <rect x="10" y="15" width="110" height="44" rx="4" fill="none" stroke="#C5A880" stroke-width="1.2"/><text x="65" y="33" text-anchor="middle" font-family="Inter,sans-serif" font-size="10" fill="#3E2723" font-weight="500">HĐH cũ chạy</text><text x="65" y="48" text-anchor="middle" font-family="Inter,sans-serif" font-size="10" fill="#3E2723" font-weight="500">đến giới hạn</text>
+            <rect x="200" y="15" width="110" height="44" rx="4" fill="none" stroke="#C5A880" stroke-width="1.2"/><text x="255" y="33" text-anchor="middle" font-family="Inter,sans-serif" font-size="10" fill="#3E2723" font-weight="500">Rõ ràng lạnh:</text><text x="255" y="48" text-anchor="middle" font-family="Inter,sans-serif" font-size="10" fill="#3E2723" font-weight="500">không còn là mình</text>
+            <rect x="200" y="145" width="110" height="44" rx="4" fill="none" stroke="#C5A880" stroke-width="1.2"/><text x="255" y="163" text-anchor="middle" font-family="Inter,sans-serif" font-size="10" fill="#3E2723" font-weight="500">Áp lực vá víu ngay</text><text x="255" y="178" text-anchor="middle" font-family="Inter,sans-serif" font-size="10" fill="#3E2723" font-weight="500">— tìm hướng mới</text>
+            <rect x="10" y="145" width="110" height="44" rx="4" fill="none" stroke="#C5A880" stroke-width="1.2"/><text x="65" y="163" text-anchor="middle" font-family="Inter,sans-serif" font-size="10" fill="#3E2723" font-weight="500">Kéo dài HĐH</text><text x="65" y="178" text-anchor="middle" font-family="Inter,sans-serif" font-size="10" fill="#3E2723" font-weight="500">đã hết hạn</text>
+            <line x1="120" y1="37" x2="192" y2="37" stroke="#C5A880" stroke-width="1.4" marker-end="url(#ag)"/><line x1="255" y1="59" x2="255" y2="137" stroke="#C5A880" stroke-width="1.4" marker-end="url(#ag)"/><line x1="200" y1="167" x2="128" y2="167" stroke="#C5A880" stroke-width="1.4" marker-end="url(#ag)"/><line x1="65" y1="145" x2="65" y2="67" stroke="#C5A880" stroke-width="1.4" marker-end="url(#ag)"/>
+            <text x="160" y="105" text-anchor="middle" font-family="Inter,sans-serif" font-size="8.5" fill="#C5A880" opacity=".5" letter-spacing="2">VÒNG LẶP</text>
+          </svg>
+        </div>
+        <div class="article-body reveal">
+          <p>Không phải lúc mọi thứ đổ vỡ ồn ào. Đôi khi nó đến rất lặng — một buổi tối bạn ngồi một mình, không có deadline nào, không có khủng hoảng nào, và bỗng nhiên nhận ra với một sự bình tĩnh kỳ lạ rằng: cách mình đang sống không còn là mình nữa. Không phải hoảng loạn. Không phải nước mắt. Chỉ là một sự rõ ràng lạnh — và sự rõ ràng đó đáng sợ hơn bất kỳ cơn hoảng loạn nào bạn từng trải qua.</p>
+          <p>Có thể nó đến sau một thất bại lớn. Có thể sau một thành công mà bạn tưởng sẽ thay đổi mọi thứ — nhưng sáng hôm sau thức dậy, lồng ngực vẫn nặng y như cũ. Có thể không có sự kiện cụ thể nào. Chỉ là bạn nhìn vào lịch tuần tới, nhìn vào những thứ mình đã xây, và cái giọng bên trong thì thầm: <em>mình đã đi rất xa — nhưng không chắc đây là hướng mình muốn đi.</em></p>
+          <p>Người xung quanh thường có sẵn chẩn đoán. Bạn kiệt sức — hãy nghỉ ngơi. Bạn trầm cảm — hãy gặp chuyên gia. Bạn khủng hoảng tuổi trung niên — sẽ qua thôi. Coach giao thêm framework. Bạn bè rủ đi du lịch. Và bạn biết, rất rõ, rằng không thứ nào trong số đó chạm được vào thứ đang thực sự xảy ra — vì thứ đang xảy ra không phải là thiếu năng lượng, không phải là cần một kỳ nghỉ. Bạn đã thử hết. Chúng work ba tuần, rồi mọi thứ quay về điểm cũ.</p>
+          <p>Điều thực sự đang xảy ra tinh vi hơn nhiều. Nhà tâm lý học Carl Jung gọi giai đoạn này là <em>individuation</em> — quá trình mà cái tôi cũ, được xây để đáp ứng kỳ vọng của thế giới bên ngoài, phải được giải thể để một bản ngã thật hơn có thể xuất hiện. Ông không coi đây là sự sụp đổ. Ông coi đây là điều kiện bắt buộc của sự trưởng thành thực sự. Và ông lưu ý rằng nó thường xảy ra đúng vào lúc bạn nghĩ mình đã tìm ra câu trả lời — khi hệ điều hành cũ đã đi đến giới hạn mà nó được thiết kế để đi đến.</p>
+          <p>Trong vật lý lượng tử, một hạt tồn tại ở trạng thái chồng chất — nhiều khả năng cùng một lúc — cho đến khi nó bị đo lường bởi thực tế. Lúc đó, tất cả các khả năng còn lại sụp đổ, chỉ còn một. Không phải mất mát. Là hiển lộ.</p>
+          <p>Tôi gọi điều đang xảy ra với bạn là <strong>Sụp Đổ Hàm Sóng Bắt Buộc</strong>: khoảnh khắc mà hệ điều hành được lập trình bởi nỗi sợ, bởi kỳ vọng của người khác, bởi phiên bản bạn nghĩ mình cần phải là — không thể tiếp tục chạy trong thực tại hiện tại của bạn. Nó không sụp đổ vì nó yếu. Nó sụp đổ vì <em>bạn đã lớn khỏi nó.</em></p>
+          <p>Thứ khó nhất không phải là chịu đựng giai đoạn này. Mà là chống lại sự thôi thúc phải vá víu ngay — tìm một hướng mới, một mục tiêu mới, một framework mới để lấp đầy khoảng trống. Sự thôi thúc đó đến từ phần não đã quen với việc làm hơn là là. Nó không chịu được sự mơ hồ. Nhưng hàm sóng cần thời gian để sụp đổ hoàn toàn trước khi cái mới có thể xuất hiện. Vá víu quá sớm chỉ kéo dài thêm thời gian bạn phải sống trong một hệ thống đã hết hạn.</p>
+          <p>Đây không phải điểm cuối. Đây là điểm kỳ dị — nơi mà vật lý của cuộc đời bạn thay đổi hoàn toàn. Và người duy nhất có thể đi qua nó không phải là phiên bản cũ của bạn.</p>
+        </div>
+        <div class="article-closing reveal">Câu hỏi để bắt đầu: <em>Nếu bỏ qua áp lực phải biết mình đi đâu tiếp theo — điều gì, trong sâu thẳm nhất, đang bắt đầu trở nên rõ ràng với bạn về con người bạn thực sự muốn là?</em></div>
+        <div class="article-cta reveal">
+          <div class="cta-eyebrow">Muốn tháo gỡ vòng lặp này?</div>
+          <p class="cta-question">Hàm sóng của bạn đang sụp đổ.<br/>Đây không phải khủng hoảng — đây là điều kiện của sự hiển lộ.</p>
+          <div class="cta-btns">
+            <a href="https://www.quantumrebirth.io.vn/" target="_blank" class="btn-ip">Quantum Rebirth OS →</a>
+            <a href="diagnostic.html" class="btn-is">Làm lại OS Audit ↗</a>
+          </div>
+        </div>
+      </div>
+    </article>
+
+  </div><!-- /#art-view -->
+
+</main>
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <p class="footer-brand">Jamesidentity</p>
+    <p class="footer-tagline">Kiến trúc sư ý thức — không phải huấn luyện viên động lực.</p>
+    <nav class="footer-nav">
+      <a href="diagnostic.html">OS Audit</a>
+      <a href="https://www.quantumrebirth.io.vn/" target="_blank">Quantum Rebirth OS</a>
+    </nav>
+    <p class="footer-copy">© 2026 Jamesidentity. Bảo lưu mọi quyền.</p>
+  </div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<noscript><style>.reveal{opacity:1!important;transform:none!important}</style></noscript>
+<script>
+(function () {
+  'use strict';
+
+  var params    = new URLSearchParams(window.location.search);
+  var artNum    = params.get('a');
+  var overlayOn = params.get('overlay') === '1';
+
+  if (artNum) {
+    // ── Article view ──────────────────────────────────────────────
+    var idx = document.getElementById('idx-view');
+    var art = document.getElementById('art-view');
+    var target = document.getElementById('art-' + artNum);
+
+    if (idx) idx.style.display = 'none';
+    if (art) art.style.display = 'block';
+
+    if (target) {
+      target.style.display = 'block';
+      // Show overlay intro if coming from diagnostic
+      if (overlayOn) {
+        var intro = target.querySelector('.overlay-intro');
+        if (intro) intro.style.display = 'block';
+      }
+      // Make article reveals instantly visible so GSAP only animates below-fold elements
+      target.querySelectorAll('.reveal').forEach(function (el) {
+        el.style.opacity = '1';
+        el.style.transform = 'none';
+      });
+    }
+  }
+
+  // ── GSAP init ─────────────────────────────────────────────────
+  if (typeof gsap === 'undefined') {
+    document.documentElement.classList.remove('js');
+    return;
+  }
+
+  gsap.registerPlugin(ScrollTrigger);
+  gsap.utils.toArray('.reveal').forEach(function (el) {
+    // Skip elements already made visible by article-view logic above
+    if (el.style.opacity === '1') return;
+    gsap.to(el, {
+      opacity: 1, y: 0, duration: 0.8, ease: 'power2.out',
+      scrollTrigger: { trigger: el, start: 'top 88%', toggleActions: 'play none none none', once: true }
     });
-  </script>
+  });
 
+})();
+</script>
 </body>
 </html>
-
