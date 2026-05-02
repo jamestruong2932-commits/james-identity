@@ -106,6 +106,34 @@
     .archive-title{font-family:var(--font-serif);font-size:clamp(20px,3vw,30px);font-weight:700;color:var(--color-heading);margin-bottom:40px}
     .archive-placeholder{border:1px dashed rgba(197,168,128,.45);padding:44px 32px;text-align:center}
     .archive-placeholder p{font-family:'EB Garamond',Georgia,serif;font-size:17px;line-height:1.9;color:var(--color-muted);font-style:italic}
+    /* ── Archive cards ───────────────────────────────────────────── */
+    .archive-list{display:flex;flex-direction:column;gap:1px;border-top:1px solid var(--color-border-gold)}
+    .archive-card{display:grid;grid-template-columns:1fr auto;grid-template-rows:auto auto auto;column-gap:28px;row-gap:0;padding:28px 0;border-bottom:1px solid var(--color-border-soft);text-decoration:none;transition:background .2s}
+    .archive-card:hover .archive-card-title{color:var(--color-accent)}
+    .archive-card-meta{grid-column:1/2;display:flex;gap:16px;align-items:center;margin-bottom:10px}
+    .archive-card-tag{font-family:var(--font-sans);font-size:10px;font-weight:500;letter-spacing:.22em;text-transform:uppercase;color:var(--color-accent)}
+    .archive-card-date{font-family:var(--font-sans);font-size:11px;color:var(--color-muted)}
+    .archive-card-title{grid-column:1/2;font-family:var(--font-serif);font-size:clamp(18px,2.5vw,22px);font-weight:700;color:var(--color-heading);line-height:1.25;margin-bottom:10px;transition:color .2s}
+    .archive-card-desc{grid-column:1/2;font-family:var(--font-sans);font-size:13px;line-height:1.75;color:var(--color-muted)}
+    .archive-card-link{grid-column:2/3;grid-row:1/4;align-self:center;font-family:var(--font-sans);font-size:13px;color:var(--color-accent);white-space:nowrap;padding-left:8px}
+    @media(max-width:540px){.archive-card{grid-template-columns:1fr}.archive-card-link{grid-column:1/2;grid-row:auto;margin-top:14px;padding-left:0}}
+    /* ── Module blocks ───────────────────────────────────────────── */
+    .module-section{margin:52px 0 40px}
+    .module-label{font-family:var(--font-sans);font-size:10px;font-weight:500;letter-spacing:.22em;text-transform:uppercase;color:var(--color-muted);margin-bottom:36px}
+    .module-block{margin-bottom:44px;padding-bottom:44px;border-bottom:1px solid var(--color-border-soft)}
+    .module-block:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0}
+    .module-header{display:grid;grid-template-columns:48px 1fr;column-gap:16px;align-items:end;margin-bottom:18px}
+    .module-num{font-family:var(--font-serif);font-size:40px;font-weight:900;color:var(--color-border-gold-hi);line-height:1;letter-spacing:-.02em}
+    .module-meta{display:flex;flex-direction:column;gap:4px}
+    .module-tag{font-family:var(--font-sans);font-size:10px;font-weight:500;letter-spacing:.2em;text-transform:uppercase;color:var(--color-accent)}
+    .module-title{font-family:var(--font-serif);font-size:19px;font-weight:700;color:var(--color-heading);line-height:1.25}
+    .module-body{font-family:'EB Garamond',Georgia,serif;font-size:17.5px;line-height:1.88;color:#4A413C}
+    .module-body p{margin-bottom:18px}
+    .module-body p:last-child{margin-bottom:0}
+    .module-body em{font-style:italic;color:var(--color-heading)}
+    .module-body strong{font-weight:600;color:var(--color-heading);font-style:normal}
+    .module-tool{font-family:var(--font-sans);font-size:13px;line-height:1.8;color:var(--color-muted);margin-top:20px;padding:16px 18px;background:rgba(197,168,128,.05);border-left:2px solid var(--color-border-gold)}
+    .module-tool strong{font-weight:600;color:var(--color-heading);font-family:var(--font-sans)}
     /* ── Reveal animation ────────────────────────────────────────── */
     @media(max-width:640px){
       .article-inner,.article-back-bar{padding-left:20px;padding-right:20px}
@@ -217,8 +245,16 @@
       <div class="archive-inner">
         <p class="archive-eyebrow reveal">The Archive</p>
         <h2 class="archive-title reveal">Latest Insights</h2>
-        <div class="archive-placeholder reveal">
-          <p>Coming Soon: Deep dives into the Quantum system</p>
+        <div class="archive-list reveal">
+          <a href="insight.html?a=7" class="archive-card">
+            <div class="archive-card-meta">
+              <span class="archive-card-tag">Quantum Rebirth OS</span>
+              <span class="archive-card-date">Tháng 5, 2026</span>
+            </div>
+            <h3 class="archive-card-title">Hệ Thống Tái Sinh Lượng Tử: Từ Kiến Trúc Sư Đến Nhà Giả Kim Thuật</h3>
+            <p class="archive-card-desc">7 module gỡ bỏ Brule và cài đặt lại hệ điều hành — từ giải thể con người cũ đến hiện thân phiên bản tiếp theo. Tại sao Atomic Habits chưa đủ và tầng nào mới thực sự thay đổi.</p>
+            <span class="archive-card-link">Đọc bài →</span>
+          </a>
         </div>
       </div>
     </section>
@@ -492,6 +528,200 @@
           <div class="cta-btns">
             <a href="https://www.quantumrebirth.io.vn/" target="_blank" class="btn-ip">Quantum Rebirth OS →</a>
             <a href="diagnostic.html" class="btn-is">Làm lại OS Audit ↗</a>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <!-- ── Bài 7 — Giới thiệu Quantum Rebirth OS ── -->
+    <article id="art-7" class="insight-article" style="display:none">
+      <div class="article-inner">
+        <div class="article-tag reveal">Quantum Rebirth OS · Giới Thiệu</div>
+        <h2 class="article-title reveal">Hệ Thống Tái Sinh Lượng Tử:<br/>Từ Kiến Trúc Sư Đến Nhà Giả Kim Thuật</h2>
+        <p class="article-mechanism reveal">Cơ chế: 7 module — Giải thể con người cũ. Thiết kế bản thiết kế mới. Hiện thân phiên bản tiếp theo.</p>
+        <div class="article-body reveal">
+          <p>Có một điều kỳ lạ xảy ra với những người thông minh và nghiêm túc nhất.</p>
+          <p>Họ đọc nhiều. Họ làm nhiều. Họ biết các khái niệm như tư duy phát triển, Atomic Habits, luật hấp dẫn. Họ đã thử thiền. Đã viết journal. Đã lên kế hoạch đổi mới bản thân ít nhất ba lần.</p>
+          <p>Và họ vẫn thấy mình — theo một cách nào đó — vẫn là con người cũ.</p>
+          <p>Không phải vì họ thiếu kỷ luật. Không phải vì họ lười. Mà vì tất cả những thứ họ đã thử đều vận hành ở <em>tầng sai.</em></p>
+        </div>
+        <div class="article-body reveal">
+          <p>Thay đổi hành vi là tầng ngoài cùng. Hiệu quả trong ba tuần, rồi ý chí cạn kiệt và mọi thứ quay về điểm cũ. Bởi vì hành vi là triệu chứng — không phải nguồn gốc.</p>
+          <p>Nguồn gốc nằm sâu hơn. Nó nằm ở tầng danh tính.</p>
+          <p>Theo Dr. Joe Dispenza, 95% hành vi của chúng ta được điều khiển bởi chương trình tiềm thức — không phải ý chí. Những chương trình này được ghi vào não ở sóng Theta (0–7 tuổi), khi bộ lọc nhận thức chưa hình thành. Mọi tổn thương, mọi vắng mặt, mọi thông điệp ngầm về tiền bạc và giá trị bản thân — đều được hấp thụ trực tiếp vào phần mềm nền. Không qua xét duyệt. Không có cách từ chối.</p>
+          <p>Đó là lý do tại sao bạn có thể biết chính xác mình cần làm gì — và vẫn không làm được. Bạn đang chạy phần mềm tương lai trên phần cứng đã nhiễm mã độc từ quá khứ.</p>
+        </div>
+        <div class="article-body reveal">
+          <p><strong>Quantum Rebirth OS được thiết kế để giải quyết đúng tầng đó.</strong></p>
+          <p>Không phải thêm thói quen mới vào danh tính cũ. Mà là giải thể danh tính cũ — và thiết kế lại từ gốc rễ. Hệ thống gồm 7 module, theo một chuỗi không thể đảo ngược.</p>
+        </div>
+        <div class="module-section">
+          <p class="module-label">Lộ trình 21 ngày · 7 Module</p>
+
+          <!-- Module 00 -->
+          <div class="module-block reveal">
+            <div class="module-header">
+              <span class="module-num">00</span>
+              <div class="module-meta">
+                <span class="module-tag">The Awakening Invitation</span>
+                <h3 class="module-title">Thức Tỉnh — Lời Mời Nhận Ra</h3>
+              </div>
+            </div>
+            <div class="module-body">
+              <p>Có một nhà tù không có tường.</p>
+              <p>Không ai giải thích cho bạn về Culturescape — thế giới quan văn hóa mà chúng ta được sinh ra vào trong đó. Những quy tắc về thành công trông như thế nào, tình yêu cần phải cảm thấy ra sao, và một người đàn ông hay phụ nữ "tốt" cần làm gì. Những quy tắc này không ai viết ra. Nhưng chúng vận hành ngầm trong từng quyết định của bạn.</p>
+              <p>Vishen Lakhiani gọi chúng là Brules — Bullshit Rules. Không phải vì chúng xấu, mà vì chúng <em>không phải của bạn.</em> Bạn thừa hưởng từ cha mẹ, từ văn hóa, từ truyền thống mà không ai hỏi bạn có muốn không.</p>
+              <p>Module 0 làm một việc duy nhất: đặt tên cho cái nhà tù đó. Bởi vì bạn không thể phá vỡ thứ mà bạn chưa nhìn thấy.</p>
+              <p>Khi đặt tên xong — điều đầu tiên xảy ra không phải là tức giận. Đó là sự nhẹ nhõm. Lồng ngực hạ xuống. Một thứ căng cứng từ lâu bắt đầu giãn ra. <em>Tôi không bị hỏng. Tôi chỉ bị lập trình sai.</em></p>
+              <p>Sự khác biệt đó không nhỏ. Nó là nền móng của toàn bộ hệ thống — vì bạn không thể xây nhà mới khi vẫn tin rằng vấn đề là bạn.</p>
+            </div>
+            <div class="module-tool">
+              <strong>Điểm chạm thực tế:</strong> Quan sát một vật trong nhà mà bạn mua để "vừa lòng người khác" hơn là vì bạn thực sự muốn. Cảm giác nặng nề nhẹ khi nhìn nó — đó là bằng chứng vật lý đầu tiên của một Brule đang vận hành.
+            </div>
+          </div>
+
+          <!-- Module 01 -->
+          <div class="module-block reveal">
+            <div class="module-header">
+              <span class="module-num">01</span>
+              <div class="module-meta">
+                <span class="module-tag">The Deconstruction</span>
+                <h3 class="module-title">Giải Thể Con Người Cũ</h3>
+              </div>
+            </div>
+            <div class="module-body">
+              <p>Não bộ là cơ quan duy nhất trong cơ thể có thể tự quan sát chính mình — và vẫn chạy vòng lặp cũ trong khi làm điều đó.</p>
+              <p>Đây là lý do tại sao "nhận thức" thôi chưa đủ. Bạn có thể biết một niềm tin giới hạn là sai — và vẫn hành động theo nó mỗi ngày. Dr. Joe Dispenza gọi đây là <strong>cơn nghiện cảm xúc:</strong> vòng lặp Suy nghĩ → Cảm xúc → Hóa chất cơ thể → Nghiện. Cơ thể chờ đợi tín hiệu hóa học quen thuộc. Khi không có — nó tạo ra tình huống để có.</p>
+              <p>Module 1 gồm ba công cụ làm việc theo thứ tự không thể đảo ngược.</p>
+            </div>
+            <div class="module-tool">
+              <strong>Bài Kiểm Toán Lịch Sử:</strong> Truy tìm sự kiện cụ thể đã hình thành niềm tin cốt lõi. Không để đổ lỗi — để tìm địa chỉ file. Bạn không thể xóa thứ không biết nằm ở thư mục nào.<br/><br/>
+              <strong>Bản Đồ Nhà Tù:</strong> Liệt kê và đặt tên các Brule đang vận hành. Gọi tên "Cảm xúc Sinh tồn" chủ đạo — sợ hãi, tủi hổ, thiếu thốn, hay vô giá trị. Biến nỗi sợ mơ hồ thành đối tượng cụ thể để xử lý.<br/><br/>
+              <strong>Tha Thứ Chủ Động:</strong> Không phải hành động đạo đức. Đó là việc rút phích cắm của một thiết bị đang tiêu tốn điện năng vô ích — để dồn toàn bộ công suất cho việc xây dựng. Sự oán giận giữ não ở sóng Beta cao (stress). Tha thứ đưa não về Alpha — trạng thái duy nhất mà phần mềm mới có thể được cài đặt.
+            </div>
+          </div>
+
+          <!-- Module 02 -->
+          <div class="module-block reveal">
+            <div class="module-header">
+              <span class="module-num">02</span>
+              <div class="module-meta">
+                <span class="module-tag">The Blueprint</span>
+                <h3 class="module-title">Bản Thiết Kế Lượng Tử</h3>
+              </div>
+            </div>
+            <div class="module-body">
+              <p>Hầu hết người thiết kế mục tiêu đều mắc một lỗi tinh vi: họ viết từ góc nhìn của con người hiện tại đang nhìn về tương lai.</p>
+              <p><em>"Tôi muốn trở thành..."</em> — <em>"Tôi hy vọng sẽ..."</em> — <em>"Mục tiêu của tôi là..."</em></p>
+              <p>Mọi câu đó đều xác nhận một điều: bạn chưa là người đó. Và tiềm thức đọc đúng điều đó — rồi hành động để duy trì sự thật đó.</p>
+              <p>Module 2 dạy một cú đảo ngược hoàn toàn. <strong>Bản Thiết Kế Lượng Tử</strong> không phải danh sách mục tiêu. Đó là một "Ký ức về Tương lai" — được viết ở thì hiện tại, từ góc nhìn của người đã là. <em>"Tôi cảm thấy lồng ngực mở rộng mỗi sáng thức dậy không có alarm. Tôi biết chính xác công việc mình đang tạo ra giá trị gì và cho ai."</em></p>
+              <p>Tiềm thức không phân biệt được thực tại và ký ức đủ sống động. Bản Thiết Kế này không phải lời cầu nguyện của kẻ thiếu thốn đang mong muốn — đó là mệnh lệnh trực tiếp cho hệ điều hành của bạn.</p>
+            </div>
+            <div class="module-tool">
+              <strong>Bằng chứng khoa học:</strong> Dr. Richard Davidson (Harvard) đo được — chỉ 15 phút/ngày thực hành "Ký ức Tương lai" tạo ra thay đổi cấu trúc vật lý trong não sau 8 tuần. Dựa trên quy luật Hebbian: <em>"Neurons that fire together, wire together."</em> Lặp lại đủ nhiều lần, mạch thần kinh mới trở thành đường cao tốc mặc định.
+            </div>
+          </div>
+
+          <!-- Module 03 -->
+          <div class="module-block reveal">
+            <div class="module-header">
+              <span class="module-num">03</span>
+              <div class="module-meta">
+                <span class="module-tag">The Operations Engine</span>
+                <h3 class="module-title">Cỗ Máy Vận Hành — Giao Thức Hàng Ngày</h3>
+              </div>
+            </div>
+            <div class="module-body">
+              <p>Bạn có thể có bản thiết kế đẹp nhất thế giới — và không bao giờ bước vào trong đó nếu cơ thể không biết cảm giác đó là gì.</p>
+              <p>Module 3 là giao thức đưa trạng thái mới từ trang giấy vào từng tế bào — qua ba giai đoạn mỗi ngày.</p>
+            </div>
+            <div class="module-tool">
+              <strong>Buổi sáng — System Reboot (30–45 phút):</strong> Breathwork nhịp 4-2-4 trong 5–10 phút đưa não vào trạng thái xuất thần — Thùy trán tạm ngưng, bộ lọc phê bình tắt. Tiếp theo: Audio Loop DIY RTT — file ghi âm giọng chính mình, chạy trên nền nhạc Theta. Khi não logic đã ngủ, ngôn ngữ đi thẳng vào hệ điều hành gốc không qua kiểm duyệt. Kết thúc bằng Thiền 6 Giai đoạn: biết ơn, tha thứ, rồi <em>sống trong</em> cảm xúc tương lai — không phải đọc về nó.<br/><br/>
+              <strong>Trong ngày — Pattern Interrupt:</strong> EFT Tapping (gõ huyệt đạo Karate Chop) bất cứ khi nào lồng ngực thắt lại. Hai phút. Câu lệnh: <em>"Dừng lại. Ta đổi kênh."</em> Checkpoint tỉnh thức 3–5 lần/ngày khi chuyển đổi công việc — 60 giây ngắt kết nối, reset về 0.<br/><br/>
+              <strong>Buổi tối — Anchoring:</strong> Evidence Journaling — viết 3 điều nhỏ nhất trong ngày khớp với Bản Thiết Kế. Kích hoạt Hệ Lưới Hoạt Hóa (RAS): não bắt đầu tự động săn tìm bằng chứng của thực tại mới thay vì rủi ro và thiếu thốn.<br/><br/>
+              <strong>Nền khoa học:</strong> Dr. Bruce Lipton (Epigenetics, Stanford) chứng minh cảm xúc trong thiền định gửi tín hiệu hóa học trực tiếp đến gen, bật hoặc tắt biểu hiện di truyền. Bạn không bị giam cầm trong DNA thừa hưởng.
+            </div>
+          </div>
+
+          <!-- Module 04 -->
+          <div class="module-block reveal">
+            <div class="module-header">
+              <span class="module-num">04</span>
+              <div class="module-meta">
+                <span class="module-tag">The River of Change</span>
+                <h3 class="module-title">Dòng Sông Thay Đổi — Quản Trị Hỗn Loạn</h3>
+              </div>
+            </div>
+            <div class="module-body">
+              <p>Có một điều hầu hết khóa học không nói thật với bạn: hành trình thay đổi thực sự có một giai đoạn mà mọi thứ trở nên tồi tệ hơn trước khi tốt hơn.</p>
+              <p>Tâm lý học hành vi gọi đây là <strong>Extinction Burst — Cơn Bùng Phát Dập Tắt.</strong> Khi bạn ngừng cung cấp phần thưởng quen thuộc cho một hành vi cũ, não bộ sẽ tăng cường hành vi đó lên gấp đôi trước khi từ bỏ. Như đứa trẻ khóc to hơn khi bố mẹ không nhượng bộ lần đầu. Đây là sinh học — không phải thất bại.</p>
+              <p>Người bỏ cuộc thường bỏ ở đúng điểm này. Họ cảm thấy "mình đã thử mà không hiệu quả" — trong khi thực ra họ đang ở 80% hành trình và đang thắng.</p>
+            </div>
+            <div class="module-tool">
+              <strong>Tái Định Khung Đau Khổ:</strong> Khi cơn bùng phát đến: <em>"Đây là cơ thể tôi đang thải độc tố cảm xúc cũ. Tôi đang chứng kiến sự trỗi dậy của danh tính mới."</em> Biến tín hiệu đau khổ thành bằng chứng của tiến bộ.<br/><br/>
+              <strong>Ngắt Mạch 60 Giây:</strong> Không cố dập tắt cảm xúc tiêu cực — mà đứng lùi lại quan sát nó từ vị trí Người Quan Sát. <em>"Ta đang xem cơn nghiện cảm xúc cũ đang cố gắng sống sót."</em> Quan sát không phán xét là đủ để phá vỡ vòng lặp. Sau đó: hít thở, đổi kênh, tiếp tục giao thức.
+            </div>
+          </div>
+
+          <!-- Module 05 -->
+          <div class="module-block reveal">
+            <div class="module-header">
+              <span class="module-num">05</span>
+              <div class="module-meta">
+                <span class="module-tag">The Embodiment</span>
+                <h3 class="module-title">Hiện Thân — Sống Như Người Đã Là</h3>
+              </div>
+            </div>
+            <div class="module-body">
+              <p>Đây là module làm rõ sự khác biệt giữa manifestation thất bại và manifestation thật sự.</p>
+              <p>Hầu hết người thực hành vẫn ở trạng thái <em>"Không Là"</em> — họ <em>hình dung</em> chiếc xe, <em>nghĩ về</em> từ "Tự do", <em>mong muốn</em> trạng thái đủ đầy. Mọi câu đó đều phát tín hiệu lượng tử: <em>"Tôi chưa có thứ này."</em> Vũ trụ phản hồi chính xác tần số đó.</p>
+              <p>Trạng thái <strong>"Là"</strong> thì khác hoàn toàn. Bạn không xem phim trong đầu — bạn sống trong cảnh đó. Da thịt tiếp xúc với ghế lái. Tiếng động cơ rung lên. Nụ cười bất chợt xuất hiện không phải vì bạn cố — mà vì cơ thể đã bị "đánh lừa" thành công. Não giải phóng neuropeptides tương ứng. Tim đập nhịp gắn kết. Biểu sinh học thay đổi trong thời gian thực.</p>
+            </div>
+            <div class="module-tool">
+              <strong>Cái Neo Cảm Xúc:</strong> Chọn một từ khóa duy nhất — <em>Tự do, Xứng đáng, An toàn</em> — rồi tìm cảm giác vật lý của nó trong cơ thể. Ở đâu? Ấm hay lạnh? Tim hay bụng? Đắm chìm vào cảm giác đó thay vì khái niệm về nó.<br/><br/>
+              <strong>Cổng Giác Quan:</strong> Chọn một giác quan và đi sâu hoàn toàn. Âm thanh của cảnh tương lai — đủ rõ để giật mình khi mở mắt. Khi một giác quan được kích hoạt đủ mạnh, các giác quan còn lại và cảm xúc tự động đi theo.<br/><br/>
+              <strong>Hành Động Được Truyền Cảm Hứng:</strong> Phân biệt hành động từ tần số <em>Force</em> (nặng nề, áp lực, sợ bỏ lỡ) và <em>Power</em> (nhẹ nhàng, thôi thúc, rõ ràng không cần giải thích). Hành động từ Power thường đến trong khoảnh khắc tĩnh lặng nhất — và hiệu quả theo cách không tỷ lệ với nỗ lực.
+            </div>
+          </div>
+
+          <!-- Module 06 -->
+          <div class="module-block reveal">
+            <div class="module-header">
+              <span class="module-num">06</span>
+              <div class="module-meta">
+                <span class="module-tag">The Infinite Game</span>
+                <h3 class="module-title">Trò Chơi Vô Hạn — Duy Trì Đà Phát Triển</h3>
+              </div>
+            </div>
+            <div class="module-body">
+              <p>21 ngày không phải điểm đến. Đó là điểm mà hệ điều hành mới bắt đầu vận hành đủ mạnh để tự duy trì.</p>
+              <p>Module 6 hoàn thành vòng lặp với ba chuyển hóa cuối cùng.</p>
+              <p><strong>Ý Thức Nhà Sáng Tạo (Creator Consciousness):</strong> Chuyển từ nạn nhân — người mà cuộc sống xảy ra <em>với</em> mình — sang kiến trúc sư — người thiết kế điều kiện để cuộc sống mong muốn tự trồi sinh. Không phải ảo tưởng kiểm soát mọi thứ. Mà là hiểu rằng thực tại bên ngoài chỉ là tấm gương của trạng thái bên trong. Bạn không thay đổi cái gương. Bạn thay đổi khuôn mặt trước gương.</p>
+              <p><strong>Cam Kết Blissipline Trọn Đời:</strong> Hạnh phúc không phải may mắn. Đó là kỷ luật — như đánh răng mỗi sáng. Không phải ép buộc, mà là thiết kế môi trường mà ở đó, sự đồng bộ giữa tim và não là trạng thái nền, không phải ngoại lệ.</p>
+            </div>
+            <div class="module-tool">
+              <strong>Câu Hỏi Bất Khả Thi Tiếp Theo:</strong> Khóa học kết thúc không phải bằng lời chúc tụng — mà bằng một câu hỏi Socratic: <em>"Nếu mọi giới hạn chỉ là giả tưởng của con người cũ — thì phiên bản vĩ đại nhất của bạn đang muốn trải nghiệm điều gì ngay lúc này?"</em> Con người cần sự phát triển liên tục để cảm thấy sống động. Câu hỏi đó là đòn bẩy cho vòng lặp tiếp theo.
+            </div>
+          </div>
+
+        </div>
+        <div class="article-body reveal">
+          <p>Điều làm hệ thống này khác biệt không phải là nội dung. Đó là thứ tự.</p>
+          <p>Hầu hết khóa học tự cải thiện bắt đầu từ Module 2 — thiết kế mục tiêu, lập kế hoạch. Rồi thắc mắc tại sao học viên không áp dụng được. Quantum Rebirth OS bắt đầu từ Module 0 — vì bạn không thể xây nhà mới trên nền móng đã vỡ.</p>
+          <p>Không phải thêm. Mà là tháo gỡ trước. Rồi mới xây lại.</p>
+        </div>
+        <div class="article-body reveal">
+          <p>Tôi là nguyên mẫu đầu tiên của hệ thống này.</p>
+          <p>Không phải lý thuyết. Không phải framework học từ sách. Đây là những gì tôi đã áp dụng trên chính mình — sau đêm kỳ dị mà người tôi yêu nhất rời bỏ, và tôi nhận ra rằng mình không thất bại vì thiếu nỗ lực. Tôi thất bại vì đang sụp đổ lượng tử về đúng kênh mà tiềm thức đã chọn từ năm 7 tuổi.</p>
+          <p>Đơn hàng 17 triệu không đến khi tôi cố gắng hơn. Nó đến khi tôi thay đổi người gửi tin nhắn đó. Đó là bằng chứng tôi mang vào từng module của hệ thống này.</p>
+        </div>
+        <div class="article-closing reveal">Nếu bạn đã từng thử và không giữ được lâu — điều đó không nói về bạn. Nó nói về tầng mà bạn đang can thiệp. <em>Quantum Rebirth OS can thiệp ở tầng sâu hơn.</em></div>
+        <div class="article-cta reveal">
+          <div class="cta-eyebrow">Sẵn sàng gỡ bỏ phần mềm cũ?</div>
+          <p class="cta-question">Khám phá toàn bộ lộ trình 21 ngày<br/>và quyết định cho chính mình.</p>
+          <div class="cta-btns">
+            <a href="https://www.quantumrebirth.io.vn/" target="_blank" class="btn-ip">Quantum Rebirth OS →</a>
+            <a href="diagnostic.html" class="btn-is">Làm OS Audit trước ↗</a>
           </div>
         </div>
       </div>
