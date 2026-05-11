@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="vi">
 <head>
   <meta charset="UTF-8" />
@@ -48,8 +48,149 @@
       },
     }
   </script>
+
+  <!-- Hide body immediately to prevent flash of protected content -->
+  <style>
+    body { visibility: hidden; }
+
+    #auth-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(244, 241, 234, 0.94);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      z-index: 9999;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+
+    .ov-card {
+      background: #fff;
+      border: 1px solid rgba(197, 168, 128, 0.25);
+      border-radius: 4px;
+    }
+
+    .ov-label {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.7rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: #89837f;
+      display: block;
+      margin-bottom: 8px;
+    }
+
+    .ov-input {
+      width: 100%;
+      background: #F4F1EA;
+      border: 1px solid rgba(197, 168, 128, 0.35);
+      border-radius: 2px;
+      padding: 12px 14px;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.95rem;
+      color: #3E2723;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .ov-input:focus { border-color: #C5A880; }
+    .ov-input::placeholder { color: #b8b0a8; }
+
+    .ov-btn {
+      width: 100%;
+      background: #3E2723;
+      color: #F4F1EA;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.8rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      padding: 14px;
+      border: none;
+      border-radius: 2px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .ov-btn:hover { background: #5a3a34; }
+    .ov-btn:disabled { background: #b8b0a8; cursor: default; }
+
+    .ov-error {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.82rem;
+      margin-top: 12px;
+      text-align: center;
+      min-height: 20px;
+    }
+
+    .ov-divider {
+      border: none;
+      border-top: 1px solid rgba(197, 168, 128, 0.2);
+    }
+  </style>
+
+  <!-- Supabase auth check — runs before first paint -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    (function () {
+      const SUPABASE_URL = 'https://fstzbqtkshkynzfffwva.supabase.co';
+      const SUPABASE_ANON_KEY = 'sb_publishable_byyw62DMCZMgF6K9MVEPBQ_7bIRjrr6';
+      const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+      window._supabase = sb;
+      sb.auth.getSession().then(function (result) {
+        document.body.style.visibility = 'visible';
+        if (!result.data.session) {
+          document.getElementById('auth-overlay').style.display = 'flex';
+        } else {
+          document.getElementById('logout-btn').style.display = '';
+        }
+      }).catch(function () {
+        document.body.style.visibility = 'visible';
+        document.getElementById('auth-overlay').style.display = 'flex';
+      });
+    })();
+  </script>
 </head>
 <body>
+
+  <!-- Auth Overlay — shown when not logged in -->
+  <div id="auth-overlay">
+    <div class="w-full max-w-md">
+
+      <div class="text-center mb-10">
+        <p class="font-sans text-xs tracking-widest uppercase mb-4" style="color:#C5A880;letter-spacing:0.22em">Khu vực thành viên</p>
+        <h2 class="font-serif text-3xl" style="color:#3E2723">Đăng nhập</h2>
+        <p class="font-sans text-sm mt-3" style="color:#89837f">Dùng email và mật khẩu được gửi sau khi thanh toán.</p>
+      </div>
+
+      <div class="ov-card p-8">
+        <form id="loginForm" novalidate>
+          <div class="mb-5">
+            <label class="ov-label" for="ov-email">Email</label>
+            <input id="ov-email" type="email" class="ov-input" placeholder="your@email.com" autocomplete="email" required />
+          </div>
+          <div class="mb-6">
+            <label class="ov-label" for="ov-password">Mật khẩu</label>
+            <input id="ov-password" type="password" class="ov-input" placeholder="••••••••" autocomplete="current-password" required />
+          </div>
+          <button type="submit" class="ov-btn" id="submitBtn">Đăng nhập</button>
+          <p class="ov-error" id="errorMsg" style="color:#c0392b"></p>
+        </form>
+
+        <hr class="ov-divider my-6" />
+
+        <div class="flex flex-col items-center gap-3">
+          <button id="forgotBtn" type="button" class="font-sans text-xs" style="color:#C5A880;text-decoration:underline;background:none;border:none;cursor:pointer">
+            Quên mật khẩu?
+          </button>
+          <p class="font-sans text-xs text-center" style="color:#89837f">
+            Chưa có tài khoản? Truy cập <a href="https://www.quantumrebirth.io.vn/" style="color:#C5A880;text-decoration:underline">trang khoá học</a> để đăng ký.
+          </p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
 
   <div id="page-beams" aria-hidden="true">
     <div class="pg-beam"></div><div class="pg-beam"></div>
@@ -60,12 +201,13 @@
   <header class="site-nav">
     <div class="max-w-6xl mx-auto px-6 py-5 flex items-center justify-between">
       <a href="index.html" class="nav-logo">James.identity</a>
-      <nav class="flex gap-8">
+      <nav class="flex gap-8 items-center">
         <a href="about.html"      class="nav-link">About</a>
         <a href="https://www.quantumrebirth.io.vn/" target="_blank" class="nav-link nav-desktop">QROS</a>
         <a href="diagnostic.html" class="nav-link">Chẩn đoán</a>
         <a href="insight.html"    class="nav-link">Insight</a>
         <a href="academy.html"    class="nav-link nav-link--active nav-desktop">Academy</a>
+        <button id="logout-btn" class="nav-link" style="display:none;background:none;border:none;cursor:pointer;padding:0">Đăng xuất</button>
       </nav>
     </div>
   </header>
@@ -205,8 +347,71 @@
         }
       );
     });
+
+    const sb = window._supabase;
+    const loginForm = document.getElementById('loginForm');
+    const submitBtn = document.getElementById('submitBtn');
+    const errorMsg  = document.getElementById('errorMsg');
+    const forgotBtn = document.getElementById('forgotBtn');
+    const logoutBtn = document.getElementById('logout-btn');
+
+    loginForm.addEventListener('submit', async function (e) {
+      e.preventDefault();
+      errorMsg.style.color = '#c0392b';
+      errorMsg.textContent = '';
+
+      const email    = document.getElementById('ov-email').value.trim();
+      const password = document.getElementById('ov-password').value;
+
+      if (!email || !password) {
+        errorMsg.textContent = 'Vui lòng nhập email và mật khẩu.';
+        return;
+      }
+
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Đang đăng nhập...';
+
+      const { error } = await sb.auth.signInWithPassword({ email, password });
+
+      if (error) {
+        errorMsg.textContent = 'Email hoặc mật khẩu không đúng.';
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Đăng nhập';
+      } else {
+        document.getElementById('auth-overlay').style.display = 'none';
+        logoutBtn.style.display = '';
+      }
+    });
+
+    forgotBtn.addEventListener('click', async function () {
+      errorMsg.style.color = '#c0392b';
+      errorMsg.textContent = '';
+      const email = document.getElementById('ov-email').value.trim();
+      if (!email) {
+        errorMsg.textContent = 'Nhập email trước để nhận link đặt lại mật khẩu.';
+        return;
+      }
+
+      forgotBtn.disabled = true;
+      const { error } = await sb.auth.resetPasswordForEmail(email, {
+        redirectTo: window.location.origin + '/academy'
+      });
+      forgotBtn.disabled = false;
+
+      if (error) {
+        errorMsg.textContent = 'Không thể gửi email. Thử lại sau.';
+      } else {
+        errorMsg.style.color = '#3E2723';
+        errorMsg.textContent = 'Đã gửi link đặt lại mật khẩu vào email của bạn.';
+      }
+    });
+
+    logoutBtn.addEventListener('click', async function () {
+      await sb.auth.signOut();
+      logoutBtn.style.display = 'none';
+      document.getElementById('auth-overlay').style.display = 'flex';
+    });
   </script>
 
 </body>
 </html>
-
