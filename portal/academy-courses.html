@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Khóa học — Academy · James Identity</title>
+  <link rel="icon" type="image/png" href="/favicon.png" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="theme.css" />
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            cream: '#F4F1EA', 'brown-deep': '#3E2723',
+            'gold-sand': '#C5A880', charcoal: '#2B2B2B', 'warm-stone': '#89837f',
+          },
+          fontFamily: {
+            serif: ['"Playfair Display"', 'Georgia', 'serif'],
+            sans:  ['Inter', 'system-ui', 'sans-serif'],
+          },
+        },
+      },
+    }
+  </script>
+
+  <style>
+    body { visibility: hidden; }
+
+    .course-card {
+      background: #fff;
+      border: 1px solid rgba(197, 168, 128, 0.22);
+      border-radius: 4px;
+      padding: 36px 36px 28px;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+    .course-card:hover {
+      border-color: rgba(197, 168, 128, 0.55);
+      box-shadow: 0 4px 24px rgba(62, 39, 35, 0.06);
+    }
+    .course-card.locked {
+      opacity: 0.4;
+      cursor: default;
+      pointer-events: none;
+    }
+
+    .course-eyebrow {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.68rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: #C5A880;
+      margin-bottom: 14px;
+    }
+    .course-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #3E2723;
+      line-height: 1.15;
+      margin-bottom: 10px;
+    }
+    .course-desc {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.875rem;
+      color: #89837f;
+      line-height: 1.65;
+      flex: 1;
+    }
+    .course-meta {
+      display: flex;
+      gap: 20px;
+      margin-top: 20px;
+      padding-top: 20px;
+      border-top: 1px solid rgba(197, 168, 128, 0.15);
+    }
+    .course-meta-item {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.78rem;
+      color: #A8A39D;
+    }
+    .course-meta-item strong {
+      display: block;
+      font-size: 1.1rem;
+      font-family: 'Playfair Display', serif;
+      color: #3E2723;
+      font-weight: 400;
+    }
+    .course-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 22px;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.75rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: #C5A880;
+      text-decoration: none;
+      border-bottom: 1px solid rgba(197, 168, 128, 0.35);
+      padding-bottom: 2px;
+      transition: color 0.2s, border-color 0.2s;
+      width: fit-content;
+    }
+    .course-cta:hover { color: #3E2723; border-color: rgba(62,39,35,0.35); }
+
+    .badge-coming {
+      display: inline-block;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.65rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: #A8A39D;
+      border: 1px solid rgba(168, 163, 157, 0.35);
+      border-radius: 2px;
+      padding: 3px 8px;
+      margin-left: 10px;
+      vertical-align: middle;
+    }
+  </style>
+
+  <!-- Auth guard -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    (function () {
+      const SUPABASE_URL = 'https://fstzbqtkshkynzfffwva.supabase.co';
+      const SUPABASE_ANON_KEY = 'sb_publishable_byyw62DMCZMgF6K9MVEPBQ_7bIRjrr6';
+      const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+      window._supabase = sb;
+      sb.auth.getSession().then(function (result) {
+        if (!result.data.session) {
+          window.location.replace('academy.html');
+        } else {
+          window._userEmail = result.data.session.user.email;
+          document.body.style.visibility = 'visible';
+          var emailEl = document.getElementById('user-email');
+          if (emailEl) emailEl.textContent = result.data.session.user.email;
+        }
+      }).catch(function () {
+        window.location.replace('academy.html');
+      });
+    })();
+  </script>
+</head>
+<body>
+
+  <div id="page-beams" aria-hidden="true">
+    <div class="pg-beam"></div><div class="pg-beam"></div>
+    <div class="pg-beam"></div><div class="pg-beam"></div>
+    <div class="pg-beam"></div>
+  </div>
+
+  <header class="site-nav">
+    <div class="max-w-6xl mx-auto px-6 py-5 flex items-center justify-between">
+      <a href="index.html" class="nav-logo">James.identity</a>
+      <nav class="flex gap-8 items-center">
+        <a href="about.html"      class="nav-link">About</a>
+        <a href="https://www.quantumrebirth.io.vn/" target="_blank" class="nav-link nav-desktop">QROS</a>
+        <a href="diagnostic.html" class="nav-link">Chẩn đoán</a>
+        <a href="insight.html"    class="nav-link">Insight</a>
+        <a href="academy.html"    class="nav-link nav-link--active nav-desktop">Academy</a>
+        <button id="logout-btn" class="nav-link" style="background:none;border:none;cursor:pointer;padding:0">Đăng xuất</button>
+      </nav>
+    </div>
+  </header>
+
+
+  <section class="pt-32 pb-16 px-6" style="border-bottom:1px solid rgba(62,39,35,0.08)">
+    <div class="max-w-4xl mx-auto">
+      <p class="font-sans text-xs tracking-widest uppercase mb-4" style="color:#C5A880;letter-spacing:0.22em">
+        Khu vực thành viên
+      </p>
+      <h1 class="font-serif mb-3" style="font-size:clamp(2.2rem,5vw,4rem);font-weight:900;color:#3E2723;line-height:1;letter-spacing:-0.03em">
+        Khóa học của bạn
+      </h1>
+      <p class="font-sans text-sm" style="color:#89837f">
+        <span id="user-email"></span>
+      </p>
+    </div>
+  </section>
+
+
+  <section class="py-20 px-6">
+    <div class="max-w-4xl mx-auto">
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+        <!-- QROS -->
+        <a href="academy-lessons.html" class="course-card">
+          <p class="course-eyebrow">Chương trình chính</p>
+          <h2 class="course-title">Quantum Rebirth OS</h2>
+          <p class="course-desc">
+            Tái thiết lập hệ điều hành danh tính ở tầng thần kinh. Chấm dứt vòng lặp gượng ép, bắt đầu hành trình Vô Vi.
+          </p>
+          <div class="course-meta">
+            <div class="course-meta-item"><strong>21</strong> Ngày</div>
+            <div class="course-meta-item"><strong>7</strong> Module</div>
+            <div class="course-meta-item"><strong>1</strong> Chuyển Hóa</div>
+          </div>
+          <span class="course-cta">
+            Vào học
+            <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+              <path d="M5 12h14M12 5l7 7-7 7"/>
+            </svg>
+          </span>
+        </a>
+
+        <!-- Bonus — placeholder -->
+        <div class="course-card locked">
+          <p class="course-eyebrow">Bonus <span class="badge-coming">Sắp ra mắt</span></p>
+          <h2 class="course-title">Tài liệu & Bonus</h2>
+          <p class="course-desc">
+            Workbook, bài tập nâng cao, và tài liệu bổ trợ dành riêng cho thành viên QROS.
+          </p>
+          <div class="course-meta">
+            <div class="course-meta-item"><strong>—</strong> Workbook</div>
+            <div class="course-meta-item"><strong>—</strong> Template</div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Future courses row -->
+      <div class="mt-6">
+        <div class="course-card locked">
+          <p class="course-eyebrow">Khóa học khác <span class="badge-coming">Sắp ra mắt</span></p>
+          <h2 class="course-title">Chương trình tiếp theo</h2>
+          <p class="course-desc">
+            Các khóa học chuyên sâu sẽ được mở sau khi hoàn thành QROS. Theo dõi để nhận thông báo sớm nhất.
+          </p>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+
+  <footer class="site-footer">
+    <div class="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-8">
+      <a href="index.html" class="footer-logo">James.identity</a>
+      <nav class="flex gap-8">
+        <a href="about.html"      class="nav-link">About</a>
+        <a href="https://www.quantumrebirth.io.vn/" target="_blank" class="nav-link">QROS</a>
+        <a href="diagnostic.html" class="nav-link">Chẩn đoán</a>
+        <a href="insight.html"    class="nav-link">Insight</a>
+        <a href="academy.html"    class="nav-link">Academy</a>
+      </nav>
+      <p class="footer-copy">© 2026 James Trương</p>
+    </div>
+  </footer>
+
+
+  <script>
+    const sb = window._supabase;
+    document.getElementById('logout-btn').addEventListener('click', async function () {
+      await sb.auth.signOut();
+      window.location.href = 'academy.html';
+    });
+  </script>
+
+</body>
+</html>

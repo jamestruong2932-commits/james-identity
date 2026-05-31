@@ -1,0 +1,1278 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bài Học — QROS · James Identity</title>
+  <link rel="icon" type="image/png" href="/favicon.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="theme.css" />
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            cream: '#F4F1EA', 'brown-deep': '#3E2723',
+            'gold-sand': '#C5A880', charcoal: '#2B2B2B', 'warm-stone': '#89837f',
+          },
+          fontFamily: {
+            serif: ['"Playfair Display"', 'Georgia', 'serif'],
+            sans:  ['Inter', 'system-ui', 'sans-serif'],
+          },
+        },
+      },
+    }
+  </script>
+
+  <style>
+    body { visibility: hidden; background: #F4F1EA; margin: 0; }
+
+    /* ── Player layout ───────────────────────────────── */
+    .player-wrap {
+      display: flex;
+      padding-top: 72px;
+      min-height: 100vh;
+      max-width: 1280px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    /* ── Sidebar ─────────────────────────────────────── */
+    .sidebar {
+      width: 272px;
+      flex-shrink: 0;
+      position: sticky;
+      top: 72px;
+      height: calc(100vh - 72px);
+      overflow-y: auto;
+      border-right: 1px solid rgba(62,39,35,0.08);
+      background: #FAF8F4;
+      padding: 24px 0 48px;
+    }
+    .sidebar::-webkit-scrollbar { width: 3px; }
+    .sidebar::-webkit-scrollbar-thumb { background: rgba(197,168,128,0.3); border-radius: 2px; }
+
+    .sb-module-label {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.63rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: #C5A880;
+      padding: 18px 20px 5px;
+    }
+    .sb-module-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 0.82rem;
+      color: #3E2723;
+      padding: 0 20px 10px;
+      border-bottom: 1px solid rgba(62,39,35,0.06);
+      margin-bottom: 3px;
+    }
+    .sb-day {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 20px;
+      cursor: pointer;
+      border-left: 2px solid transparent;
+      text-decoration: none;
+      transition: background 0.12s;
+    }
+    .sb-day:hover { background: rgba(197,168,128,0.07); }
+    .sb-day.active  { background: rgba(197,168,128,0.13); border-left-color: #C5A880; }
+    .sb-day-num {
+      font-family: 'Playfair Display', serif;
+      font-size: 0.7rem;
+      color: #C5A880;
+      min-width: 22px;
+      text-align: right;
+      flex-shrink: 0;
+    }
+    .sb-day.active  .sb-day-num { color: #3E2723; }
+    .sb-day.done    .sb-day-num { color: #b0cdb3; }
+    .sb-day-name {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.78rem;
+      color: #89837f;
+      line-height: 1.3;
+      flex: 1;
+    }
+    .sb-day.active  .sb-day-name { color: #3E2723; font-weight: 500; }
+    .sb-integration .sb-day-name { color: #C5A880; }
+    .sb-integration.active .sb-day-name { color: #3E2723; }
+    .sb-check { font-size: 0.7rem; color: #b0cdb3; flex-shrink: 0; }
+
+    /* ── Main content ────────────────────────────────── */
+    .player-content {
+      flex: 1;
+      min-width: 0;
+      padding: 40px 64px 100px;
+    }
+    .player-inner {
+      max-width: 740px;
+    }
+
+    /* ── Mobile day bar ──────────────────────────────── */
+    .mobile-daybar {
+      display: none;
+      position: sticky;
+      top: 72px;
+      z-index: 50;
+      background: #FAF8F4;
+      border-bottom: 1px solid rgba(62,39,35,0.08);
+      padding: 10px 20px;
+      align-items: center;
+      gap: 10px;
+    }
+    .mdb-nav {
+      background: none;
+      border: 1px solid rgba(62,39,35,0.15);
+      border-radius: 2px;
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      color: #89837f;
+      flex-shrink: 0;
+      transition: border-color 0.15s, color 0.15s;
+    }
+    .mdb-nav:hover { color: #3E2723; border-color: rgba(62,39,35,0.3); }
+    .mdb-nav:disabled { opacity: 0.25; cursor: default; }
+    .mdb-center { flex: 1; text-align: center; }
+    .mdb-day {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.65rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: #C5A880;
+      margin-bottom: 2px;
+    }
+    .mdb-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 0.88rem;
+      color: #3E2723;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .mdb-list-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: #A8A39D;
+      padding: 4px;
+      flex-shrink: 0;
+    }
+    .mdb-list-btn:hover { color: #3E2723; }
+
+    /* ── Mobile drawer ───────────────────────────────── */
+    .mobile-drawer-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(62,39,35,0.35);
+      z-index: 100;
+    }
+    .mobile-drawer-overlay.open { display: block; }
+    .mobile-drawer {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 280px;
+      height: 100vh;
+      background: #FAF8F4;
+      z-index: 101;
+      overflow-y: auto;
+      padding: 20px 0 48px;
+      transform: translateX(-100%);
+      transition: transform 0.25s ease;
+    }
+    .mobile-drawer.open { transform: translateX(0); }
+    .mobile-drawer-close {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 20px 16px;
+      border-bottom: 1px solid rgba(62,39,35,0.06);
+      margin-bottom: 8px;
+    }
+    .mobile-drawer-close span {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.68rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: #A8A39D;
+    }
+    .mdc-x {
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: #A8A39D;
+      font-size: 1.1rem;
+      line-height: 1;
+    }
+
+    @media (max-width: 900px) {
+      .sidebar { display: none; }
+      .mobile-daybar { display: flex; }
+      .player-content { padding: 24px 20px 80px; }
+    }
+    @media (min-width: 901px) and (max-width: 1100px) {
+      .player-content { padding: 40px 40px 100px; }
+    }
+
+    /* ── Breadcrumb ──────────────────────────────────── */
+    .breadcrumb {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.7rem;
+      letter-spacing: 0.1em;
+      color: #A8A39D;
+      margin-bottom: 28px;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      flex-wrap: wrap;
+    }
+    .breadcrumb a { color: #A8A39D; text-decoration: none; }
+    .breadcrumb a:hover { color: #C5A880; }
+
+    /* ── Day header ──────────────────────────────────── */
+    .day-eyebrow {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: #C5A880;
+      margin-bottom: 10px;
+    }
+    .day-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.8rem, 4vw, 2.75rem);
+      font-weight: 700;
+      color: #3E2723;
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+      margin-bottom: 14px;
+    }
+    .day-meta { display: flex; gap: 8px; align-items: center; margin-bottom: 30px; flex-wrap: wrap; }
+    .badge {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.65rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      padding: 3px 9px;
+      border-radius: 2px;
+    }
+    .badge-lesson    { color: #C5A880; border: 1px solid rgba(197,168,128,0.4); }
+    .badge-exercise  { color: #89837f; border: 1px solid rgba(137,131,127,0.35); }
+    .badge-creative  { color: #C5A880; border: 1px solid rgba(197,168,128,0.4); }
+    .badge-ritual    { color: #3E2723; border: 1px solid rgba(62,39,35,0.22); }
+    .badge-integration { color: #3E2723; border: 1px solid rgba(62,39,35,0.22); background: rgba(197,168,128,0.1); }
+    .badge-merged    { color: #A8A39D; border: 1px solid rgba(168,163,157,0.3); }
+
+    /* ── Tabs ────────────────────────────────────────── */
+    .tab-nav {
+      display: flex;
+      border-bottom: 1px solid rgba(62,39,35,0.1);
+      margin-bottom: 30px;
+    }
+    .tab-btn {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.75rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #A8A39D;
+      padding: 10px 20px;
+      background: none;
+      border: none;
+      border-bottom: 2px solid transparent;
+      cursor: pointer;
+      transition: color 0.15s, border-color 0.15s;
+      margin-bottom: -1px;
+    }
+    .tab-btn:hover { color: #3E2723; }
+    .tab-btn.active { color: #3E2723; border-bottom-color: #C5A880; }
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+
+    /* ── Video box ───────────────────────────────────── */
+    .video-box {
+      background: #2B2B2B;
+      border-radius: 4px;
+      aspect-ratio: 16/9;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 24px;
+      position: relative;
+      overflow: hidden;
+    }
+    .video-ph-text {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.8rem;
+      color: rgba(244,241,234,0.35);
+      text-align: center;
+      line-height: 1.8;
+    }
+    .video-box iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: none; }
+
+    /* ── Reading content ─────────────────────────────── */
+    .reading-content h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: #3E2723;
+      margin: 30px 0 10px;
+      letter-spacing: -0.01em;
+    }
+    .reading-content h2:first-child { margin-top: 0; }
+    .reading-content p {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.9rem;
+      color: #2B2B2B;
+      line-height: 1.8;
+      margin-bottom: 14px;
+    }
+    .reading-content blockquote {
+      border-left: 2px solid #C5A880;
+      padding: 10px 0 10px 18px;
+      margin: 18px 0;
+    }
+    .reading-content blockquote p { color: #3E2723; font-style: italic; margin: 0; }
+    .reading-content hr { border: none; border-top: 1px solid rgba(197,168,128,0.18); margin: 22px 0; }
+    .ph-block {
+      background: rgba(197,168,128,0.06);
+      border: 1px dashed rgba(197,168,128,0.4);
+      border-radius: 3px;
+      padding: 14px 18px;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.78rem;
+      color: #A8A39D;
+      font-style: italic;
+      margin: 14px 0;
+      line-height: 1.6;
+    }
+    .reading-content table {
+      width: 100%;
+      border-collapse: collapse;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.82rem;
+      margin: 16px 0;
+    }
+    .reading-content th {
+      text-align: left;
+      padding: 9px 14px;
+      background: rgba(197,168,128,0.1);
+      color: #3E2723;
+      font-weight: 500;
+      border-bottom: 1px solid rgba(197,168,128,0.25);
+    }
+    .reading-content td {
+      padding: 8px 14px;
+      color: #2B2B2B;
+      border-bottom: 1px solid rgba(62,39,35,0.06);
+      line-height: 1.5;
+    }
+    .reading-content ul {
+      padding-left: 0;
+      list-style: none;
+      margin: 12px 0;
+    }
+    .reading-content li {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.9rem;
+      color: #2B2B2B;
+      line-height: 1.75;
+      padding-left: 1.3rem;
+      position: relative;
+      margin-bottom: 7px;
+    }
+    .reading-content li::before {
+      content: '—';
+      position: absolute;
+      left: 0;
+      color: #C5A880;
+    }
+    .reading-content .diagram {
+      background: rgba(43,43,43,0.03);
+      border: 1px solid rgba(62,39,35,0.1);
+      border-radius: 3px;
+      padding: 16px 20px;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.82rem;
+      color: #3E2723;
+      line-height: 2.2;
+      margin: 16px 0;
+      white-space: pre;
+    }
+
+    /* ── Workbook ────────────────────────────────────── */
+    .wb-block { margin-bottom: 34px; }
+    .wb-ex-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: #3E2723;
+      margin-bottom: 3px;
+    }
+    .wb-time {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.68rem;
+      color: #A8A39D;
+      letter-spacing: 0.1em;
+      margin-bottom: 12px;
+    }
+    .wb-instruction {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.83rem;
+      color: #89837f;
+      line-height: 1.65;
+      margin-bottom: 16px;
+    }
+    .wb-q {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.86rem;
+      font-weight: 500;
+      color: #3E2723;
+      margin-bottom: 8px;
+    }
+    .wb-hint {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.75rem;
+      color: #A8A39D;
+      font-style: italic;
+      margin-bottom: 8px;
+    }
+    .wb-note {
+      border-left: 2px solid rgba(197,168,128,0.4);
+      padding: 8px 14px;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.78rem;
+      color: #89837f;
+      font-style: italic;
+      margin: 10px 0;
+    }
+    .wb-ta {
+      width: 100%;
+      min-height: 96px;
+      background: #fff;
+      border: 1px solid rgba(197,168,128,0.28);
+      border-radius: 2px;
+      padding: 12px 14px;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.87rem;
+      color: #2B2B2B;
+      line-height: 1.7;
+      resize: vertical;
+      outline: none;
+      transition: border-color 0.18s;
+      margin-bottom: 16px;
+      box-sizing: border-box;
+    }
+    .wb-ta:focus { border-color: #C5A880; }
+    .wb-ta::placeholder { color: #c8c2bc; }
+    .wb-closing {
+      border-top: 1px solid rgba(197,168,128,0.18);
+      padding-top: 26px;
+      margin-top: 4px;
+    }
+    .wb-closing-quote {
+      font-family: 'Playfair Display', serif;
+      font-size: 1rem;
+      font-style: italic;
+      color: #3E2723;
+      line-height: 1.65;
+      margin-bottom: 14px;
+    }
+    .wb-tomorrow {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.78rem;
+      color: #A8A39D;
+    }
+
+    /* ── Integration day ─────────────────────────────── */
+    .integration-box {
+      background: rgba(197,168,128,0.06);
+      border: 1px solid rgba(197,168,128,0.2);
+      border-radius: 4px;
+      padding: 28px 32px;
+      margin-bottom: 28px;
+    }
+    .section-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: #3E2723;
+      margin: 0 0 12px;
+    }
+
+    /* ── Bottom nav ──────────────────────────────────── */
+    .bottom-nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 52px;
+      padding-top: 24px;
+      border-top: 1px solid rgba(62,39,35,0.08);
+      gap: 12px;
+    }
+    .nav-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.72rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: #89837f;
+      background: none;
+      border: 1px solid rgba(137,131,127,0.28);
+      border-radius: 2px;
+      padding: 9px 16px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: color 0.15s, border-color 0.15s;
+    }
+    .nav-btn:hover { color: #3E2723; border-color: rgba(62,39,35,0.3); }
+    .complete-btn {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.72rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: #F4F1EA;
+      background: #3E2723;
+      border: none;
+      border-radius: 2px;
+      padding: 10px 22px;
+      cursor: pointer;
+      transition: background 0.18s;
+      white-space: nowrap;
+    }
+    .complete-btn:hover { background: #5a3a34; }
+    .complete-btn.done { background: #7a9e7e; cursor: default; }
+  </style>
+
+  <!-- Auth guard -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    (function () {
+      const SUPABASE_URL = 'https://fstzbqtkshkynzfffwva.supabase.co';
+      const SUPABASE_ANON_KEY = 'sb_publishable_byyw62DMCZMgF6K9MVEPBQ_7bIRjrr6';
+      const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+      window._supabase = sb;
+      sb.auth.getSession().then(function (res) {
+        if (!res.data.session) { window.location.replace('academy.html'); }
+        else { document.body.style.visibility = 'visible'; }
+      }).catch(function () { window.location.replace('academy.html'); });
+    })();
+  </script>
+</head>
+<body>
+
+  <header class="site-nav">
+    <div class="max-w-6xl mx-auto px-6 py-5 flex items-center justify-between">
+      <a href="index.html" class="nav-logo">James.identity</a>
+      <nav class="flex gap-8 items-center">
+        <a href="academy-courses.html" class="nav-link">Khóa học</a>
+        <a href="academy-lessons.html" class="nav-link nav-link--active">QROS</a>
+        <button id="logout-btn" class="nav-link" style="background:none;border:none;cursor:pointer;padding:0">Đăng xuất</button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Mobile: drawer overlay -->
+  <div class="mobile-drawer-overlay" id="drawer-overlay" onclick="closeDrawer()"></div>
+  <div class="mobile-drawer" id="mobile-drawer">
+    <div class="mobile-drawer-close">
+      <span>Danh sách ngày</span>
+      <button class="mdc-x" onclick="closeDrawer()">×</button>
+    </div>
+    <div id="drawer-sidebar"></div>
+  </div>
+
+  <!-- Mobile: sticky day bar -->
+  <div class="mobile-daybar" id="mobile-daybar">
+    <button class="mdb-nav" id="mdb-prev" onclick="mdbNav('prev')">
+      <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+    </button>
+    <div class="mdb-center">
+      <div class="mdb-day" id="mdb-day-label"></div>
+      <div class="mdb-title" id="mdb-day-title"></div>
+    </div>
+    <button class="mdb-nav" id="mdb-next" onclick="mdbNav('next')">
+      <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+    </button>
+    <button class="mdb-list-btn" onclick="openDrawer()" title="Xem danh sách">
+      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+    </button>
+  </div>
+
+  <div class="player-wrap">
+    <aside class="sidebar" id="sidebar"></aside>
+    <main class="player-content">
+      <div class="player-inner" id="main-content"></div>
+    </main>
+  </div>
+
+  <script>
+    // ═══════════════════════════════════════════════════════════════
+    // DATA — chỉnh sửa tại đây khi có nội dung thật
+    // ═══════════════════════════════════════════════════════════════
+
+    const MODULES = {
+      0: 'Phá Vỡ & Định Hướng',
+      1: 'Đào Sâu & Tha Thứ',
+      2: 'Bản Thiết Kế Mới',
+      3: 'Vận Hành',
+      4: 'Vượt Khủng Hoảng',
+      5: 'Sống Trong Trạng Thái Mới',
+      6: 'Ngày Tái Sinh',
+    };
+
+    const DAYS = [
+      { module: 0, day: 1,  title: 'Nhà Tù Vô Hình',                             type: 'lesson' },
+      { module: 0, day: 2,  title: 'Câu Chuyện & Mục Tiêu Đúng',                 type: 'lesson',      merged: 'B2+B3' },
+      { module: 0, day: 3,  title: 'Khoa Học Chuyển Hóa',                        type: 'lesson' },
+      { module: 1, day: 4,  title: 'Nghiện Cảm Xúc',                             type: 'lesson' },
+      { module: 1, day: 5,  title: 'Kiểm Toán Lịch Sử',                          type: 'exercise' },
+      { module: 1, day: 6,  title: 'Bản Đồ Nhà Tù',                              type: 'exercise' },
+      { module: 1, day: 7,  title: 'Ngày Gương Soi',                             type: 'integration' },
+      { module: 1, day: 8,  title: 'Tha Thứ Chủ Động',                           type: 'ritual' },
+      { module: 2, day: 9,  title: 'Ba Câu Hỏi Quan Trọng Nhất',                 type: 'lesson' },
+      { module: 2, day: 10, title: 'Bản Thiết Kế Lượng Tử',                      type: 'creative' },
+      { module: 2, day: 11, title: 'Tuyên Ngôn & Neuroplasticity',               type: 'lesson' },
+      { module: 2, day: 12, title: 'Ngày Kích Hoạt',                             type: 'integration' },
+      { module: 3, day: 13, title: 'Blissipline',                                type: 'lesson' },
+      { module: 3, day: 14, title: 'Quy Trình Thiền Tái Sinh',                   type: 'lesson' },
+      { module: 3, day: 15, title: 'Biểu Sinh Học của Niềm Tin',                 type: 'lesson' },
+      { module: 3, day: 16, title: 'Ngày Hiệu Chỉnh',                            type: 'integration' },
+      { module: 4, day: 17, title: 'Cơn Bùng Phát Dập Tắt',                      type: 'lesson' },
+      { module: 4, day: 18, title: 'Công Cụ Ngắt Mạch & Case Study',             type: 'lesson',      merged: 'B2+B3' },
+      { module: 5, day: 19, title: 'Từ Làm → Là & Hành Động Truyền Cảm',         type: 'lesson',      merged: 'B1+B2' },
+      { module: 5, day: 20, title: 'Hiệu Ứng Người Quan Sát & Đồng Bộ',          type: 'lesson' },
+      { module: 6, day: 21, title: 'Ngày Tái Sinh',                              type: 'ritual',      merged: 'B1+B2+B3' },
+    ];
+
+    const TYPE_LABEL = {
+      orientation: 'Video mở đầu', lesson: 'Học mới', exercise: 'Bài tập sâu',
+      creative: 'Sáng tạo sâu', integration: 'Tích hợp', ritual: 'Nghi thức',
+    };
+
+    // ═══════════════════════════════════════════════════════════════
+    // CONTENT — điền nội dung thật vào đây theo từng ngày
+    // ═══════════════════════════════════════════════════════════════
+    const CONTENT = {
+      1: {
+        orientationUrl: '',  // TODO: YouTube embed URL cho video mở đầu
+        videoUrl: '',         // TODO: YouTube embed URL cho bài học Ngày 1
+        videoDesc: '<em>Cái nặng buổi sáng. Trước khi nghĩ đến bất cứ điều gì. Nó đã ở đó rồi.</em><br/><br/>Bài học này đặt tên cho phần mềm đang chạy bên dưới mọi quyết định của bạn — và giải thích tại sao ý chí không đủ để thay đổi nó.',
+        reading: `<div class="reading-content">
+
+<h2>I. Điều Cần Nói Trước Tiên</h2>
+<p>Bạn không bị hỏng.</p>
+<p>Câu đó không phải lời an ủi. Không phải câu mở đầu hoa mỹ để bạn cảm thấy dễ chịu trước khi vào nội dung "thật."</p>
+<p>Đó là chẩn đoán chính xác nhất mà khoa học thần kinh và tâm lý học hiện đại có thể đưa ra về lý do tại sao người thông minh, nỗ lực, hiểu biết — vẫn mắc kẹt.</p>
+<p>Bạn không thiếu kỷ luật. Không thiếu chiến lược. Không thiếu thông tin.</p>
+<p>Bạn đang chạy một phần mềm được cài từ trước khi bạn có khả năng đặt câu hỏi về nó. Và phần mềm đó — dù đã lỗi thời — vẫn đang vận hành im lặng bên dưới mọi quyết định bạn đưa ra hôm nay.</p>
+<p>Bài học này sẽ đặt tên cho nó. Không phải để bạn phán xét nó. Không phải để bạn đổ lỗi cho quá khứ. Mà vì bạn không thể thoát ra khỏi điều bạn không nhìn thấy.</p>
+
+<hr/>
+
+<h2>II. Culturescape: Nhà Tù Không Có Tường</h2>
+<p><strong>Vishen Lakhiani</strong> — nhà sáng lập Mindvalley — gọi nó là <strong>Culturescape.</strong></p>
+<p>Culturescape là toàn bộ hệ thống niềm tin, kỳ vọng, chuẩn mực và "lẽ đương nhiên" mà xã hội xây dựng xung quanh bạn — liên tục, từ trước khi bạn chào đời, và không bao giờ hỏi ý kiến bạn.</p>
+<p>Nó không có hình dạng. Không có biển báo. Không có ai đứng ra tuyên bố: <em>"Đây là những quy tắc."</em></p>
+<p>Nó chỉ ở đó. Như không khí. Như trọng lực.</p>
+<hr/>
+<p><strong>Culturescape vận hành qua ba tầng:</strong></p>
+<p><strong>Tầng 1 — Xã hội:</strong> Những thứ cả một nền văn hóa tin mà không ai kiểm chứng.</p>
+<p>Ở Việt Nam, một số ví dụ:</p>
+<p><em>"Học giỏi → vào đại học tốt → công việc ổn định → cuộc sống thành công."</em><br/>Đây là một con đường. Không phải con đường duy nhất. Nhưng cả một hệ thống giáo dục, gia đình, và xã hội vận hành như thể đó là sự thật tuyệt đối.</p>
+<p><em>"Bận rộn có nghĩa là có giá trị."</em><br/>Người ta hỏi nhau "dạo này thế nào?" và câu trả lời được khen nhất là "bận lắm, không có thời gian." Bận rộn đã trở thành huy hiệu danh dự, không phải dấu hiệu cần xem lại.</p>
+<p><em>"Tiền đến từ sự hy sinh."</em><br/>Không ai nói thẳng câu đó. Nhưng hãy nhìn vào cách người xung quanh bạn sống: làm việc nhiều giờ = tốt, kiếm tiền nhàn hạ = đáng ngờ.</p>
+<hr/>
+<p><strong>Tầng 2 — Gia đình:</strong> Những gì bạn học được không phải từ lời nói mà từ <em>hành vi</em> của người thân xung quanh.</p>
+<p>Bố bạn không nói "tiền khó kiếm." Nhưng bạn thấy ông lo lắng mỗi cuối tháng. Bạn thấy giọng bố đổi khác mỗi khi nhắc đến tiền bạc.</p>
+<p>Não bạn ghi lại tất cả. Không phải dưới dạng ký ức. Dưới dạng <em>cảm giác về tiền</em> — và cảm giác đó sẽ theo bạn vào từng quyết định tài chính của cuộc đời trưởng thành.</p>
+<p>Không ai cố ý làm điều đó với bạn. Bố mẹ bạn cũng nhận những file cài đó từ thế hệ của họ. Họ không biết mình đang truyền gì đi. Nhưng bây giờ những file đó đang chạy trong bạn.</p>
+<hr/>
+<p><strong>Tầng 3 — Tự cài:</strong> Những niềm tin bạn tự tạo ra để giải thích trải nghiệm của mình.</p>
+<p>Khi bạn bị từ chối — bất kể trong tình cảm, công việc, hay một cơ hội nào đó — não bạn tìm kiếm giải thích. Và nếu đã có sẵn một Brule về việc bạn không đủ, não sẽ dùng nó làm câu trả lời: <em>"Vì tôi không đủ tốt."</em></p>
+<p>Câu đó được lặp lại đủ nhiều lần sẽ trở thành sự thật không cần kiểm chứng.</p>
+<hr/>
+<p>Cả ba tầng này vận hành cùng nhau. Liên tục. Im lặng. Dưới ngưỡng ý thức.</p>
+<p>Đó là lý do tôi gọi nó là Nhà Tù Vô Hình. Không có tường, không có xích. Chỉ có những niềm tin đang định nghĩa bạn là ai — trước khi bạn kịp tự định nghĩa mình.</p>
+
+<hr/>
+
+<h2>III. Theta: Cửa Sổ Cài Đặt</h2>
+<p>Để hiểu tại sao Culturescape lại ngấm sâu đến mức khó thoát, bạn cần biết điều này về não bộ.</p>
+<p>Từ 0 đến 7 tuổi, não của bạn vận hành chủ yếu ở dải sóng <strong>Theta</strong> — 4 đến 8 Hz. Theta là dải sóng của trạng thái gần với thôi miên. Đứa trẻ sống trong trạng thái đó gần như toàn thời gian.</p>
+<p><strong>Không có bộ lọc phân tích.</strong> Người lớn ở dải Beta nghe một thông tin mới và tự động hỏi: <em>"Điều này có đúng không?"</em> Đứa trẻ trong Theta không có cơ chế đó. Mọi thứ đi thẳng vào. Không qua cổng kiểm duyệt.</p>
+<p>Nhà sinh học tế bào <strong>Dr. Bruce Lipton</strong> — tác giả <em>The Biology of Belief</em> — mô tả giai đoạn này như sau: đứa trẻ đang ở trạng thái thôi miên liên tục, đang tải về toàn bộ chương trình vận hành cho cuộc sống từ môi trường xung quanh. Không phải bằng lý trí. Bằng quan sát và cảm nhận — trực tiếp vào tiềm thức.</p>
+<hr/>
+<p><strong>Sơ đồ sóng não theo độ tuổi:</strong></p>
+<table>
+  <thead><tr><th>Giai đoạn</th><th>Sóng não chủ đạo</th><th>Trạng thái</th></tr></thead>
+  <tbody>
+    <tr><td>0–2 tuổi</td><td>Delta</td><td>Gần như ngủ — ghi nhận sâu nhất</td></tr>
+    <tr><td>2–6 tuổi</td><td>Theta</td><td>Thôi miên — lập trình trực tiếp</td></tr>
+    <tr><td>6–12 tuổi</td><td>Alpha</td><td>Trí tưởng tượng cao — vẫn còn cửa sổ</td></tr>
+    <tr><td>Trưởng thành</td><td>Beta</td><td>Phân tích — nhưng chương trình cũ vẫn chạy</td></tr>
+  </tbody>
+</table>
+<p>Khi bạn trưởng thành và chuyển sang Beta — bạn <em>có thể</em> phân tích và đặt câu hỏi. Nhưng những chương trình được cài trong Theta không ở tầng Beta. Chúng ở sâu hơn. Ở tầng tiềm thức — nơi lý trí không dễ tiếp cận.</p>
+<hr/>
+<p>Đây là lý do bạn có thể <em>biết</em> một điều là sai nhưng vẫn <em>làm</em> theo cách cũ.</p>
+<ul>
+  <li>Bạn biết nên đặt giá cao hơn — nhưng tay vẫn gõ số nhỏ hơn.</li>
+  <li>Bạn biết mình xứng đáng được nghỉ ngơi — nhưng cơ thể không chịu thư giãn.</li>
+  <li>Bạn biết cơ hội này tốt — nhưng có thứ gì đó kéo bạn trở lại.</li>
+</ul>
+<p>Không phải vì bạn không đủ ý chí. Mà vì hành vi đang được điều hướng bởi một chương trình chạy ở tầng sâu hơn tầng ý chí có thể chạm tới.</p>
+
+<hr/>
+
+<h2>IV. Brules: Tên Gọi Của Những Chương Trình Đó</h2>
+<p><strong>Vishen Lakhiani</strong> gọi chúng là <strong>Brules</strong> — viết tắt của <em>Bullshit Rules.</em></p>
+<p>Những quy tắc mà chúng ta chấp nhận và sống theo như thể chúng là sự thật tuyệt đối — không phải vì chúng ta đã kiểm chứng, mà vì chúng ta đã thở trong chúng quá lâu đến mức không còn nhận ra chúng là quy tắc nữa.</p>
+<hr/>
+<p><strong>Brules xã hội:</strong></p>
+<ul>
+  <li><em>"Thành công là có công việc ổn định, có nhà, có xe."</em></li>
+  <li><em>"Phụ nữ thành đạt quá sẽ khó lấy chồng."</em></li>
+  <li><em>"Khởi nghiệp là mạo hiểm, đi làm thuê là an toàn."</em></li>
+  <li><em>"Ở tuổi này mà chưa có X thì đã tụt hậu."</em></li>
+</ul>
+<p><strong>Brules gia đình:</strong></p>
+<ul>
+  <li><em>"Tiền rất khó kiếm và dễ mất."</em></li>
+  <li><em>"Người ngoài không đáng tin."</em></li>
+  <li><em>"Muốn được yêu thương thì phải không làm phiền."</em></li>
+  <li><em>"Thành công cá nhân phải được sự chấp thuận của gia đình."</em></li>
+</ul>
+<p><strong>Brules tự cài:</strong></p>
+<ul>
+  <li><em>"Tôi không giỏi kinh doanh."</em></li>
+  <li><em>"Tôi không phải người may mắn."</em></li>
+  <li><em>"Khi tôi thật sự phấn khích với điều gì đó — nó thường không thành."</em></li>
+  <li><em>"Tôi cần được phép mới có quyền bắt đầu."</em></li>
+</ul>
+<hr/>
+<p><strong>Brules cảm thấy như thế nào từ bên trong?</strong></p>
+<p>Brule không cảm thấy như một quy tắc. Nó cảm thấy như <em>sự thật.</em></p>
+<p>Khi bạn nghĩ "tiền khó kiếm" — nó không xuất hiện như một niềm tin có thể tranh luận. Nó xuất hiện như một thực tế hiển nhiên — giống như 2+2=4, giống như mặt trời mọc ở phía Đông.</p>
+<p>Đó là lý do tại sao không thể dùng thông tin để thay đổi Brule. Bạn không thể "thuyết phục" một Brule bằng lý luận — vì nó không ở tầng lý luận. Nó ở tầng sâu hơn, nơi mọi thứ đã được ghi nhận như là <em>cách thế giới vận hành.</em></p>
+
+<hr/>
+
+<h2>V. Vòng Lặp Tự Xác Nhận: Tại Sao Brules Không Tự Tan</h2>
+<p>Brules không chỉ ở yên một chỗ. Chúng tích cực duy trì chính mình.</p>
+<div class="diagram">Brule hoạt động ngầm
+        ↓
+Hành vi vô thức phù hợp với Brule
+        ↓
+Kết quả phù hợp với Brule
+        ↓
+Não bộ ghi nhận: "Đúng rồi, thế giới đúng là như vậy"
+        ↓
+Brule được củng cố</div>
+<hr/>
+<p><strong>Ví dụ cụ thể:</strong></p>
+<p><em>Brule:</em> "Tôi không xứng đáng được trả nhiều tiền cho công việc của mình."</p>
+<p><em>Hành vi:</em> Khi đưa ra giá, tay gõ số thấp hơn giá trị thực. Khi được trả thấp, không đàm phán. Khi có cơ hội cao hơn, tự tìm lý do từ chối.</p>
+<p><em>Kết quả:</em> Thu nhập thấp hơn giá trị thực.</p>
+<p><em>Não ghi nhận:</em> "Đúng rồi. Tôi chỉ xứng đáng được bấy nhiêu thôi."</p>
+<p><em>Brule được củng cố thêm.</em></p>
+<hr/>
+<p>Bạn có thể thay thói quen trong vòng lặp này — nhưng nếu không thay được Brule bên dưới, thói quen mới sẽ bị bào mòn dần. Đây là lý do Atomic Habits không đủ. Tại sao danh sách công việc không đủ. Tại sao biết đúng mà làm không được.</p>
+
+<hr/>
+
+<h2>VI. Chi Phí Của Việc Tiếp Tục Chạy Phần Mềm Cũ</h2>
+<p>Mỗi ngày bạn tiếp tục vận hành từ Brule cũ — có một chi phí thực sự được trả.</p>
+<p><strong>Về tài chính:</strong> Brule <em>"tiền khó kiếm"</em> → định giá thấp, ngại đàm phán, chọn an toàn thay vì đòn bẩy. Brule <em>"người tốt thì không quá giàu"</em> → sabotage tiềm thức mỗi khi gần chạm đến ngưỡng thu nhập mới.</p>
+<p><strong>Về năng lượng:</strong> Mỗi Brule đang hoạt động tiêu thụ năng lượng não — ngay cả khi bạn không ý thức về nó. Đây là lý do tại sao cái nặng buổi sáng xuất hiện trước khi bạn nghĩ đến bất cứ điều gì cụ thể.</p>
+<p><strong>Về thời gian:</strong> Mỗi quyết định được đưa ra từ Brule thay vì từ sự rõ ràng — là một quyết định bạn có thể phải làm lại.</p>
+
+<hr/>
+
+<h2>VII. Tin Tốt: Neuroplasticity Và Lý Do Bạn Có Thể Viết Lại</h2>
+<p><strong><em>Neuroplasticity</em></strong> — tính mềm dẻo thần kinh — là khả năng của não bộ tự tái cấu trúc: tạo ra các kết nối mới, củng cố đường mòn đang dùng, và cắt tỉa đường mòn không còn cần thiết. Khả năng này tồn tại suốt đời.</p>
+<p>Nghiên cứu của <strong>Richard Davidson</strong> tại Đại học Wisconsin — dùng MRI để scan não của người thiền định — chứng minh: thiền định có cấu trúc, thực hành đủ lâu, thực sự thay đổi cấu trúc vật lý của não. Prefrontal cortex dày hơn đo được. Amygdala — vùng kích hoạt phản ứng sợ hãi — thu nhỏ lại.</p>
+<p>Đây không phải ẩn dụ. Đây là đo được trên máy scan.</p>
+<hr/>
+<p>Điều đó có nghĩa là: những Brule được cài trong Theta không phải là bản án chung thân. Chúng là <strong>đường mòn thần kinh</strong> — và đường mòn có thể được viết lại khi bạn tạo ra các điều kiện phù hợp.</p>
+<p>Đó chính xác là những gì 21 ngày tiếp theo sẽ làm. Không phải bằng ý chí. Không phải bằng thêm thông tin. Mà bằng cách tiếp cận đúng tầng — nơi chương trình thực sự đang chạy.</p>
+
+<hr/>
+
+<h2>VIII. Bài Tập Vi Mô: Vật Chứng Đầu Tiên</h2>
+<p>Đứng dậy — hoặc nhìn xung quanh không gian bạn đang ở.</p>
+<p>Tìm <strong>một vật</strong> mà bạn sở hữu không phải vì bạn thực sự muốn nó — mà vì nó <em>trông đúng.</em> Vì ai đó sẽ nghĩ tốt hơn về bạn khi thấy nó. Vì "người như mình thì nên có."</p>
+<p>Khi bạn tìm được — nhìn vào nó. Và chú ý: <em>cơ thể cảm thấy gì?</em></p>
+<p>Không phải suy nghĩ về nó. Không phân tích. Chỉ chú ý. Có hơi nặng hơn không? Ngực hơi co lại? Một cảm giác không rõ ràng — không hẳn là buồn, không hẳn là khó chịu, chỉ là <em>không hoàn toàn là mình?</em></p>
+<hr/>
+<p>Cảm giác đó là dữ liệu. Nó là dấu hiệu vật lý của một Brule đang vận hành.</p>
+<p>Bạn không cần biết Brule đó là gì ngay bây giờ. Chỉ cần nhận ra rằng nó có ở đó. Đó là bước đầu tiên — và bước đầu tiên của sự thay đổi không phải là hành động — mà là <strong>nhận ra.</strong></p>
+
+<hr/>
+
+<h2>IX. Tóm Tắt Và Cầu Nối</h2>
+<p><strong>Bài học này trong một câu:</strong> Bạn không bị hỏng — bạn đang chạy phần mềm được cài từ trước khi bạn có quyền lựa chọn, và phần mềm đó có thể được viết lại.</p>
+<hr/>
+<p><strong>Ba điều cần mang theo:</strong></p>
+<ul>
+  <li><strong>Culturescape</strong> là hệ thống niềm tin vô hình vận hành qua ba tầng: xã hội, gia đình, và tự cài.</li>
+  <li><strong>Giai đoạn Theta (0–7 tuổi)</strong> là cửa sổ cài đặt — não không có bộ lọc, mọi thứ đi thẳng vào tiềm thức.</li>
+  <li><strong>Brules</strong> không cảm thấy như quy tắc — chúng cảm thấy như sự thật. Đó là lý do chúng khó thấy và khó thay đổi chỉ bằng thông tin.</li>
+</ul>
+<hr/>
+<p><strong>Bài tiếp theo:</strong> Ngày 2 — <em>Câu Chuyện & Mục Tiêu Đúng</em> — Hoàn thành Workbook Ngày 1 trước khi xem.</p>
+
+</div>`,
+        workbook: [
+          {
+            title: 'BÀI TẬP 1: Vật Chứng Đầu Tiên',
+            time: '5–10 phút — làm ngay, không suy nghĩ quá nhiều',
+            instruction: 'Đứng dậy, hoặc nhìn xung quanh không gian bạn đang ở.\n\nTìm một vật — không cần tìm đủ ý nghĩa ngay. Chỉ để ý vật đầu tiên mà khi nhìn vào bạn cảm thấy không hoàn toàn là mình. Có thể là thứ bạn mua vì "người như mình nên có." Có thể là thứ bạn giữ lại vì không muốn ai phán xét.',
+            note: 'Không cần kết luận ngay. Chỉ cần nhận ra cảm giác đó có ở đó. Đó là đủ.',
+            fields: [
+              { id: 'bt1_q1', label: 'Vật đó là gì?', rows: 2 },
+              { id: 'bt1_q2', label: 'Khi nhìn vào nó, cơ thể bạn cảm thấy gì?', hint: 'Mô tả bằng ngôn ngữ thân thể — không phải cảm xúc trừu tượng\nVí dụ: "ngực hơi co lại", "vai căng hơn", "hơi thở nông hơn"', rows: 3 },
+              { id: 'bt1_q3', label: 'Nếu phải đoán — vật này đang ở đây để chứng minh điều gì với ai?', rows: 3 },
+            ],
+          },
+          {
+            title: 'BÀI TẬP 2: Bản Đồ Culturescape Cá Nhân',
+            time: '15–20 phút — viết tự do, không chỉnh sửa',
+            instruction: 'Hoàn thành các câu dưới đây. Viết điều đầu tiên xuất hiện trong đầu — không lọc, không "viết cho đẹp."\n\nĐây là dữ liệu. Không phải văn chương.',
+            fields: [
+              { id: 'bt2_q1', label: '"Người thành công phải..."', rows: 3 },
+              { id: 'bt2_q2', label: '"Tiền là..."', rows: 2 },
+              { id: 'bt2_q3', label: '"Tôi xứng đáng được nghỉ ngơi khi..."', rows: 3 },
+              { id: 'bt2_q4', label: '"Nếu tôi không bận rộn, tôi sẽ bị..."', rows: 2 },
+              { id: 'bt2_q5', label: '"Người ta sẽ nhìn tôi như thế nào nếu tôi thực sự sống theo cách mình muốn?"', rows: 3 },
+              { id: 'bt2_q6', label: 'Sau khi đọc lại — những câu trả lời này: tôi đã chọn chúng, hay chúng được chọn cho tôi?', rows: 4 },
+            ],
+          },
+          {
+            title: 'BÀI TẬP 3: Truy Tìm Nguồn Gốc',
+            time: '10–15 phút',
+            instruction: 'Chọn một trong những câu trả lời từ Bài tập 2 mà khi đọc lại bạn cảm thấy nặng nhất — hoặc quen thuộc nhất theo cách không thoải mái.',
+            fields: [
+              { id: 'bt3_q0', label: 'Niềm tin đó là gì?', rows: 2 },
+              { id: 'bt3_q1', label: 'Lần đầu tiên bạn nghe hoặc cảm nhận điều này — là khi nào? Ở đâu? Ai ở đó?', hint: 'Không cần chính xác 100%. Ước tính cũng được. Nếu không nhớ cụ thể, ghi môi trường chung — gia đình, trường học, xã hội.', rows: 3 },
+              { id: 'bt3_q2', label: 'Niềm tin đó đã giúp bạn điều gì — trong bối cảnh lúc đó?', hint: 'Ví dụ: "Giúp tôi được khen ngợi", "Giúp tôi tránh xung đột", "Giúp tôi thuộc về nhóm"', rows: 3 },
+              { id: 'bt3_q3', label: 'Niềm tin đó đang cản trở bạn điều gì — trong bối cảnh bây giờ?', rows: 4 },
+            ],
+          },
+        ],
+        closing: {
+          quote: 'Hệ thống đó không phải kẻ thù của tôi.\nNó chỉ đang bảo vệ tôi khỏi thứ nó tin là nguy hiểm —\ndựa trên dữ liệu từ khi tôi còn là đứa trẻ lên 5.\nTôi không cần chiến đấu với nó.\nTôi chỉ cần cho nó thấy bản đồ mới.',
+          next: 'Ngày 2: Câu Chuyện & Mục Tiêu Đúng — Hoàn thành workbook trước khi xem.',
+        },
+      },
+    };
+
+    // Nội dung ngày tích hợp — thay thế khi có content thật
+    const INTEGRATION = {
+      7: {
+        why: 'Bạn vừa hoàn thành Kiểm Toán Lịch Sử (Ngày 5) và Bản Đồ Nhà Tù (Ngày 6). Hôm nay không có bài mới. Cảm xúc cần được xử lý trước khi bước vào Tha Thứ.',
+        activity: 'Thiền hướng dẫn ngắn 20 phút (audio bên dưới) và một câu hỏi journaling duy nhất. Không làm gì thêm.',
+        question: 'Điều nào trong Bản Đồ Nhà Tù vẫn đang nặng nhất lúc này?',
+        next: 8,
+      },
+      12: {
+        why: 'Sau khi có Tuyên ngôn và Bản Thiết kế, hôm nay là ngày đưa chúng vào cơ thể. Không học thêm lý thuyết — chỉ thực hành.',
+        activity: 'Thiền Bản Thiết kế 30 phút (audio hướng dẫn từ James) + ghi lại một dấu ấn cảm xúc bạn cảm nhận được.',
+        question: 'Một dấu ấn cảm xúc bạn cảm nhận được khi đọc Tuyên ngôn hôm nay là gì?',
+        next: 13,
+      },
+      16: {
+        why: 'Sau khi học đủ 4 giai đoạn thiền (Ngày 13–15), hôm nay là lần đầu bạn thực hành đầy đủ mà không có video hướng dẫn. Không có thông tin mới.',
+        activity: 'Thiền 4 giai đoạn tự thực hành (30 phút) + ghi lại quan sát sau thiền.',
+        question: 'Giai đoạn nào tự nhiên nhất? Giai đoạn nào còn vấp?',
+        next: 17,
+      },
+    };
+
+    // ═══════════════════════════════════════════════════════════════
+    // STATE
+    // ═══════════════════════════════════════════════════════════════
+    const completed = new Set(JSON.parse(localStorage.getItem('qros_completed') || '[]'));
+    let currentDay = 1;
+
+    function saveProgress() {
+      localStorage.setItem('qros_completed', JSON.stringify([...completed]));
+    }
+
+    // ═══════════════════════════════════════════════════════════════
+    // SIDEBAR
+    // ═══════════════════════════════════════════════════════════════
+    function buildSidebarHTML() {
+      let html = '';
+      let lastMod = -1;
+
+      DAYS.forEach(function (d) {
+        if (d.module !== lastMod) {
+          if (lastMod !== -1) html += '</div>';
+          html += `
+            <div class="sb-module-label">Module ${d.module}</div>
+            <div class="sb-module-title">${MODULES[d.module]}</div>
+            <div>`;
+          lastMod = d.module;
+        }
+        const isInt  = d.type === 'integration';
+        const isOri  = d.type === 'orientation';
+        const active = d.day === currentDay;
+        const done   = completed.has(d.day);
+
+        html += `<a href="?day=${d.day}"
+          class="sb-day${active ? ' active' : ''}${done ? ' done' : ''}${isInt ? ' sb-integration' : ''}"
+          onclick="return goDay(${d.day})">
+          <span class="sb-day-num">${isInt ? '✦' : isOri ? '▶' : d.day}</span>
+          <span class="sb-day-name">${d.title}</span>
+          ${done ? '<span class="sb-check">✓</span>' : ''}
+        </a>`;
+      });
+      html += '</div>';
+      return html;
+    }
+
+    function renderSidebar() {
+      const html = buildSidebarHTML();
+      document.getElementById('sidebar').innerHTML = html;
+      document.getElementById('drawer-sidebar').innerHTML = html;
+    }
+
+    function renderMobileDaybar() {
+      const d    = DAYS.find(function (x) { return x.day === currentDay; });
+      const prevD = DAYS.find(function (x) { return x.day === currentDay - 1; });
+      const nextD = DAYS.find(function (x) { return x.day === currentDay + 1; });
+      if (!d) return;
+
+      document.getElementById('mdb-day-label').textContent  = 'Module ' + d.module + ' · Ngày ' + d.day;
+      document.getElementById('mdb-day-title').textContent  = d.title;
+      document.getElementById('mdb-prev').disabled = !prevD;
+      document.getElementById('mdb-next').disabled = !nextD;
+    }
+
+    function mdbNav(dir) {
+      const delta = dir === 'prev' ? -1 : 1;
+      const target = DAYS.find(function (x) { return x.day === currentDay + delta; });
+      if (target) goDay(target.day);
+    }
+
+    function openDrawer() {
+      document.getElementById('mobile-drawer').classList.add('open');
+      document.getElementById('drawer-overlay').classList.add('open');
+    }
+
+    function closeDrawer() {
+      document.getElementById('mobile-drawer').classList.remove('open');
+      document.getElementById('drawer-overlay').classList.remove('open');
+    }
+
+    // ═══════════════════════════════════════════════════════════════
+    // CONTENT RENDERERS
+    // ═══════════════════════════════════════════════════════════════
+    function renderContent() {
+      const d = DAYS.find(function (x) { return x.day === currentDay; });
+      if (!d) return;
+
+      const done    = completed.has(d.day);
+      const prevD   = DAYS.find(function (x) { return x.day === currentDay - 1; });
+      const nextD   = DAYS.find(function (x) { return x.day === currentDay + 1; });
+      const badgeCls = 'badge-' + d.type;
+
+      let metaBadges = `<span class="badge ${badgeCls}">${TYPE_LABEL[d.type] || d.type}</span>`;
+      if (d.merged) metaBadges += ` <span class="badge badge-merged">Gộp ${d.merged}</span>`;
+
+      const inner = d.type === 'integration' ? renderIntegration(d)
+                  : d.type === 'orientation' ? renderOrientation(d)
+                  : renderTabs(d);
+
+      const completeBtnHtml = done
+        ? `<button class="complete-btn done" disabled>✓ Đã hoàn thành</button>`
+        : `<button class="complete-btn" onclick="markComplete(${d.day})">Đánh dấu hoàn thành</button>`;
+
+      document.getElementById('main-content').innerHTML = `
+        <div class="breadcrumb">
+          <a href="academy-courses.html">Khóa học</a><span>›</span>
+          <a href="academy-lessons.html">QROS</a><span>›</span>
+          <span>Module ${d.module}</span><span>›</span>
+          <span>Ngày ${d.day}</span>
+        </div>
+
+        <p class="day-eyebrow">Module ${d.module} — Ngày ${d.day}</p>
+        <h1 class="day-title">${d.title}</h1>
+        <div class="day-meta">${metaBadges}</div>
+
+        ${inner}
+
+        <div class="bottom-nav">
+          ${prevD
+            ? `<a href="?day=${prevD.day}" class="nav-btn" onclick="return goDay(${prevD.day})">
+                 <svg width="11" height="11" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+                 Ngày ${prevD.day}
+               </a>`
+            : `<span></span>`}
+          ${completeBtnHtml}
+          ${nextD
+            ? `<a href="?day=${nextD.day}" class="nav-btn" onclick="return goDay(${nextD.day})">
+                 Ngày ${nextD.day}
+                 <svg width="11" height="11" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+               </a>`
+            : `<span></span>`}
+        </div>`;
+    }
+
+    function renderOrientation(d) {
+      const c = CONTENT[d.day] || {};
+      const url = c.videoUrl || '';
+      const videoEl = url
+        ? `<iframe src="${url}" allowfullscreen></iframe>`
+        : `<div class="video-ph-text">
+             <svg width="36" height="36" fill="none" stroke="currentColor" stroke-width="1" viewBox="0 0 24 24" style="margin:0 auto 10px;display:block;opacity:.35"><circle cx="12" cy="12" r="10"/><polygon points="10,8 16,12 10,16"/></svg>
+             Video Mở Đầu<br/><span style="font-size:.7rem;opacity:.55">Nhúng YouTube embed URL vào CONTENT[0].videoUrl</span>
+           </div>`;
+      return `
+        <div class="video-box">${videoEl}</div>
+        ${c.videoDesc ? `<div class="reading-content" style="margin-top:16px"><p>${c.videoDesc}</p></div>` : ''}`;
+    }
+
+    function renderTabs(d) {
+      return `
+        <div class="tab-nav">
+          <button class="tab-btn active"  onclick="switchTab(event,'video')">Video</button>
+          <button class="tab-btn"         onclick="switchTab(event,'baodoc')">Bài Đọc</button>
+          <button class="tab-btn"         onclick="switchTab(event,'workbook')">Workbook</button>
+        </div>
+        <div id="tab-video"    class="tab-panel active">${renderVideo(d)}</div>
+        <div id="tab-baodoc"   class="tab-panel">${renderReading(d)}</div>
+        <div id="tab-workbook" class="tab-panel">${renderWorkbook(d)}</div>`;
+    }
+
+    function renderVideo(d) {
+      const c = CONTENT[d.day] || {};
+
+      function videoBox(url, label, contentKey) {
+        const el = url
+          ? `<iframe src="${url}" allowfullscreen></iframe>`
+          : `<div class="video-ph-text">
+               <svg width="32" height="32" fill="none" stroke="currentColor" stroke-width="1" viewBox="0 0 24 24"
+                    style="margin:0 auto 10px;display:block;opacity:.35">
+                 <circle cx="12" cy="12" r="10"/><polygon points="10,8 16,12 10,16"/>
+               </svg>
+               ${label}<br/>
+               <span style="font-size:.7rem;opacity:.55">Thêm URL vào CONTENT[${d.day}].${contentKey}</span>
+             </div>`;
+        return `<div class="video-box">${el}</div>`;
+      }
+
+      // Ngày 1: hiển thị video mở đầu trước, sau đó video bài học
+      if (d.day === 1 && 'orientationUrl' in c) {
+        return `
+          <p style="font-family:'Inter',sans-serif;font-size:.65rem;letter-spacing:.18em;text-transform:uppercase;color:#C5A880;margin-bottom:10px">Video Mở Đầu — Xem trước</p>
+          ${videoBox(c.orientationUrl, 'Video Mở Đầu — 4–5 phút', 'orientationUrl')}
+          <p style="font-family:'Inter',sans-serif;font-size:.65rem;letter-spacing:.18em;text-transform:uppercase;color:#A8A39D;margin:24px 0 10px">Bài Học Ngày 1</p>
+          ${videoBox(c.videoUrl, 'Video Ngày 1 — "Nhà Tù Vô Hình"', 'videoUrl')}
+          ${c.videoDesc ? `<div class="reading-content" style="margin-top:16px"><p>${c.videoDesc}</p></div>` : ''}`;
+      }
+
+      const descHtml = c.videoDesc
+        ? `<div class="reading-content" style="margin-top:20px"><p>${c.videoDesc}</p></div>`
+        : `<div class="reading-content"><div class="ph-block">✎ Mô tả ngắn bài học Ngày ${d.day} — 2–3 câu tóm tắt nội dung video và mục tiêu học.</div></div>`;
+
+      return `${videoBox(c.videoUrl || '', `Video Ngày ${d.day} — "${d.title}"`, 'videoUrl')}${descHtml}`;
+    }
+
+    function renderReading(d) {
+      const c = CONTENT[d.day];
+      if (c && c.reading) return c.reading;
+      return `
+        <div class="reading-content">
+          <div class="ph-block">
+            ✎ Bài Đọc Đầy Đủ — Ngày ${d.day}: "${d.title}".<br/>
+            Format: Roman numeral sections → nội dung chính → Tóm Tắt + bridge sang ngày tiếp theo.
+          </div>
+          <h2>I. [Tiêu đề phần 1]</h2>
+          <div class="ph-block">Nội dung phần I — 100–250 từ</div>
+          <hr/>
+          <h2>II. [Tiêu đề phần 2]</h2>
+          <div class="ph-block">Nội dung phần II — 100–250 từ</div>
+          <hr/>
+          <h2>III. Tóm Tắt Ngày ${d.day}</h2>
+          <div class="ph-block">
+            [Một câu tóm lại toàn bài]<br/><br/>
+            3 điểm cần mang theo + bridge sang Ngày ${d.day < 21 ? d.day + 1 : '—'}
+          </div>
+        </div>`;
+    }
+
+    function renderWorkbook(d) {
+      const key   = 'qros_wb_' + d.day;
+      const saved = JSON.parse(localStorage.getItem(key) || '{}');
+      const c     = CONTENT[d.day];
+      const nextD = DAYS.find(function (x) { return x.day === d.day + 1; });
+
+      function ta(fieldId, rows) {
+        return `<textarea class="wb-ta" style="min-height:${Math.max(72, (rows || 3) * 26)}px"
+          placeholder="Viết câu trả lời của bạn tại đây..."
+          oninput="saveWb(${d.day},'${fieldId}',this.value)">${saved[fieldId] || ''}</textarea>`;
+      }
+
+      // Real content from CONTENT object
+      if (c && c.workbook) {
+        let html = '<div>';
+        c.workbook.forEach(function (ex, ei) {
+          html += `<div class="wb-block">
+            <div class="wb-ex-title">${ex.title}</div>
+            <div class="wb-time">~${ex.time}</div>
+            <div class="wb-instruction">${ex.instruction.replace(/\n/g, '<br/>')}</div>
+            ${ex.note ? `<div class="wb-note">${ex.note}</div>` : ''}`;
+          ex.fields.forEach(function (f) {
+            html += `<div class="wb-q">${f.label}</div>`;
+            if (f.hint) html += `<div class="wb-hint">${f.hint.replace(/\n/g, '<br/>')}</div>`;
+            html += ta(f.id, f.rows);
+          });
+          html += '</div>';
+        });
+        const cl = c.closing || {};
+        html += `<div class="wb-closing">
+          <div class="wb-closing-quote">"${(cl.quote || '').replace(/\n/g, '<br/>')}"</div>
+          <div class="wb-tomorrow">${cl.next || (nextD ? `Ngày mai (Ngày ${nextD.day}): ${nextD.title} — Hoàn thành workbook trước khi xem.` : '')}</div>
+        </div></div>`;
+        return html;
+      }
+
+      // Placeholder
+      return `
+        <div>
+          <div class="ph-block" style="margin-bottom:26px">
+            ✎ Workbook Ngày ${d.day}: "${d.title}" — câu trả lời được tự động lưu vào trình duyệt.
+          </div>
+          <div class="wb-block">
+            <div class="wb-ex-title">BÀI TẬP 1: [Tên bài tập]</div>
+            <div class="wb-time">~15 phút</div>
+            <div class="wb-instruction">[Hướng dẫn 2–4 câu]</div>
+            <div class="wb-q">[Câu hỏi 1]</div>
+            ${ta('q1', 4)}
+          </div>
+          <div class="wb-block">
+            <div class="wb-ex-title">BÀI TẬP 2: [Tên bài tập]</div>
+            <div class="wb-time">~15 phút</div>
+            <div class="wb-instruction">[Hướng dẫn 2–4 câu]</div>
+            <div class="wb-q">[Câu hỏi 2a]</div>
+            ${ta('q2a', 3)}
+            <div class="wb-q">[Câu hỏi 2b]</div>
+            ${ta('q2b', 3)}
+          </div>
+          <div class="wb-closing">
+            <div class="wb-closing-quote">"[Câu kết workbook]"</div>
+            <div class="wb-tomorrow">${nextD ? `Ngày mai (Ngày ${nextD.day}): ${nextD.title} — Hoàn thành workbook trước khi xem.` : 'Bạn đã hoàn thành hành trình 21 ngày.'}</div>
+          </div>
+        </div>`;
+    }
+
+    function renderIntegration(d) {
+      const info  = INTEGRATION[d.day] || { why: '[Lý do ngày tích hợp]', activity: '[Mô tả hoạt động]', question: '[Câu hỏi journaling]', next: d.day + 1 };
+      const key   = 'qros_wb_' + d.day;
+      const saved = JSON.parse(localStorage.getItem(key) || '{}');
+      const nextD = DAYS.find(function (x) { return x.day === info.next; });
+
+      return `
+        <div class="integration-box">
+          <p style="font-family:'Inter',sans-serif;font-size:.63rem;letter-spacing:.2em;text-transform:uppercase;color:#C5A880;margin-bottom:12px">
+            Ngày Tích Hợp — Không có bài mới
+          </p>
+          <p style="font-family:'Inter',sans-serif;font-size:.88rem;color:#3E2723;line-height:1.7;max-width:560px">${info.why}</p>
+        </div>
+
+        <p class="section-title">Hoạt Động Duy Nhất Hôm Nay</p>
+        <p style="font-family:'Inter',sans-serif;font-size:.88rem;color:#2B2B2B;line-height:1.75;margin-bottom:22px">${info.activity}</p>
+
+        <div class="ph-block" style="margin-bottom:28px">
+          ✎ Audio hướng dẫn thiền sẽ được nhúng tại đây (SoundCloud / file MP3)
+        </div>
+
+        <hr style="border:none;border-top:1px solid rgba(197,168,128,.18);margin:28px 0"/>
+
+        <p class="section-title">Câu Hỏi Journaling</p>
+        <p style="font-family:'Playfair Display',serif;font-size:.95rem;font-style:italic;color:#3E2723;margin-bottom:14px">"${info.question}"</p>
+        <textarea class="wb-ta" style="min-height:130px"
+          placeholder="Viết tự do — không lọc, không chỉnh sửa..."
+          oninput="saveWb(${d.day},'journal',this.value)">${saved['journal'] || ''}</textarea>
+
+        <div class="wb-tomorrow">
+          ${nextD ? `Ngày mai (Ngày ${nextD.day}): ${nextD.title} — Hoàn thành journaling trước khi xem.` : ''}
+        </div>`;
+    }
+
+    // ═══════════════════════════════════════════════════════════════
+    // INTERACTIONS
+    // ═══════════════════════════════════════════════════════════════
+    function switchTab(e, id) {
+      document.querySelectorAll('.tab-btn').forEach(function (b) { b.classList.remove('active'); });
+      document.querySelectorAll('.tab-panel').forEach(function (p) { p.classList.remove('active'); });
+      e.currentTarget.classList.add('active');
+      document.getElementById('tab-' + id).classList.add('active');
+    }
+
+    function markComplete(day) {
+      completed.add(day);
+      saveProgress();
+      renderSidebar();
+      var btn = document.querySelector('.complete-btn');
+      if (btn) { btn.textContent = '✓ Đã hoàn thành'; btn.classList.add('done'); btn.disabled = true; }
+    }
+
+    function goDay(day) {
+      currentDay = day;
+      history.pushState({}, '', '?day=' + day);
+      renderSidebar();
+      renderMobileDaybar();
+      renderContent();
+      closeDrawer();
+      window.scrollTo(0, 0);
+      return false;
+    }
+
+    function saveWb(day, field, value) {
+      var key   = 'qros_wb_' + day;
+      var saved = JSON.parse(localStorage.getItem(key) || '{}');
+      saved[field] = value;
+      localStorage.setItem(key, JSON.stringify(saved));
+    }
+
+    // ═══════════════════════════════════════════════════════════════
+    // INIT
+    // ═══════════════════════════════════════════════════════════════
+    var params = new URLSearchParams(window.location.search);
+    currentDay = parseInt(params.get('day')) || 1;
+    renderSidebar();
+    renderMobileDaybar();
+    renderContent();
+
+    window.addEventListener('popstate', function () {
+      var p = new URLSearchParams(window.location.search);
+      currentDay = parseInt(p.get('day')) || 1;
+      renderSidebar();
+      renderMobileDaybar();
+      renderContent();
+    });
+
+    document.getElementById('logout-btn').addEventListener('click', async function () {
+      await window._supabase.auth.signOut();
+      window.location.href = 'academy.html';
+    });
+  </script>
+
+</body>
+</html>

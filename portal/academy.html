@@ -49,10 +49,7 @@
     }
   </script>
 
-  <!-- Hide body immediately to prevent flash of protected content -->
   <style>
-    body { visibility: hidden; }
-
     #auth-overlay {
       position: fixed;
       inset: 0;
@@ -137,15 +134,12 @@
       const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
       window._supabase = sb;
       sb.auth.getSession().then(function (result) {
-        document.body.style.visibility = 'visible';
-        if (!result.data.session) {
-          document.getElementById('auth-overlay').style.display = 'flex';
-        } else {
+        window._isLoggedIn = !!(result.data && result.data.session);
+        if (window._isLoggedIn) {
           document.getElementById('logout-btn').style.display = '';
         }
       }).catch(function () {
-        document.body.style.visibility = 'visible';
-        document.getElementById('auth-overlay').style.display = 'flex';
+        window._isLoggedIn = false;
       });
     })();
   </script>
@@ -249,12 +243,12 @@
       </div>
 
       <div class="flex gap-4 flex-wrap reveal">
-        <a href="diagnostic.html" class="btn-cta">
-          Bắt đầu Chẩn đoán
+        <button id="login-btn-cta" class="btn-cta" style="cursor:pointer">
+          Đăng nhập
           <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
             <path d="M5 12h14M12 5l7 7-7 7"/>
           </svg>
-        </a>
+        </button>
         <a href="https://www.quantumrebirth.io.vn/" target="_blank" class="btn-cta" style="border-color:rgba(62,39,35,0.30);color:#A8A39D">
           Xem QROS
           <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
@@ -355,6 +349,14 @@
     const forgotBtn = document.getElementById('forgotBtn');
     const logoutBtn = document.getElementById('logout-btn');
 
+    document.getElementById('login-btn-cta').addEventListener('click', function () {
+      if (window._isLoggedIn) {
+        window.location.href = 'academy-courses.html';
+      } else {
+        document.getElementById('auth-overlay').style.display = 'flex';
+      }
+    });
+
     loginForm.addEventListener('submit', async function (e) {
       e.preventDefault();
       errorMsg.style.color = '#c0392b';
@@ -378,8 +380,7 @@
         submitBtn.disabled = false;
         submitBtn.textContent = 'Đăng nhập';
       } else {
-        document.getElementById('auth-overlay').style.display = 'none';
-        logoutBtn.style.display = '';
+        window.location.href = 'academy-courses.html';
       }
     });
 
@@ -408,8 +409,8 @@
 
     logoutBtn.addEventListener('click', async function () {
       await sb.auth.signOut();
+      window._isLoggedIn = false;
       logoutBtn.style.display = 'none';
-      document.getElementById('auth-overlay').style.display = 'flex';
     });
   </script>
 

@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bài học — Academy · James Identity</title>
+  <link rel="icon" type="image/png" href="/favicon.png" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="theme.css" />
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            cream: '#F4F1EA', 'brown-deep': '#3E2723',
+            'gold-sand': '#C5A880', charcoal: '#2B2B2B', 'warm-stone': '#89837f',
+          },
+          fontFamily: {
+            serif: ['"Playfair Display"', 'Georgia', 'serif'],
+            sans:  ['Inter', 'system-ui', 'sans-serif'],
+          },
+        },
+      },
+    }
+  </script>
+
+  <style>
+    body { visibility: hidden; }
+
+    .lesson-card {
+      background: #fff;
+      border: 1px solid rgba(197, 168, 128, 0.2);
+      border-radius: 4px;
+      padding: 28px 32px;
+      transition: border-color 0.2s;
+    }
+    .lesson-card:hover { border-color: rgba(197, 168, 128, 0.5); }
+    .lesson-card.locked { opacity: 0.45; cursor: not-allowed; }
+
+    .lesson-num {
+      font-family: 'Playfair Display', serif;
+      font-size: 0.75rem;
+      color: #C5A880;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+    .lesson-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.15rem;
+      color: #3E2723;
+      margin-bottom: 6px;
+    }
+    .lesson-desc {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.85rem;
+      color: #89837f;
+      line-height: 1.6;
+    }
+    .lesson-tag {
+      display: inline-block;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.68rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: #C5A880;
+      border: 1px solid rgba(197, 168, 128, 0.4);
+      border-radius: 2px;
+      padding: 3px 8px;
+      margin-top: 14px;
+    }
+    .lesson-tag.done {
+      color: #7a9e7e;
+      border-color: rgba(122, 158, 126, 0.4);
+    }
+
+    .lesson-days {
+      list-style: none;
+      padding: 0;
+      margin: 14px 0 0;
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+      border-top: 1px solid rgba(197, 168, 128, 0.12);
+      padding-top: 14px;
+    }
+    .lesson-days li {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.8rem;
+      color: #89837f;
+      display: flex;
+      align-items: baseline;
+      gap: 10px;
+    }
+    .lesson-days li span {
+      font-family: 'Playfair Display', serif;
+      font-size: 0.72rem;
+      color: #C5A880;
+      min-width: 20px;
+      flex-shrink: 0;
+      text-align: right;
+    }
+    .lesson-days li.integration {
+      color: #3E2723;
+    }
+    .lesson-days li small {
+      font-size: 0.72rem;
+      color: #A8A39D;
+    }
+  </style>
+
+  <!-- Auth guard — redirect to academy.html if not logged in -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    (function () {
+      const SUPABASE_URL = 'https://fstzbqtkshkynzfffwva.supabase.co';
+      const SUPABASE_ANON_KEY = 'sb_publishable_byyw62DMCZMgF6K9MVEPBQ_7bIRjrr6';
+      const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+      window._supabase = sb;
+      sb.auth.getSession().then(function (result) {
+        if (!result.data.session) {
+          window.location.replace('academy.html');
+        } else {
+          window._userEmail = result.data.session.user.email;
+          document.body.style.visibility = 'visible';
+          var emailEl = document.getElementById('user-email');
+          if (emailEl) emailEl.textContent = result.data.session.user.email;
+        }
+      }).catch(function () {
+        window.location.replace('academy.html');
+      });
+    })();
+  </script>
+</head>
+<body>
+
+  <div id="page-beams" aria-hidden="true">
+    <div class="pg-beam"></div><div class="pg-beam"></div>
+    <div class="pg-beam"></div><div class="pg-beam"></div>
+    <div class="pg-beam"></div>
+  </div>
+
+  <header class="site-nav">
+    <div class="max-w-6xl mx-auto px-6 py-5 flex items-center justify-between">
+      <a href="index.html" class="nav-logo">James.identity</a>
+      <nav class="flex gap-8 items-center">
+        <a href="about.html"      class="nav-link">About</a>
+        <a href="https://www.quantumrebirth.io.vn/" target="_blank" class="nav-link nav-desktop">QROS</a>
+        <a href="diagnostic.html" class="nav-link">Chẩn đoán</a>
+        <a href="insight.html"    class="nav-link">Insight</a>
+        <a href="academy.html"    class="nav-link nav-desktop">Academy</a>
+        <button id="logout-btn" class="nav-link" style="background:none;border:none;cursor:pointer;padding:0">Đăng xuất</button>
+      </nav>
+    </div>
+  </header>
+
+
+  <section class="pt-32 pb-16 px-6" style="border-bottom:1px solid rgba(62,39,35,0.08)">
+    <div class="max-w-4xl mx-auto">
+      <a href="academy-courses.html" class="font-sans text-xs tracking-widest uppercase mb-6 inline-flex items-center gap-2" style="color:#A8A39D;text-decoration:none;letter-spacing:0.16em">
+        <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+        Khóa học
+      </a>
+      <p class="font-sans text-xs tracking-widest uppercase mb-4 mt-4" style="color:#C5A880;letter-spacing:0.22em">
+        Quantum Rebirth OS
+      </p>
+      <h1 class="font-serif mb-4" style="font-size:clamp(2.2rem,5vw,4rem);font-weight:900;color:#3E2723;line-height:1;letter-spacing:-0.03em">
+        Bài học của bạn
+      </h1>
+      <p class="font-sans text-sm" style="color:#89837f">
+        Đăng nhập với: <span id="user-email" style="color:#3E2723"></span>
+      </p>
+    </div>
+  </section>
+
+
+  <section class="py-20 px-6">
+    <div class="max-w-4xl mx-auto">
+
+      <div class="mb-12">
+        <p class="font-sans text-xs tracking-widest uppercase mb-6" style="color:#A8A39D">
+          Quantum Rebirth OS — 21 ngày · 7 module · 23 bài
+        </p>
+
+        <div class="flex flex-col gap-4">
+
+          <!-- M0 -->
+          <a href="academy-player.html?day=1" class="lesson-card block">
+            <div class="flex items-start justify-between mb-3">
+              <p class="lesson-num">Module 0 · Ngày 1–3</p>
+              <span style="font-family:'Inter',sans-serif;font-size:0.7rem;color:#A8A39D">3 ngày · 4 bài</span>
+            </div>
+            <p class="lesson-title">Phá Vỡ & Định Hướng</p>
+            <p class="lesson-desc">Nhận ra nhà tù vô hình, xác định mục tiêu đúng, và xây nền khoa học cho hành trình chuyển hóa.</p>
+            <ul class="lesson-days">
+              <li><span>1</span> Nhà Tù Vô Hình <small>+ video mở đầu</small></li>
+              <li><span>2</span> Câu Chuyện & Mục Tiêu Đúng <small>— gộp</small></li>
+              <li><span>3</span> Khoa Học Chuyển Hóa</li>
+            </ul>
+            <span class="lesson-tag">Bắt đầu</span>
+          </a>
+
+          <!-- M1 -->
+          <a href="academy-player.html?day=4" class="lesson-card block">
+            <div class="flex items-start justify-between mb-3">
+              <p class="lesson-num">Module 1 · Ngày 4–8</p>
+              <span style="font-family:'Inter',sans-serif;font-size:0.7rem;color:#A8A39D">5 ngày · 4 bài + tích hợp</span>
+            </div>
+            <p class="lesson-title">Đào Sâu & Tha Thứ</p>
+            <p class="lesson-desc">Truy vết nghiện cảm xúc, kiểm toán lịch sử vết thương, và thực hành tha thứ như nghi thức reset hệ thống.</p>
+            <ul class="lesson-days">
+              <li><span>4</span> Nghiện Cảm Xúc</li>
+              <li><span>5</span> Kiểm Toán Lịch Sử</li>
+              <li><span>6</span> Bản Đồ Nhà Tù</li>
+              <li class="integration"><span>7</span> ✦ Tích Hợp — Ngày Gương Soi</li>
+              <li><span>8</span> Tha Thứ Chủ Động</li>
+            </ul>
+            <span class="lesson-tag">Bắt đầu</span>
+          </a>
+
+          <!-- M2 -->
+          <div class="lesson-card locked">
+            <div class="flex items-start justify-between mb-3">
+              <p class="lesson-num">Module 2 · Ngày 9–12</p>
+              <span style="font-family:'Inter',sans-serif;font-size:0.7rem;color:#A8A39D">4 ngày · 3 bài + tích hợp</span>
+            </div>
+            <p class="lesson-title">Bản Thiết Kế Mới</p>
+            <p class="lesson-desc">Trả lời ba câu hỏi quan trọng nhất, thiết kế lượng tử danh tính mới, cài đặt tuyên ngôn vào đường mòn thần kinh.</p>
+            <ul class="lesson-days">
+              <li><span>9</span> Ba Câu Hỏi Quan Trọng Nhất</li>
+              <li><span>10</span> Bản Thiết Kế Lượng Tử</li>
+              <li><span>11</span> Tuyên Ngôn & Neuroplasticity</li>
+              <li class="integration"><span>12</span> ✦ Tích Hợp — Ngày Kích Hoạt</li>
+            </ul>
+            <span class="lesson-tag">Sắp mở khóa</span>
+          </div>
+
+          <!-- M3 -->
+          <div class="lesson-card locked">
+            <div class="flex items-start justify-between mb-3">
+              <p class="lesson-num">Module 3 · Ngày 13–16</p>
+              <span style="font-family:'Inter',sans-serif;font-size:0.7rem;color:#A8A39D">4 ngày · 3 bài + tích hợp</span>
+            </div>
+            <p class="lesson-title">Vận Hành</p>
+            <p class="lesson-desc">Tái định nghĩa kỷ luật qua Blissipline, học quy trình thiền tái sinh 4 giai đoạn, và hiểu khoa học biểu sinh học của niềm tin.</p>
+            <ul class="lesson-days">
+              <li><span>13</span> Blissipline</li>
+              <li><span>14</span> Quy Trình Thiền Tái Sinh</li>
+              <li><span>15</span> Biểu Sinh Học của Niềm Tin</li>
+              <li class="integration"><span>16</span> ✦ Tích Hợp — Ngày Hiệu Chỉnh</li>
+            </ul>
+            <span class="lesson-tag">Sắp mở khóa</span>
+          </div>
+
+          <!-- M4 -->
+          <div class="lesson-card locked">
+            <div class="flex items-start justify-between mb-3">
+              <p class="lesson-num">Module 4 · Ngày 17–18</p>
+              <span style="font-family:'Inter',sans-serif;font-size:0.7rem;color:#A8A39D">2 ngày · 3 bài</span>
+            </div>
+            <p class="lesson-title">Vượt Khủng Hoảng</p>
+            <p class="lesson-desc">Nhận diện cơn bùng phát cảm xúc và trang bị công cụ ngắt mạch để giữ vững danh tính mới dưới áp lực.</p>
+            <ul class="lesson-days">
+              <li><span>17</span> Cơn Bùng Phát Dập Tắt</li>
+              <li><span>18</span> Công Cụ Ngắt Mạch & Case Study <small>— gộp</small></li>
+            </ul>
+            <span class="lesson-tag">Sắp mở khóa</span>
+          </div>
+
+          <!-- M5 -->
+          <div class="lesson-card locked">
+            <div class="flex items-start justify-between mb-3">
+              <p class="lesson-num">Module 5 · Ngày 19–20</p>
+              <span style="font-family:'Inter',sans-serif;font-size:0.7rem;color:#A8A39D">2 ngày · 3 bài</span>
+            </div>
+            <p class="lesson-title">Sống Trong Trạng Thái Mới</p>
+            <p class="lesson-desc">Chuyển từ "Làm" sang "Là", hành động từ trạng thái đó, và nhận ra vũ trụ đang phản hồi qua hiệu ứng người quan sát.</p>
+            <ul class="lesson-days">
+              <li><span>19</span> Từ Làm → Là & Hành Động Truyền Cảm <small>— gộp</small></li>
+              <li><span>20</span> Hiệu Ứng Người Quan Sát & Đồng Bộ</li>
+            </ul>
+            <span class="lesson-tag">Sắp mở khóa</span>
+          </div>
+
+          <!-- M6 -->
+          <div class="lesson-card locked">
+            <div class="flex items-start justify-between mb-3">
+              <p class="lesson-num">Module 6 · Ngày 21</p>
+              <span style="font-family:'Inter',sans-serif;font-size:0.7rem;color:#A8A39D">1 ngày · 3 bài</span>
+            </div>
+            <p class="lesson-title">Ngày Tái Sinh</p>
+            <p class="lesson-desc">Nghi thức đóng: nhận danh tính mới, cam kết, và mở chương tiếp theo của hành trình.</p>
+            <ul class="lesson-days">
+              <li class="integration"><span>21</span> Nhận Danh Tính → Cam Kết → Mở Chương Mới <small>— nghi thức</small></li>
+            </ul>
+            <span class="lesson-tag">Sắp mở khóa</span>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+
+  <footer class="site-footer">
+    <div class="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-8">
+      <a href="index.html" class="footer-logo">James.identity</a>
+      <nav class="flex gap-8">
+        <a href="about.html"      class="nav-link">About</a>
+        <a href="https://www.quantumrebirth.io.vn/" target="_blank" class="nav-link">QROS</a>
+        <a href="diagnostic.html" class="nav-link">Chẩn đoán</a>
+        <a href="insight.html"    class="nav-link">Insight</a>
+        <a href="academy.html"    class="nav-link">Academy</a>
+      </nav>
+      <p class="footer-copy">© 2026 James Trương</p>
+    </div>
+  </footer>
+
+
+  <script>
+    const sb = window._supabase;
+    const logoutBtn = document.getElementById('logout-btn');
+
+    logoutBtn.addEventListener('click', async function () {
+      await sb.auth.signOut();
+      window.location.href = 'academy.html';
+    });
+  </script>
+
+</body>
+</html>
