@@ -133,6 +133,12 @@
       const SUPABASE_ANON_KEY = 'sb_publishable_byyw62DMCZMgF6K9MVEPBQ_7bIRjrr6';
       const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
       window._supabase = sb;
+      // Register early so PASSWORD_RECOVERY event isn't missed before DOM scripts load
+      sb.auth.onAuthStateChange(function (event) {
+        if (event === 'PASSWORD_RECOVERY') {
+          window._needsPasswordReset = true;
+        }
+      });
       sb.auth.getSession().then(function (result) {
         window._isLoggedIn = !!(result.data && result.data.session);
         if (window._isLoggedIn) {
@@ -376,20 +382,22 @@
     const forgotBtn = document.getElementById('forgotBtn');
     const logoutBtn = document.getElementById('logout-btn');
 
-    // Show reset-password form when user arrives via email reset link
-    sb.auth.onAuthStateChange(function (event) {
-      if (event === 'PASSWORD_RECOVERY') {
+    // Show reset panel if PASSWORD_RECOVERY fired early (in <head>) or is in URL hash/query
+    (function () {
+      const hasRecoveryHash  = window.location.hash.includes('type=recovery');
+      const hasRecoveryCode  = new URLSearchParams(window.location.search).get('code');
+
+      if (window._needsPasswordReset || hasRecoveryHash) {
         document.getElementById('loginPanel').style.display = 'none';
         document.getElementById('resetPanel').style.display = '';
         document.getElementById('auth-overlay').style.display = 'flex';
-      }
-    });
-
-    // Handle PKCE flow: Supabase sends ?code= instead of #access_token in newer projects
-    (function () {
-      const code = new URLSearchParams(window.location.search).get('code');
-      if (code) {
-        sb.auth.exchangeCodeForSession(code).then(function () {
+        window.history.replaceState({}, '', window.location.pathname);
+      } else if (hasRecoveryCode) {
+        // PKCE flow: exchange code then show reset panel
+        sb.auth.exchangeCodeForSession(hasRecoveryCode).then(function () {
+          document.getElementById('loginPanel').style.display = 'none';
+          document.getElementById('resetPanel').style.display = '';
+          document.getElementById('auth-overlay').style.display = 'flex';
           window.history.replaceState({}, '', window.location.pathname);
         });
       }
