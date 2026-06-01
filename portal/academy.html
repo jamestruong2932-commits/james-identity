@@ -385,6 +385,16 @@
       }
     });
 
+    // Handle PKCE flow: Supabase sends ?code= instead of #access_token in newer projects
+    (function () {
+      const code = new URLSearchParams(window.location.search).get('code');
+      if (code) {
+        sb.auth.exchangeCodeForSession(code).then(function () {
+          window.history.replaceState({}, '', window.location.pathname);
+        });
+      }
+    })();
+
     document.getElementById('resetForm').addEventListener('submit', async function (e) {
       e.preventDefault();
       const resetMsg = document.getElementById('resetMsg');
@@ -468,7 +478,7 @@
 
       forgotBtn.disabled = true;
       const { error } = await sb.auth.resetPasswordForEmail(email, {
-        redirectTo: window.location.origin + '/academy'
+        redirectTo: window.location.origin + window.location.pathname
       });
       forgotBtn.disabled = false;
 
