@@ -146,39 +146,66 @@
 </head>
 <body>
 
-  <!-- Auth Overlay — shown when not logged in -->
+  <!-- Auth Overlay — shown when not logged in or on password reset -->
   <div id="auth-overlay">
     <div class="w-full max-w-md">
 
-      <div class="text-center mb-10">
-        <p class="font-sans text-xs tracking-widest uppercase mb-4" style="color:#C5A880;letter-spacing:0.22em">Khu vực thành viên</p>
-        <h2 class="font-serif text-3xl" style="color:#3E2723">Đăng nhập</h2>
-        <p class="font-sans text-sm mt-3" style="color:#89837f">Dùng email và mật khẩu được gửi sau khi thanh toán.</p>
+      <!-- Login panel (default) -->
+      <div id="loginPanel">
+        <div class="text-center mb-10">
+          <p class="font-sans text-xs tracking-widest uppercase mb-4" style="color:#C5A880;letter-spacing:0.22em">Khu vực thành viên</p>
+          <h2 class="font-serif text-3xl" style="color:#3E2723">Đăng nhập</h2>
+          <p class="font-sans text-sm mt-3" style="color:#89837f">Dùng email và mật khẩu được gửi sau khi thanh toán.</p>
+        </div>
+
+        <div class="ov-card p-8">
+          <form id="loginForm" novalidate>
+            <div class="mb-5">
+              <label class="ov-label" for="ov-email">Email</label>
+              <input id="ov-email" type="email" class="ov-input" placeholder="your@email.com" autocomplete="email" required />
+            </div>
+            <div class="mb-6">
+              <label class="ov-label" for="ov-password">Mật khẩu</label>
+              <input id="ov-password" type="password" class="ov-input" placeholder="••••••••" autocomplete="current-password" required />
+            </div>
+            <button type="submit" class="ov-btn" id="submitBtn">Đăng nhập</button>
+            <p class="ov-error" id="errorMsg" style="color:#c0392b"></p>
+          </form>
+
+          <hr class="ov-divider my-6" />
+
+          <div class="flex flex-col items-center gap-3">
+            <button id="forgotBtn" type="button" class="font-sans text-xs" style="color:#C5A880;text-decoration:underline;background:none;border:none;cursor:pointer">
+              Quên mật khẩu?
+            </button>
+            <p class="font-sans text-xs text-center" style="color:#89837f">
+              Chưa có tài khoản? Truy cập <a href="https://www.quantumrebirth.io.vn/" style="color:#C5A880;text-decoration:underline">trang khoá học</a> để đăng ký.
+            </p>
+          </div>
+        </div>
       </div>
 
-      <div class="ov-card p-8">
-        <form id="loginForm" novalidate>
-          <div class="mb-5">
-            <label class="ov-label" for="ov-email">Email</label>
-            <input id="ov-email" type="email" class="ov-input" placeholder="your@email.com" autocomplete="email" required />
-          </div>
-          <div class="mb-6">
-            <label class="ov-label" for="ov-password">Mật khẩu</label>
-            <input id="ov-password" type="password" class="ov-input" placeholder="••••••••" autocomplete="current-password" required />
-          </div>
-          <button type="submit" class="ov-btn" id="submitBtn">Đăng nhập</button>
-          <p class="ov-error" id="errorMsg" style="color:#c0392b"></p>
-        </form>
+      <!-- Reset password panel (shown after clicking email link) -->
+      <div id="resetPanel" style="display:none">
+        <div class="text-center mb-10">
+          <p class="font-sans text-xs tracking-widest uppercase mb-4" style="color:#C5A880;letter-spacing:0.22em">Khu vực thành viên</p>
+          <h2 class="font-serif text-3xl" style="color:#3E2723">Đặt mật khẩu mới</h2>
+          <p class="font-sans text-sm mt-3" style="color:#89837f">Nhập mật khẩu mới cho tài khoản của bạn.</p>
+        </div>
 
-        <hr class="ov-divider my-6" />
-
-        <div class="flex flex-col items-center gap-3">
-          <button id="forgotBtn" type="button" class="font-sans text-xs" style="color:#C5A880;text-decoration:underline;background:none;border:none;cursor:pointer">
-            Quên mật khẩu?
-          </button>
-          <p class="font-sans text-xs text-center" style="color:#89837f">
-            Chưa có tài khoản? Truy cập <a href="https://www.quantumrebirth.io.vn/" style="color:#C5A880;text-decoration:underline">trang khoá học</a> để đăng ký.
-          </p>
+        <div class="ov-card p-8">
+          <form id="resetForm" novalidate>
+            <div class="mb-5">
+              <label class="ov-label" for="ov-new-pass">Mật khẩu mới</label>
+              <input id="ov-new-pass" type="password" class="ov-input" placeholder="••••••••" autocomplete="new-password" required minlength="6" />
+            </div>
+            <div class="mb-6">
+              <label class="ov-label" for="ov-confirm-pass">Nhập lại mật khẩu</label>
+              <input id="ov-confirm-pass" type="password" class="ov-input" placeholder="••••••••" autocomplete="new-password" required minlength="6" />
+            </div>
+            <button type="submit" class="ov-btn" id="resetBtn">Lưu mật khẩu mới</button>
+            <p class="ov-error" id="resetMsg"></p>
+          </form>
         </div>
       </div>
 
@@ -348,6 +375,52 @@
     const errorMsg  = document.getElementById('errorMsg');
     const forgotBtn = document.getElementById('forgotBtn');
     const logoutBtn = document.getElementById('logout-btn');
+
+    // Show reset-password form when user arrives via email reset link
+    sb.auth.onAuthStateChange(function (event) {
+      if (event === 'PASSWORD_RECOVERY') {
+        document.getElementById('loginPanel').style.display = 'none';
+        document.getElementById('resetPanel').style.display = '';
+        document.getElementById('auth-overlay').style.display = 'flex';
+      }
+    });
+
+    document.getElementById('resetForm').addEventListener('submit', async function (e) {
+      e.preventDefault();
+      const resetMsg = document.getElementById('resetMsg');
+      const resetBtn = document.getElementById('resetBtn');
+      resetMsg.style.color = '#c0392b';
+      resetMsg.textContent = '';
+
+      const newPass     = document.getElementById('ov-new-pass').value;
+      const confirmPass = document.getElementById('ov-confirm-pass').value;
+
+      if (newPass.length < 6) {
+        resetMsg.textContent = 'Mật khẩu phải có ít nhất 6 ký tự.';
+        return;
+      }
+      if (newPass !== confirmPass) {
+        resetMsg.textContent = 'Hai mật khẩu không khớp.';
+        return;
+      }
+
+      resetBtn.disabled = true;
+      resetBtn.textContent = 'Đang lưu...';
+
+      const { error } = await sb.auth.updateUser({ password: newPass });
+
+      if (error) {
+        resetMsg.textContent = 'Không thể đổi mật khẩu. Vui lòng thử lại.';
+        resetBtn.disabled = false;
+        resetBtn.textContent = 'Lưu mật khẩu mới';
+      } else {
+        resetMsg.style.color = '#3E2723';
+        resetMsg.textContent = 'Đổi mật khẩu thành công. Đang chuyển hướng...';
+        setTimeout(function () {
+          window.location.href = 'academy-courses.html';
+        }, 1500);
+      }
+    });
 
     document.getElementById('login-btn-cta').addEventListener('click', function () {
       if (window._isLoggedIn) {
