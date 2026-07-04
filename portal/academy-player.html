@@ -274,6 +274,16 @@
     .badge-ritual    { color: #3E2723; border: 1px solid rgba(62,39,35,0.22); }
     .badge-integration { color: #3E2723; border: 1px solid rgba(62,39,35,0.22); background: rgba(197,168,128,0.1); }
     .badge-merged    { color: #A8A39D; border: 1px solid rgba(168,163,157,0.3); }
+    .badge-bonus     { color: #C5A880; border: 1px solid rgba(197,168,128,0.5); background: rgba(197,168,128,0.1); }
+    .pause-cue {
+      text-align: center;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.68rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: #C5A880;
+      margin: 16px 0;
+    }
 
     /* ── Tabs ────────────────────────────────────────── */
     .tab-nav {
@@ -632,6 +642,7 @@
       4: 'Vượt Khủng Hoảng',
       5: 'Sống Trong Trạng Thái Mới',
       6: 'Ngày Tái Sinh',
+      7: 'Bonus — Miễn Phí Cho Học Viên',
     };
 
     const DAYS = [
@@ -656,11 +667,15 @@
       { module: 5, day: 19, title: 'Từ Làm → Là & Hành Động Truyền Cảm',         type: 'lesson',      merged: 'B1+B2' },
       { module: 5, day: 20, title: 'Hiệu Ứng Người Quan Sát & Đồng Bộ',          type: 'lesson' },
       { module: 6, day: 21, title: 'Ngày Tái Sinh',                              type: 'ritual',      merged: 'B1+B2+B3' },
+      { module: 7, day: 22, title: 'Bonus 1 — Sổ Tay Kiểm Toán Lịch Sử',         type: 'bonus' },
+      { module: 7, day: 23, title: 'Bonus 2 — Audio "Zero-Point Meditator"',     type: 'bonus' },
+      { module: 7, day: 24, title: 'Bonus 3 — The Reality Architect Protocol',   type: 'bonus' },
     ];
 
     const TYPE_LABEL = {
       orientation: 'Video mở đầu', lesson: 'Học mới', exercise: 'Bài tập sâu',
       creative: 'Sáng tạo sâu', integration: 'Tích hợp', ritual: 'Nghi thức',
+      bonus: 'Bonus · Miễn phí',
     };
 
     // ═══════════════════════════════════════════════════════════════
@@ -2102,6 +2117,522 @@ Chức năng sinh lý, hành vi, trạng thái nền</pre>
           next: 'Ngày 16 (Ngày Hiệu Chỉnh): Không có bài học mới. Bạn sẽ thực hành toàn bộ giao thức một mình. Đây là ngày bạn chuyển từ "học theo" sang "sở hữu."',
         },
       },
+
+      // ═══════════════════════════════════════════════════════════
+      // BONUS — miễn phí cho tất cả học viên, dùng render(ta, cell)
+      // ═══════════════════════════════════════════════════════════
+      22: {
+        render: function (ta, cell) {
+          var scanRows = '';
+          for (var i = 1; i <= 10; i++) {
+            scanRows += '<tr><td style="width:36px;color:#C5A880;font-family:\'Playfair Display\',serif;text-align:center">' + i + '</td><td>' + cell('b1_scan_event_' + i) + '</td><td>' + cell('b1_scan_brule_' + i) + '</td></tr>';
+          }
+          var auditRows = '';
+          for (var j = 1; j <= 5; j++) {
+            auditRows += '<tr><td>' + cell('b1_audit_domain_' + j) + '</td><td>' + cell('b1_audit_brule_' + j) + '</td><td style="width:70px">' + cell('b1_audit_age_' + j) + '</td><td style="width:80px">' + cell('b1_audit_score_' + j) + '</td><td style="width:100px">' + cell('b1_audit_date_' + j) + '</td></tr>';
+          }
+
+          return `<div class="reading-content">
+
+<blockquote><p><strong>Đây không phải bản sao của Workbook Ngày 5.</strong> Workbook Ngày 5 dạy bạn quy trình trace lần đầu, trên 1 Brule. Sổ tay này là công cụ bạn giữ lại và dùng lại — mỗi khi một Brule mới lộ diện, trong suốt 21 ngày và sau đó. Dùng song song với Ngày 5: đọc Bản đồ Brule bên dưới trước khi làm Bài Tập 1 của Workbook, để chọn đúng Brule cần trace.</p><p>Không cần làm hết một lần. Đây là tài liệu tham khảo — mở ra khi cần, không phải bài tập có deadline.</p></blockquote>
+
+<h2>I. Nghi Thức Quan Sát Hàng Ngày</h2>
+<p>Trước khi đào sâu vào quá khứ ở Phần II–III, có một thực hành ngắn hơn — dùng mỗi ngày, ngay trong lúc sống, không cần ngồi xuống viết.</p>
+<p>Hãy xem mình như một nhà khoa học đang quan sát đối tượng nghiên cứu. Đối tượng đó là "con người cũ" của bạn.</p>
+<p>Trong lúc làm việc, trong lúc sống — chú ý đến những suy nghĩ tự động, những cảm xúc quen thuộc bật lên. Khi một cảm giác quen thuộc xuất hiện, thầm ghi nhận nó bằng một câu, không hơn:</p>
+<ul>
+<li><em>"À, đây là chương trình 'không đủ tốt' đang chạy."</em></li>
+<li><em>"Đây là chương trình 'thiếu thốn'."</em></li>
+<li><em>"Đây là chương trình 'phải kiểm soát' đang chạy."</em></li>
+</ul>
+<p>Không phán xét. Không cố thay đổi nó ngay lúc đó. Chỉ quan sát.</p>
+<blockquote><p>Trong vật lý lượng tử, hành động quan sát một hệ thống làm thay đổi hệ thống đó. Bằng việc quan sát — không phản ứng — bạn đang rút năng lượng ra khỏi chương trình vô thức đó, và chuẩn bị nó cho công việc đào sâu ở Phần II–III.</p></blockquote>
+<p class="wb-q">Cuối ngày — nếu có ít nhất một chương trình bạn đã bắt được, ghi lại một dòng:</p>
+${ta('b1_daily_log', 2)}
+<p style="font-size:.8rem;color:#A8A39D;font-style:italic">Không cần ghi nhiều. Một dòng một ngày, làm đều, có giá trị hơn một buổi viết dài rồi bỏ quên.</p>
+<hr/>
+
+<h2>II. Bản Đồ Brule — 5 Lĩnh Vực</h2>
+<p>Brule hiếm khi đứng một mình. Chúng tụ theo lĩnh vực. Nhận diện đúng lĩnh vực trước giúp quy trình trace ở Phần III nhanh hơn nhiều — vì bạn không còn đi tìm trong bóng tối.</p>
+<p>Đọc qua 5 lĩnh vực dưới đây. Đánh dấu bất kỳ câu nào khiến cơ thể bạn phản ứng — hơi thở khựng lại, ngực thắt lại, hoặc một cái gật đầu tự động.</p>
+
+<h2>1. Tiền Bạc</h2>
+<ul>
+<li>"Tiền là thứ gây chia rẽ / làm hỏng mối quan hệ."</li>
+<li>"Tôi phải hy sinh gần như kiệt sức thì tiền mới đến."</li>
+<li>"Muốn nhiều tiền là tham lam."</li>
+<li>"Người giàu thường không tử tế."</li>
+<li>"Tiền không dành cho người như tôi."</li>
+</ul>
+
+<h2>2. Tình Yêu & Mối Quan Hệ</h2>
+<ul>
+<li>"Tôi không đủ để ai ở lại lâu dài."</li>
+<li>"Nếu tôi cần ai đó quá nhiều, tôi sẽ bị bỏ rơi."</li>
+<li>"Yêu là phải chứng minh liên tục mới giữ được."</li>
+<li>"Xung đột đồng nghĩa với mất mát."</li>
+<li>"Tốt hơn là đừng phụ thuộc vào ai."</li>
+</ul>
+
+<h2>3. Giá Trị Bản Thân</h2>
+<ul>
+<li>"Tôi chỉ có giá trị khi tạo ra kết quả."</li>
+<li>"Nghỉ ngơi là lười biếng."</li>
+<li>"Nếu tôi không giỏi nhất, tôi không đáng được chú ý."</li>
+<li>"Cảm xúc của tôi là gánh nặng cho người khác."</li>
+<li>"Tôi phải hoàn hảo mới được chấp nhận."</li>
+</ul>
+
+<h2>4. Thành Công & Thất Bại</h2>
+<ul>
+<li>"Thành công lớn sẽ khiến tôi mất đi người thân / bị ghen ghét."</li>
+<li>"Nếu tôi thử và thất bại, điều đó chứng minh tôi vô dụng."</li>
+<li>"Tham vọng là ích kỷ."</li>
+<li>"Tôi không được phép vượt qua bố/mẹ."</li>
+<li>"An toàn quan trọng hơn khả năng."</li>
+</ul>
+
+<h2>5. An Toàn & Kiểm Soát</h2>
+<ul>
+<li>"Nếu tôi không kiểm soát mọi thứ, chuyện tồi tệ sẽ xảy ra."</li>
+<li>"Thế giới về cơ bản không an toàn."</li>
+<li>"Tin tưởng người khác là rủi ro."</li>
+<li>"Bình yên là dấu hiệu tôi đang thiếu cảnh giác."</li>
+<li>"Tôi phải luôn chuẩn bị cho điều tệ nhất."</li>
+</ul>
+
+<p class="wb-q">Lĩnh vực nào có nhiều đánh dấu nhất với bạn?</p>
+${ta('b1_top_domain', 1)}
+<p style="font-size:.8rem;color:#A8A39D;font-style:italic">Đây là lĩnh vực nên trace trước — không phải vì nó "quan trọng nhất về mặt lý thuyết", mà vì nó đang hoạt động mạnh nhất trong bạn ngay lúc này.</p>
+<blockquote><p><strong>5 lĩnh vực trên là điểm khởi đầu, không phải giới hạn.</strong> Trong thực tế, Brule cũng thường xuất hiện ở: Sức khỏe & Cơ thể ("tôi hay ốm vặt để tránh bệnh nặng hơn"), Ngoại hình ("tôi phải phẫu thuật mới ổn"), Sự nghiệp & Thành tích ("tôi ở mức trung bình, không có duyên với nghề này"). Nếu Brule của bạn không khớp lĩnh vực nào trong 5 mục trên — cứ đặt tên lĩnh vực riêng ở Bước 1 dưới đây. Bản đồ này chỉ để khởi động nhận diện, không để đóng khung.</p></blockquote>
+<hr/>
+
+<h2>III. Quy Trình Trace Mở Rộng — 5 Bước</h2>
+<p>Quy trình này mở rộng từ 3 bước bạn học ở Workbook Ngày 5, thêm 2 bước để dùng độc lập, nhiều lần, không cần video hướng dẫn lại.</p>
+
+<h2>Bước 0 — Quét Nhanh <span style="font-weight:400;font-style:italic;color:#A8A39D">(làm trước, một lần, càng nhiều dòng càng tốt)</span></h2>
+<p>Trước khi đào sâu từng Brule bằng 5 bước bên dưới, dành 20–30 phút viết nhanh một bảng thô — không dừng lại để phân tích, không sửa câu chữ. Mục tiêu là số lượng, không phải độ sâu.</p>
+<p>Với mỗi sự kiện nhớ được (thuộc bất kỳ lĩnh vực nào ở Phần II) — viết ngay Brule nó tạo ra, bằng bản năng, không lọc:</p>
+<table>
+<thead><tr><th style="width:36px">#</th><th>Sự kiện</th><th>Brule được hình thành</th></tr></thead>
+<tbody>${scanRows}</tbody>
+</table>
+<p style="font-size:.8rem;color:#A8A39D;font-style:italic">Thêm dòng nếu cần — không giới hạn ở 10. Một buổi quét nhanh nghiêm túc thường ra 20–30 dòng.</p>
+<blockquote><p>Đừng đào sâu tuổi, bối cảnh, hay ý nghĩa ở bước này. Đó là việc của Bước 1–5. Ở đây, bạn chỉ đang lấy hết những gì đang có ra khỏi đầu, đặt lên giấy — để nhìn thấy khối lượng thật sự, thay vì chỉ nhớ 1–2 sự kiện "nổi bật nhất."</p></blockquote>
+<p><strong>Sau khi quét xong — nhìn lại bảng, khoanh tròn 2–3 dòng có phản ứng cơ thể mạnh nhất khi đọc lại.</strong> Đó là những Brule đưa vào quy trình Bước 1–5 dưới đây, và vào Bảng Kiểm Toán ở Phần IV.</p>
+<hr/>
+<p style="font-size:.82rem;color:#89837f">Sao chép mẫu 5 bước dưới đây mỗi lần bạn đào sâu một Brule đã khoanh tròn.</p>
+
+<h2>Bước 1 — Đặt Tên Brule</h2>
+<p class="wb-q">Viết thành câu hoàn chỉnh, bắt đầu bằng "Tôi tin rằng...":</p>
+${ta('b1_step1_belief', 2)}
+<p class="wb-q">Lĩnh vực (theo Phần II):</p>
+${ta('b1_step1_domain', 1)}
+
+<h2>Bước 2 — Sự Kiện Gốc</h2>
+<p class="wb-q">Lần đầu tiên tôi nhớ cảm thấy điều này là khi...</p>
+${ta('b1_step2_event', 3)}
+<p class="wb-q">Tôi khoảng bao nhiêu tuổi? Tôi đang ở đâu, với ai?</p>
+${ta('b1_step2_context', 2)}
+
+<h2>Bước 3 — Bài Học Được Rút Ra</h2>
+<p class="wb-q">Từ sự kiện đó, tôi rút ra bài học:</p>
+${ta('b1_step3_lesson', 2)}
+<p class="wb-q">Ở tuổi đó, bài học này có logic không? (có / không / một phần)</p>
+${ta('b1_step3_logic', 1)}
+<blockquote><p>Brule không sai về đạo đức. Nó là cách tốt nhất một đứa trẻ có thể diễn giải hoàn cảnh với dữ liệu lúc đó. Vấn đề là nó vẫn đang chạy — ở tuổi này, trong hoàn cảnh khác hoàn toàn.</p></blockquote>
+
+<h2>Bước 4 — Mức Độ Ảnh Hưởng Hiện Tại <span style="font-weight:400;font-style:italic;color:#A8A39D">(bước mới)</span></h2>
+<p class="wb-q">Trên thang 1–10, Brule này đang chi phối quyết định của tôi hôm nay ở mức nào?</p>
+${ta('b1_step4_score', 1)}
+<p class="wb-q">Nó xuất hiện rõ nhất trong tình huống nào gần đây? (1 ví dụ cụ thể, trong 30 ngày qua)</p>
+${ta('b1_step4_example', 2)}
+<p style="font-size:.8rem;color:#A8A39D;font-style:italic">Điểm số này không cố định — nó thay đổi khi bạn thực hành. Ghi lại ngày trace để so sánh sau này.</p>
+<p class="wb-q">Ngày trace:</p>
+${ta('b1_step4_date', 1)}
+
+<h2>Bước 5 — Phản Chứng <span style="font-weight:400;font-style:italic;color:#A8A39D">(bước mới)</span></h2>
+<p class="wb-q">Một diễn giải khác có thể đúng không kém — mà đứa trẻ lúc đó không thể thấy:</p>
+${ta('b1_step5_alt', 2)}
+<p class="wb-q">Một bằng chứng trong đời sống hiện tại của tôi mâu thuẫn trực tiếp với Brule này:</p>
+${ta('b1_step5_evidence', 2)}
+<p style="font-size:.8rem;color:#A8A39D;font-style:italic">Ví dụ: Brule là "tôi không đủ để ai ở lại" — bằng chứng mâu thuẫn có thể là một người bạn đã ở lại hơn 10 năm.</p>
+<hr/>
+
+<h2>IV. Bảng Kiểm Toán Tổng Hợp</h2>
+<p>Sau khi trace từ 2 Brule trở lên, chuyển kết quả vào bảng này để thấy toàn cảnh — không phải từng mảnh rời rạc.</p>
+<table>
+<thead><tr><th>Lĩnh vực</th><th>Brule</th><th style="width:70px">Tuổi gốc</th><th style="width:80px">Điểm (1–10)</th><th style="width:100px">Đã trace ngày</th></tr></thead>
+<tbody>${auditRows}</tbody>
+</table>
+<p class="wb-q">Nhìn vào bảng — có Brule nào lặp lại cùng một tuổi gốc không? (một giai đoạn tuổi thơ có thể sinh ra nhiều Brule cùng lúc, ở nhiều lĩnh vực khác nhau)</p>
+${ta('b1_audit_pattern', 2)}
+<hr/>
+
+<h2>V. Khi Nào Dùng Lại Sổ Tay Này</h2>
+<p>Đây không phải công cụ dùng một lần ở Ngày 5. Mở lại sổ tay này khi:</p>
+<ul>
+<li>Bạn có phản ứng cảm xúc mạnh hơn tình huống thực tế xứng đáng có</li>
+<li>Một cơ hội tốt xuất hiện và bạn thấy mình tìm lý do để từ chối hoặc trì hoãn</li>
+<li>Một mối quan hệ hoặc kết quả tốt đẹp bắt đầu, và có một sự bất an mơ hồ đi kèm</li>
+<li>Bạn nhận ra mình đang lặp lại chính xác một tình huống đã xảy ra trước đây — với người khác, hoàn cảnh khác, cùng một kết cục</li>
+<li>Sổ ghi chép của Nghi thức Quan sát (Phần I) đã tích được vài dòng — đủ để nhận ra một mẫu hình đang lặp lại</li>
+</ul>
+<p>Mỗi lần như vậy — quay lại Phần III, dùng mẫu 5 bước, thêm một dòng vào Bảng Kiểm Toán ở Phần IV.</p>
+<p>Theo thời gian, bảng này trở thành bản đồ đầy đủ nhất bạn từng có về hệ điều hành cũ của mình.</p>
+<hr/>
+<blockquote><p><em>"Tôi không trace những Brule này để phán xét quá khứ.<br/>Tôi trace để biết chính xác mã nguồn nào đang chạy — trước khi viết mã mới đè lên nó."</em></p></blockquote>
+<p style="font-size:.72rem;color:#c8c2bc;margin-top:20px">Sổ tay Kiểm toán Lịch sử — Bonus 1, Quantum Rebirth OS 2.0</p>
+</div>`;
+        },
+      },
+
+      23: {
+        render: function (ta, cell) {
+          return `<div class="reading-content">
+
+<blockquote><p><strong>Đây là script để thu âm, không phải script để quay video.</strong> Không có slide, không có "Nói:" / "Kể:" như script bài học — chỉ có giọng dẫn liên tục, chậm, đều. Người nghe nhắm mắt trong suốt audio. Không cần xem gì.</p><p>Mục đích của audio này: đưa sóng não về Alpha/Theta nhanh hơn tự thực hành một mình — để mỗi lần ngồi thiền, học viên tiếp cận đúng lớp tâm thức nơi cài đặt nhân dạng mới xảy ra (Zero-Point Field — trạng thái tĩnh tại tuyệt đối, không phản ứng, không gồng).</p><p>Dùng được từ Ngày 1 — không bắt buộc phải có Bản Thiết Kế Lượng Tử (Ngày 10) trước. Giai đoạn Ký ức Tương lai trong audio này dùng hình ảnh mở, để học viên tự điền hình ảnh của riêng họ dù đã hay chưa làm Ngày 10.</p></blockquote>
+
+<div class="video-box" style="aspect-ratio:auto;height:120px">
+  <div class="video-ph-text">🎧 Bản ghi âm đầy đủ sẽ sớm được cập nhật tại đây.<br/><span style="font-size:.7rem;opacity:.6">Trong lúc chờ, đọc chậm kịch bản bên dưới, hoặc nhờ người thân đọc giúp bạn trong lúc nhắm mắt.</span></div>
+</div>
+
+<h2>Ghi Chú Cuối — Hướng Dẫn Sử Dụng</h2>
+<ul>
+<li>Dùng tai nghe nếu có thể — đặc biệt nếu bản thu có binaural beat.</li>
+<li>Nghe vào buổi sáng (trước khi vào guồng công việc) hoặc trước khi thực hành Giao thức Thiền 4 giai đoạn ở Module 3 — dùng như bước khởi động để vào trạng thái Alpha nhanh hơn.</li>
+<li>Không nghe khi đang lái xe hoặc vận hành máy móc.</li>
+<li>Không cần nghe mỗi ngày để có tác dụng — nhưng dùng đều trong tuần đầu tiên (Module 0–1) sẽ giúp quy trình trace ở Bonus 1 dễ vào hơn, vì hệ thần kinh đã quen với trạng thái mở.</li>
+</ul>
+<p style="font-size:.72rem;color:#c8c2bc;margin-top:20px">Audio "Zero-Point Meditator" — Bonus 2, Quantum Rebirth OS 2.0</p>
+</div>`;
+        },
+      },
+
+      24: {
+        render: function (ta, cell) {
+          function dayRows(n, cols) {
+            var rows = '';
+            for (var i = 1; i <= n; i++) {
+              rows += '<tr><td style="width:50px;color:#C5A880;font-family:\'Playfair Display\',serif">' + i + '</td>';
+              cols.forEach(function (c) { rows += '<td>' + cell('b3_' + c + '_' + i) + '</td>'; });
+              rows += '</tr>';
+            }
+            return rows;
+          }
+          var t2WeekRows = dayRows(7, ['t2wk_count', 't2wk_zone', 't2wk_recovery']);
+          var t3WeekRows = dayRows(5, ['t3wk_intensity', 't3wk_anchor', 't3wk_leak']);
+          var t4WeekRows = dayRows(7, ['t4wk_when', 't4wk_choice']);
+
+          return `<div class="reading-content">
+
+<blockquote><p><strong>Đây không phải bản lặp lại của Bài Đọc Ngày 20.</strong> Ngày 20 cho bạn <em>khái niệm</em> — Reality Architect Protocol là cách nhìn thấy 4 công cụ bạn đã học (Bản Thiết Kế, Vùng Mềm, Ký ức Tương lai, Power vs Force) như một cấu trúc thống nhất. Tài liệu này là <em>phần mềm ứng dụng</em> của cấu trúc đó — một giao thức luyện tập hoàn chỉnh, có cơ chế khoa học riêng cho từng tầng, có bài tập chính và biến thể nâng cao, có bảng theo dõi, có lộ trình 90 ngày, và có phần xử lý sai lầm thường gặp.</p><p>Đây là tài liệu bạn quay lại nhiều lần, không đọc một lần rồi cất. Bắt đầu dùng sau Ngày 21. Đây là công cụ của Module 6 — Trò Chơi Vô Hạn. Không có điểm hoàn thành; chỉ có mức độ thành thạo ngày càng sâu.</p></blockquote>
+
+<h2>Phần Mở Đầu — Vì Sao Giao Thức Này Tồn Tại Riêng Biệt</h2>
+<p>21 ngày của Quantum Rebirth OS làm một việc: thay thế danh tính cũ bằng danh tính mới, và cài một giao thức thiền hàng ngày để nuôi dưỡng nó.</p>
+<p>Nhưng có một khoảng trống mà 21 ngày không đủ thời gian để lấp đầy: <strong>khoảnh khắc thật, áp lực thật, ngay bây giờ.</strong></p>
+<p>Danh tính mới của bạn đã ổn định trong lúc thiền, trong không gian yên tĩnh buổi sáng. Câu hỏi còn lại là: nó có đứng vững không, khi bạn đang ngồi trước một khách hàng khó tính, một quyết định tài chính không thể rút lại, hay một cuộc trò chuyện có thể kết thúc một mối quan hệ?</p>
+<p>Reality Architect Protocol là câu trả lời cho câu hỏi đó. Nó không dạy bạn thêm lý thuyết. Nó lấy 4 công cụ đã có gốc rễ trong 21 ngày — sự tập trung, sự hấp thụ hỗn loạn, hình dung giác quan, và buông bỏ kiểm soát — và rèn chúng thành phản xạ vận hành được dưới áp lực thật, không chỉ trong không gian an toàn của một buổi thiền.</p>
+<blockquote><p><strong>Điều kiện để dùng tài liệu này:</strong> bạn đã hoàn thành ít nhất đến Ngày 14 (đã có Bản Thiết Kế Lượng Tử từ Ngày 10, đã quen với Quy Trình Thiền 4 giai đoạn). Nếu chưa — quay lại lộ trình chính trước. Giao thức này xây trên nền đó, không thay thế nó.</p></blockquote>
+<hr/>
+
+<h2>Phần I — Cơ Chế Nền: Từ Sự Chú Ý Đến Vật Chất</h2>
+<p>Trước khi vào 4 tầng, cần hiểu chuỗi cơ chế nối chúng lại — vì nếu không thấy chuỗi này, mỗi tầng sẽ chỉ là một bài tập rời rạc, không phải một hệ thống.</p>
+<div class="diagram">Sự chú ý (Tầng 1)
+   ↓
+Điều tiết hệ thần kinh dưới áp lực (Tầng 2)
+   ↓
+Mô phỏng cảm xúc — cơ thể sản xuất hóa chất của trạng thái đích (Tầng 3)
+   ↓
+Buông vòng lặp kiểm soát — Cortisol hạ, tín hiệu mạch lạc phát ra (Tầng 4)
+   ↓
+RAS lọc lại thực tại theo danh tính mới</div>
+<p><strong>Về khung Quantum:</strong> giống như đã nói ở Ngày 3, mô hình lượng tử ở đây là <strong>Siêu Giả dược</strong> — một khung tâm lý học mượn ngôn ngữ vật lý để tạo cam kết và cảm xúc mạnh hơn cho việc luyện tập, không phải một tuyên bố về cơ học lượng tử theo nghĩa vật lý học cứng. Bạn không cần tin cơ học lượng tử đúng theo nghĩa đen để giao thức này có tác dụng. Điều tạo ra kết quả là cơ chế thần kinh và sinh hóa thật — sự chú ý thay đổi RAS, trạng thái cảm xúc thay đổi biểu hiện gen, hệ thần kinh điều tiết thay đổi chất lượng quyết định. Ngôn ngữ "sụp đổ hàm sóng", "chọn thực tại" là ẩn dụ hoạt động — dùng để khuếch đại cam kết, không phải để thay thế cho việc hiểu cơ chế thật.</p>
+<p>Sự thành thật này không làm giao thức yếu đi. Nó làm giao thức đáng tin hơn — vì bạn sẽ không cần tin vào điều gì đó bạn không thể kiểm chứng để có được kết quả.</p>
+<hr/>
+
+<h2>Phần II — Tự Chẩn Đoán: Bạn Yếu Ở Tầng Nào</h2>
+<p>Không phải ai cũng cần luyện cả 4 tầng với cường độ như nhau. Trước khi bắt đầu, dùng bảng dưới để biết tầng nào là điểm nghẽn thật sự của bạn — thay vì đoán.</p>
+<p>Với mỗi câu, cho điểm từ 1 (hoàn toàn không đúng với tôi) đến 5 (rất đúng với tôi):</p>
+<p class="wb-q">Nhóm Tầng 1 — Cờ Tàn</p>
+<p>Tôi thường mở điện thoại giữa lúc đang làm việc quan trọng, dù không có lý do cụ thể:</p>
+${ta('b3_diag_t1_a', 1)}
+<p>Tôi khó ngồi yên quá vài giây mà không có một suy nghĩ chen ngang:</p>
+${ta('b3_diag_t1_b', 1)}
+<p class="wb-q">Nhóm Tầng 2 — Vùng Mềm</p>
+<p>Một gián đoạn nhỏ (tin nhắn, cuộc gọi) đủ để phá vỡ hoàn toàn trạng thái tập trung của tôi:</p>
+${ta('b3_diag_t2_a', 1)}
+<p>Tôi cần điều kiện gần như hoàn hảo (yên tĩnh, đủ thời gian) mới làm việc tốt:</p>
+${ta('b3_diag_t2_b', 1)}
+<p class="wb-q">Nhóm Tầng 3 — Sensory Stacking</p>
+<p>Khi hình dung mục tiêu, tôi chỉ thấy hình ảnh mờ, không có cảm giác cơ thể đi kèm:</p>
+${ta('b3_diag_t3_a', 1)}
+<p>Tôi khó nhớ lại một cảm giác đủ đầy quá vài giây trước khi tâm trí chuyển sang lo lắng:</p>
+${ta('b3_diag_t3_b', 1)}
+<p class="wb-q">Nhóm Tầng 4 — Surrender</p>
+<p>Sau khi đặt một ý định hoặc gửi một đề nghị, tôi kiểm tra kết quả nhiều lần trong ngày:</p>
+${ta('b3_diag_t4_a', 1)}
+<p>Tôi thấy khó "để yên" một việc mà không liên tục nghĩ về nó:</p>
+${ta('b3_diag_t4_b', 1)}
+<p style="font-size:.85rem;color:#89837f"><strong>Cách đọc kết quả:</strong> cộng điểm mỗi nhóm. Nhóm có tổng điểm cao nhất là tầng bạn nên ưu tiên luyện trước — không phải vì các tầng khác không quan trọng, mà vì tầng yếu nhất đang giới hạn cả hệ thống, giống như mắt xích yếu nhất quyết định sức chịu lực của cả sợi xích.</p>
+<p class="wb-q">Tầng ưu tiên của tôi:</p>
+${ta('b3_diag_priority', 1)}
+<hr/>
+
+<h2>Phần III — Tầng 1: Làm Chủ Cờ Tàn (The Endgame)</h2>
+<p><strong>Định Nghĩa & Khoa Học</strong></p>
+<p><strong>Josh Waitzkin</strong> — kỳ thủ cờ vua kiện toàn, sau này là nhà vô địch thế giới Tai Chi Push Hands — học cờ theo thứ tự ngược với hầu hết mọi người: bắt đầu từ Cờ Tàn, giai đoạn chỉ còn vài quân trên bàn cờ, nơi mỗi nước đi mang ý nghĩa tối giản và tuyệt đối rõ ràng. Khi đã làm chủ được sự rõ ràng đó ở quy mô nhỏ nhất, ông mang nguyên tắc đó ngược lại vào khai cuộc — giai đoạn phức tạp nhất.</p>
+<p>Đây gọi là <strong>nguyên tắc fractal</strong>: cấu trúc học được ở quy mô nhỏ nhất lặp lại ở mọi quy mô lớn hơn. Nếu bạn không thể giữ 5 giây tập trung thuần khiết trên một vật thể đơn giản, bạn sẽ không giữ được sự rõ ràng đó trong một cuộc đàm phán trị giá một hợp đồng, hay trong khoảnh khắc quyết định có nên rời bỏ một công việc an toàn hay không.</p>
+<p>Về mặt thần kinh học: mỗi giây bạn chuyển sự chú ý, vỏ não trước trán (prefrontal cortex) — vùng chịu trách nhiệm cho quyết định có chủ đích — mất một phần năng lượng để "khởi động lại." Tập trung ngắt quãng liên tục khiến vùng này luôn ở trạng thái khởi động, không bao giờ đạt độ sâu. Vi luyện tập trung là cách huấn luyện vùng này giữ trạng thái mà không cần khởi động lại.</p>
+<p><strong>Tại Sao Tầng Này Là Nền Cho 3 Tầng Còn Lại</strong></p>
+<p>Không có sự tập trung, Tầng 2 (Vùng Mềm) không có gì để bảo vệ khi gián đoạn xảy đến. Tầng 3 (Sensory Stacking) không thể đạt độ sâu cảm xúc nếu tâm trí trôi dạt sau 2 giây. Tầng 4 (Surrender) không thể phân biệt giữa "buông" và "lơ đãng" nếu chưa từng biết cảm giác của sự tập trung tuyệt đối để so sánh.</p>
+<p><strong>Bài Tập Chính — Vi Luyện Tập Trung</strong></p>
+<p><strong>Chuẩn bị:</strong> một vật thể vật lý bất kỳ — đồng xu, hạt cà phê, đầu bút. Không cần gì đặc biệt.</p>
+<p><strong>Bước 1:</strong> đặt vật thể trước mặt, ngang tầm mắt. Ngồi thẳng, hai tay yên.</p>
+<p><strong>Bước 2:</strong> nhìn vào vật thể — không phân tích, không đặt tên, không nghĩ về nó. Chỉ nhìn, như thể đây là vật duy nhất tồn tại trong không gian bạn đang có mặt.</p>
+<p><strong>Bước 3:</strong> đếm thầm — một, hai, ba, bốn, năm — trong khi giữ sự chú ý không rời vật thể dù một tích tắc.</p>
+<p><strong>Bước 4:</strong> nếu một suy nghĩ chen vào trước khi đếm hết 5 — không tự trách. Bắt đầu lại từ một.</p>
+<blockquote><p>Đây không phải bài tập thư giãn. Đây là bài tập sức mạnh. 5 giây tập trung thuần khiết khó hơn 5 phút tập trung lơ đãng.</p></blockquote>
+<p><strong>Biến Thể Nâng Cao — Tập Trung Theo Lớp Cảm Giác</strong></p>
+<p>Khi bài tập trên đã ổn định (đạt 5 giây liên tục, 5 lần/ngày, ít nhất 1 tuần) — chuyển sang các lớp khó hơn, theo thứ tự:</p>
+<table>
+<thead><tr><th style="width:40px">Lớp</th><th>Đối tượng tập trung</th><th>Vì sao khó hơn</th></tr></thead>
+<tbody>
+<tr><td>1</td><td>Vật thể tĩnh (đã luyện ở trên)</td><td>Có hình ảnh cố định để bám vào</td></tr>
+<tr><td>2</td><td>Âm thanh đơn (tiếng đồng hồ, tiếng quạt)</td><td>Không có hình ảnh — chỉ có sóng âm biến đổi</td></tr>
+<tr><td>3</td><td>Hơi thở của chính mình</td><td>Đối tượng tập trung nằm bên trong cơ thể, dễ bị "quên" đang theo dõi</td></tr>
+<tr><td>4</td><td>Một suy nghĩ trung tính, không phán xét, không phản ứng</td><td>Đối tượng tập trung là chính tâm trí — lớp khó nhất</td></tr>
+</tbody>
+</table>
+<p><strong>Luyện Tập Dưới Áp Lực Nhân Tạo</strong></p>
+<p>Cờ Tàn thật không xảy ra trong phòng yên tĩnh. Một lần mỗi tuần, thực hiện bài tập ở Bước 1–4 tại một nơi có nhiễu nhẹ — quán cà phê, phòng chờ, cạnh một cuộc trò chuyện đang diễn ra gần đó. Mục tiêu không phải chặn tiếng ồn — mà giữ được 5 giây tập trung <em>cùng lúc với</em> tiếng ồn đang tồn tại.</p>
+<p><strong>Sai Lầm Thường Gặp</strong></p>
+<ul>
+<li><strong>Cố "làm trống đầu óc" hoàn toàn.</strong> Đây không phải mục tiêu. Mục tiêu là giữ chú ý ở một điểm, không phải loại bỏ mọi suy nghĩ.</li>
+<li><strong>Tăng thời gian quá nhanh.</strong> Nhảy thẳng lên 30 giây trước khi làm chủ 5 giây tạo cảm giác thất bại liên tục, làm giảm động lực. Tiến độ chậm và chắc quan trọng hơn tốc độ.</li>
+<li><strong>Chỉ luyện trong không gian yên tĩnh.</strong> Nếu không luyện dưới áp lực nhân tạo, kỹ năng không chuyển sang được tình huống thật.</li>
+</ul>
+<p><strong>Bảng Theo Dõi 4 Tuần</strong></p>
+<table>
+<thead><tr><th style="width:50px">Tuần</th><th>Mục tiêu</th><th style="width:110px">Số lần đạt/ngày</th><th>Ghi chú tiến độ</th></tr></thead>
+<tbody>
+<tr><td>1</td><td>5 giây liên tục</td><td>3 lần</td><td>${cell('b3_t1_wk1_note')}</td></tr>
+<tr><td>2</td><td>5 giây, đổi vật thể mỗi ngày</td><td>5 lần</td><td>${cell('b3_t1_wk2_note')}</td></tr>
+<tr><td>3</td><td>8 giây liên tục, thêm âm thanh (Lớp 2)</td><td>5 lần</td><td>${cell('b3_t1_wk3_note')}</td></tr>
+<tr><td>4</td><td>8 giây dưới áp lực nhân tạo</td><td>3 lần</td><td>${cell('b3_t1_wk4_note')}</td></tr>
+</tbody>
+</table>
+<p class="wb-q">Nhật ký hôm nay — Ngày:</p>
+${ta('b3_t1_log_date', 1)}
+<p class="wb-q">Số lần đạt mục tiêu:</p>
+${ta('b3_t1_log_count', 1)}
+<p class="wb-q">Điều gì làm gián đoạn nhiều nhất:</p>
+${ta('b3_t1_log_disrupt', 1)}
+<p><strong>Minh Họa</strong></p>
+<p>Đơn hàng 27 triệu mà tôi kể ở Ngày 2 — khoảnh khắc quyết định không phải là lúc tôi gửi tin nhắn. Là lúc tôi <strong>dừng lại</strong> trước khi gửi. Đó chính là một khoảnh khắc Cờ Tàn, dù lúc đó tôi chưa có ngôn ngữ để gọi tên nó: một khoảnh khắc tập trung tuyệt đối, tách khỏi sự hoảng loạn đang thôi thúc tôi gửi ngay, nhắn thêm, theo dõi thêm. 5 giây dừng lại đó là toàn bộ sự khác biệt giữa một tin nhắn từ sự đói khát và một tin nhắn từ sự đủ đầy.</p>
+<hr/>
+
+<h2>Phần IV — Tầng 2: Xây Dựng Vùng Mềm (The Soft Zone)</h2>
+<p><strong>Định Nghĩa & Khoa Học</strong></p>
+<p>Waitzkin gọi trạng thái đối lập là <strong>Vùng Cứng</strong> — trạng thái chỉ vận hành tốt khi điều kiện hoàn hảo: đủ yên tĩnh, đủ thời gian, không ai làm phiền. Vùng Cứng hiệu quả trên giấy, nhưng vỡ vụn ngay khi thực tế không hợp tác — và thực tế gần như không bao giờ hợp tác.</p>
+<p><strong>Vùng Mềm</strong> là trạng thái biến điều kiện không hoàn hảo thành nhiên liệu thay vì trở ngại. Đây là ứng dụng hiện đại của <em>Vô Vi</em> — không phải không hành động, mà hành động hòa với những gì đang thật sự xảy ra, thay vì kháng cự nó.</p>
+<p>Về mặt sinh lý học: khả năng này liên quan trực tiếp đến <strong>biến thiên nhịp tim (Heart Rate Variability — HRV)</strong> — chỉ số đo khả năng hệ thần kinh chuyển đổi linh hoạt giữa trạng thái giao cảm (hành động, phản ứng) và phó giao cảm (phục hồi, bình tĩnh). HRV cao đồng nghĩa với khả năng hấp thụ một cú sốc — một tin xấu, một gián đoạn — và quay lại trạng thái ổn định nhanh hơn. Đây chính xác là điều Giai đoạn 1 của Quy Trình Thiền Tái Sinh (Đồng bộ Tim-Não) đã âm thầm rèn luyện từ Ngày 14. Tầng 2 của giao thức này lấy khả năng đó ra khỏi phòng thiền, và luyện nó dưới áp lực thật.</p>
+<p><strong>Bài Tập Chính — Nhật Ký Ma Sát Thành Nhiên Liệu</strong></p>
+<p>Trong 7 ngày, mỗi khi có một gián đoạn xảy ra giữa lúc bạn đang tập trung — một cuộc gọi, một tin nhắn bất ngờ, một kế hoạch bị hủy — dừng lại 10 giây và ghi ngay:</p>
+<p class="wb-q">Gián đoạn:</p>
+${ta('b3_t2_journal_event', 1)}
+<p class="wb-q">Phản ứng đầu tiên của cơ thể (căng ở đâu, thở thế nào):</p>
+${ta('b3_t2_journal_reaction', 1)}
+<p class="wb-q">Cách gián đoạn này có thể trở thành thông tin thay vì mối đe dọa:</p>
+${ta('b3_t2_journal_reframe', 2)}
+<blockquote><p>Ví dụ: khách hàng hủy cuộc hẹn phút chót → phản ứng đầu tiên: ngực thắt lại, muốn kiểm soát lại lịch → thông tin: có thể đây là dấu hiệu người này chưa phù hợp, hoặc đây là khoảng trống để chuẩn bị tốt hơn cho cuộc hẹn tiếp theo.</p></blockquote>
+<p><strong>Biến Thể Nâng Cao — Gián Đoạn Có Chủ Đích</strong></p>
+<p>Waitzkin luyện bằng cách nhờ người khác cố ý làm phiền mình giữa lúc đang tập trung cao độ — để hệ thần kinh quen với việc giữ Vùng Mềm dưới áp lực thật, thay vì chỉ trong môi trường lý tưởng. Đây là một hình thức của <strong>luyện tập tiêm chủng stress (stress inoculation)</strong> — tiếp xúc với liều lượng nhỏ, có kiểm soát, của điều gây căng thẳng, để hệ thần kinh xây khả năng chịu đựng cao hơn.</p>
+<p><strong>Cách áp dụng:</strong> một lần mỗi tuần, khi đang làm việc cần tập trung sâu, chủ động để một nguồn xao nhãng nhỏ xuất hiện — hẹn giờ điện thoại kêu giữa chừng, hoặc nhờ người thân hỏi một câu bất kỳ.</p>
+<p>Khi nó xảy ra — quan sát: cơ thể phản ứng bằng Vùng Cứng (căng, cáu, mất nhịp hoàn toàn) hay Vùng Mềm (hấp thụ, quay lại nhanh)?</p>
+<p class="wb-q">Lần luyện tập:</p>
+${ta('b3_t2_practice_when', 1)}
+<p class="wb-q">Phản ứng (Vùng Cứng / Vùng Mềm):</p>
+${ta('b3_t2_practice_reaction', 1)}
+<p class="wb-q">Thời gian quay lại trạng thái tập trung sau gián đoạn:</p>
+${ta('b3_t2_practice_recovery', 1)}
+<p style="font-size:.8rem;color:#A8A39D;font-style:italic">Mục tiêu không phải là không bị làm phiền. Mục tiêu là thời gian quay lại ngày càng ngắn.</p>
+<p><strong>Sai Lầm Thường Gặp</strong></p>
+<ul>
+<li><strong>Nhầm Vùng Mềm với sự thụ động.</strong> Vùng Mềm vẫn hành động — chỉ là không kháng cự với những gì đã xảy ra trước khi hành động.</li>
+<li><strong>Tránh né mọi tình huống có thể gây gián đoạn</strong> để "bảo vệ" sự tập trung. Điều này củng cố Vùng Cứng, không xây Vùng Mềm — vì kỹ năng chỉ hình thành khi có ma sát thật để luyện với nó.</li>
+<li><strong>Đánh giá thành công bằng việc "không cảm thấy gì" khi bị gián đoạn.</strong> Cảm giác căng ban đầu là bình thường, kể cả ở người đã luyện lâu. Thước đo thật là tốc độ quay lại, không phải việc có cảm giác hay không.</li>
+</ul>
+<p><strong>Bảng Theo Dõi 7 Ngày</strong></p>
+<table>
+<thead><tr><th style="width:50px">Ngày</th><th>Số lần ghi Nhật ký Ma sát</th><th>Vùng Mềm hay Vùng Cứng (đa số)</th><th>Thời gian quay lại trung bình</th></tr></thead>
+<tbody>${t2WeekRows}</tbody>
+</table>
+<hr/>
+
+<h2>Phần V — Tầng 3: Mã Hóa Giác Quan 5D (Sensory Stacking)</h2>
+<p><strong>Định Nghĩa & Khoa Học</strong></p>
+<p>Ký ức Tương lai ở Ngày 14 dạy bạn hình dung bằng 5 giác quan. Tầng 3 của giao thức này nâng bài tập đó lên một mức: không chỉ hình dung trong lúc thiền, mà mã hóa nó đủ sâu để rò rỉ vào hành vi hàng ngày.</p>
+<p>Sự khác biệt giữa "phim 2D trong tâm trí" và "thực tế ảo 5D": phim 2D bạn <em>xem</em> từ bên ngoài — thực tế ảo 5D bạn <em>ở trong đó</em>, và cơ thể phản ứng hóa học như thể nó đang thật sự xảy ra.</p>
+<p>Cơ chế đứng sau: <strong>tế bào thần kinh gương (mirror neurons)</strong> — nhóm neuron kích hoạt cả khi bạn thực hiện một hành động lẫn khi bạn hình dung sống động về nó. Đây là lý do vận động viên dùng hình dung để luyện tập kỹ năng vật lý mà không cần di chuyển cơ thể. Khi hình dung đủ chi tiết ở cả 5 giác quan, não bộ kích hoạt gần như cùng một mạng lưới thần kinh như khi trải nghiệm thật — và cơ thể bắt đầu sản xuất <strong>Dopamine, Serotonin, Oxytocin</strong> như thể trạng thái đích đã xảy ra. Đây là cơ chế mà <strong>Dr. Bruce Lipton</strong> gọi là biểu sinh học đang hoạt động: hóa chất do trạng thái cảm xúc tạo ra ảnh hưởng trực tiếp đến cách gen biểu hiện.</p>
+<p><strong>Bài Tập Chính — Kịch Bản 5D Mở Rộng</strong></p>
+<p>Dùng lại trạng thái đích từ Bản Thiết Kế Lượng Tử (Ngày 10). Lần này, điền đầy đủ cả 5 lớp — không bỏ trống lớp nào, kể cả lớp khó nhất:</p>
+<p class="wb-q">Thị giác — Điều đầu tiên tôi nhìn thấy trong khoảnh khắc đó:</p>
+${ta('b3_t3_visual', 2)}
+<p class="wb-q">Thính giác — Âm thanh cụ thể xung quanh tôi (không phải "yên tĩnh" — âm thanh gì cụ thể):</p>
+${ta('b3_t3_audio', 2)}
+<p class="wb-q">Xúc giác — Cảm nhận trên da, trên tay, tư thế cơ thể:</p>
+${ta('b3_t3_touch', 2)}
+<p class="wb-q">Khứu giác — Mùi hương trong không gian đó (nếu có):</p>
+${ta('b3_t3_smell', 1)}
+<p class="wb-q">Vị giác — Nếu có, vị gì đang ở trong miệng tôi lúc đó:</p>
+${ta('b3_t3_taste', 1)}
+<p class="wb-q">Cảm giác trong ngực/bụng — Không phải suy nghĩ. Cảm giác vật lý:</p>
+${ta('b3_t3_gut', 2)}
+<p class="wb-q">Trên thang 1–10, cảm giác đủ đầy khi đọc lại kịch bản này mạnh đến mức nào:</p>
+${ta('b3_t3_intensity', 1)}
+<blockquote><p>Nếu điểm dưới 6 — quay lại, viết cụ thể hơn cho lớp giác quan yếu nhất, cho đến khi ngực bạn phản ứng khi đọc lại. Một lớp mơ hồ ("cảm thấy tốt") là dấu hiệu cơ thể chưa tin vào lớp đó.</p></blockquote>
+<p><strong>Biến Thể Nâng Cao — Neo Giác Quan (Sensory Anchor)</strong></p>
+<p>Chọn một vật thể nhỏ, mang theo được — một chiếc nhẫn, một chiếc vòng, một viên đá nhỏ trong túi. Trong lúc cảm giác đủ đầy từ Kịch Bản 5D đang ở mức cao nhất (ngay sau khi thiền, hoặc ngay sau khi đọc lại kịch bản), chạm vào vật thể đó trong 5–10 giây, để cơ thể liên kết cảm giác đó với vật thể.</p>
+<p>Sau một thời gian lặp lại, việc chạm vào vật thể đó — giữa một cuộc họp căng thẳng, trước một quyết định khó — có thể gọi lại một phần cảm giác đủ đầy đó, ngay tại chỗ, không cần nhắm mắt hay ngồi thiền.</p>
+<p class="wb-q">Vật thể tôi chọn làm Neo Giác Quan:</p>
+${ta('b3_t3_anchor_object', 1)}
+<p class="wb-q">Số lần liên kết đã thực hiện:</p>
+${ta('b3_t3_anchor_count', 1)}
+<p><strong>Bài Tập Rò Rỉ Vào Ngày Thường</strong></p>
+<p>Một lần mỗi ngày, ngoài giờ thiền — trong một khoảnh khắc bình thường (đang đi bộ, đang chờ, đang rửa bát) — gọi lại một lớp giác quan từ kịch bản trên trong 10–15 giây, không cần nhắm mắt, không cần nghi thức.</p>
+<p class="wb-q">Lớp giác quan gọi lại hôm nay:</p>
+${ta('b3_t3_leak_layer', 1)}
+<p class="wb-q">Bối cảnh lúc gọi lại:</p>
+${ta('b3_t3_leak_context', 1)}
+<p><strong>Sai Lầm Thường Gặp</strong></p>
+<ul>
+<li><strong>Chỉ tập trung vào lớp thị giác</strong>, bỏ qua các lớp còn lại vì chúng khó hình dung hơn. Lớp thị giác là lớp dễ nhất và cũng là lớp yếu nhất để tạo phản ứng hóa học thật — cảm giác cơ thể (interoception) mới là lớp có tác động mạnh nhất.</li>
+<li><strong>Coi đây là một bài tập "vision board" bằng lời.</strong> Vision board tĩnh, nhìn từ bên ngoài. Kịch bản 5D phải được trải nghiệm từ bên trong — bằng ngôi thứ nhất, không phải quan sát một hình ảnh.</li>
+<li><strong>Làm bài tập chỉ một lần rồi coi là xong.</strong> Kịch bản cần được đọc lại và tinh chỉnh nhiều lần — mỗi lần cơ thể phản ứng mạnh hơn một chút, cho đến khi phản ứng đó trở nên quen thuộc.</li>
+</ul>
+<p><strong>Bảng Theo Dõi</strong></p>
+<table>
+<thead><tr><th style="width:50px">Ngày</th><th>Cường độ cảm xúc (1–10)</th><th>Neo Giác Quan đã dùng</th><th>Lớp giác quan rò rỉ hôm nay</th></tr></thead>
+<tbody>${t3WeekRows}</tbody>
+</table>
+<hr/>
+
+<h2>Phần VI — Tầng 4: Chữ Ký Cảm Xúc & Surrender</h2>
+<p><strong>Định Nghĩa & Khoa Học</strong></p>
+<p>Đây là tầng hầu hết mọi người bỏ qua — và vì thế mọi nỗ lực ở Tầng 1–3 sụp đổ ngay trước vạch đích. Bạn gieo ý định với đầy đủ cảm xúc và giác quan (Tầng 1–3), rồi phải <strong>buông</strong> — vì sự kiểm soát ám ảnh chính là bằng chứng bạn chưa thực sự tin mình đã là người đó. Người đã có điều đó rồi không cần theo dõi nó mỗi giờ.</p>
+<p>Nghiên cứu về <strong>locus of control</strong> (điểm kiểm soát) trong tâm lý học cho thấy: người có xu hướng tin rằng kết quả nằm hoàn toàn trong tầm kiểm soát trực tiếp, tức thời của họ, thường trải nghiệm mức độ lo âu cao hơn khi kết quả chưa xuất hiện ngay — vì mọi khoảng trễ đều bị diễn giải là "tôi chưa làm đủ, tôi cần làm thêm." Vòng lặp này giữ hệ thần kinh giao cảm luôn bật, giữ Cortisol luôn cao — chính là trạng thái đối lập hoàn toàn với những gì Tầng 1–3 vừa xây dựng.</p>
+<p>Buông không phải từ bỏ mục tiêu. Buông là tách hành động (đã làm ở mức tốt nhất có thể) ra khỏi việc giám sát kết quả (không thuộc quyền kiểm soát trực tiếp của bạn). Đây là sự khác biệt giữa Force và Power đã học ở Ngày 19, áp dụng vào giai đoạn sau khi hành động đã xảy ra — không chỉ giai đoạn trước và trong khi hành động.</p>
+<p><strong>Nghi Thức Gieo & Buông</strong></p>
+<p><strong>Bước 1 — Gieo:</strong> sau khi hoàn thành Kịch Bản 5D (Phần V), viết một câu duy nhất — Chữ Ký Cảm Xúc — tóm gọn trạng thái đó thành một cụm từ ngắn:</p>
+<p class="wb-q">Chữ Ký Cảm Xúc của tôi:</p>
+${ta('b3_t4_signature', 1)}
+<p style="font-size:.8rem;color:#A8A39D;font-style:italic">Ví dụ: "Nhẹ và chắc." "Đã đủ, đang mở rộng." Không cần hay — chỉ cần đúng với cảm giác.</p>
+<p><strong>Bước 2 — Đặt xuống:</strong> viết chữ ký đó ra một mảnh giấy riêng, hoặc gõ vào một ghi chú. Đọc nó một lần, chậm.</p>
+<p><strong>Bước 3 — Buông:</strong> gấp giấy lại, hoặc đóng ghi chú. Chọn một trong ba hình thức buông dưới đây, tùy điều gì phù hợp với bạn:</p>
+<table>
+<thead><tr><th style="width:130px">Hình thức</th><th>Cách làm</th></tr></thead>
+<tbody>
+<tr><td>Cất giữ</td><td>Gấp giấy, cất vào một nơi cụ thể (ví học, ngăn bàn) — không xem lại trong 24 giờ</td></tr>
+<tr><td>Giải phóng vật lý</td><td>Đốt giấy an toàn ngoài trời, hoặc xé nhỏ và bỏ đi — biểu tượng cho việc trao đi, không giữ lại</td></tr>
+<tr><td>Số hóa</td><td>Gõ vào ghi chú, đóng ứng dụng, tắt thông báo liên quan trong 24 giờ</td></tr>
+</tbody>
+</table>
+<p>Sau đó, nói thầm một câu:</p>
+<blockquote><p><em>"Tôi đã gieo. Phần còn lại không phải việc của tôi."</em></p></blockquote>
+<p><strong>Bước 4 — Quay lại hành động bình thường.</strong> Không kiểm tra, không "kiểm tra lại cho chắc." Nếu một hành động cụ thể cần thực hiện tiếp theo (gửi email, gọi điện) — làm nó, rồi buông tiếp.</p>
+<p><strong>Biến Thể Nâng Cao — 72 Giờ Không Kiểm Tra</strong></p>
+<p>Sau một hành động quan trọng đã hoàn thành (gửi đề nghị, kết thúc một cuộc phỏng vấn, gửi tin nhắn quan trọng) — đặt quy tắc không chủ động kiểm tra kết quả trong 72 giờ, trừ khi có phản hồi chủ động tìm đến bạn.</p>
+<p>Đây là bài tập khó nhất trong toàn bộ giao thức — vì nó trực tiếp đối đầu với cơn nghiện Cortisol đã học ở Ngày 4. Mỗi lần bạn cưỡng lại được xung động kiểm tra, bạn đang cắt tỉa một đường mòn thần kinh của sự kiểm soát, và củng cố một đường mòn mới của sự tin tưởng.</p>
+<p class="wb-q">Hành động tôi đang thực hành buông:</p>
+${ta('b3_t4_72h_action', 1)}
+<p class="wb-q">Số lần xung động kiểm tra xuất hiện trong 72 giờ:</p>
+${ta('b3_t4_72h_impulses', 1)}
+<p class="wb-q">Số lần tôi chọn không kiểm tra:</p>
+${ta('b3_t4_72h_resisted', 1)}
+<p><strong>Sai Lầm Thường Gặp</strong></p>
+<ul>
+<li><strong>Nhầm buông với không làm gì.</strong> Buông xảy ra <em>sau</em> khi hành động đã hoàn thành ở mức tốt nhất — không phải thay thế cho hành động.</li>
+<li><strong>Kiểm soát ngụy trang thành "chuẩn bị kỹ hơn."</strong> Việc "chuẩn bị thêm" liên tục, không có điểm dừng rõ ràng, thường là kiểm soát đội lốt sự cẩn trọng. Nếu bạn đã chuẩn bị đủ theo tiêu chuẩn đã đặt ra trước đó — đó là điểm dừng.</li>
+<li><strong>Buông một lần rồi bỏ cuộc khi xung động quay lại.</strong> Xung động kiểm soát sẽ quay lại nhiều lần trong cùng một ngày. Việc phải buông lại lần thứ mười không phải là thất bại của lần buông đầu tiên.</li>
+</ul>
+<p><strong>Bảng Theo Dõi Nhật Ký Xung Động Kiểm Soát</strong></p>
+<table>
+<thead><tr><th style="width:50px">Ngày</th><th>Xung động xuất hiện khi nào</th><th>Buông lại hay tiếp tục kiểm soát</th></tr></thead>
+<tbody>${t4WeekRows}</tbody>
+</table>
+<p style="font-size:.8rem;color:#A8A39D;font-style:italic">Số lần bạn bắt được xung động đó — không phải số lần "thành công" hoàn toàn — là thước đo tiến bộ thật sự. Bắt được là bước đầu của thay đổi.</p>
+<hr/>
+
+<h2>Phần VII — Tích Hợp: Một Ngày Vận Hành Đầy Đủ 4 Tầng</h2>
+<p>Bốn tầng không phải bốn bài tập tách biệt trong lịch trình. Đây là cách chúng dệt vào một ngày bình thường:</p>
+<p><strong>Buổi sáng</strong> — Quy Trình Thiền 4 Giai Đoạn (Ngày 14) như thường lệ. Trong Giai đoạn 3 (Ký ức Tương lai), dùng Kịch Bản 5D Mở Rộng (Tầng 3) thay vì hình dung chung chung. Kết thúc bằng chạm vào Neo Giác Quan (Tầng 3) trong 10 giây.</p>
+<p><strong>Trước một việc quan trọng trong ngày</strong> — 5 giây Vi Luyện Tập Trung (Tầng 1) ngay trước khi bắt đầu, để tách khỏi quán tính của việc trước đó.</p>
+<p><strong>Trong lúc làm việc</strong> — khi gián đoạn xảy ra, dùng phản xạ đã luyện ở Nhật ký Ma sát (Tầng 2): quan sát phản ứng cơ thể, tìm thông tin trong gián đoạn thay vì kháng cự nó.</p>
+<p><strong>Sau khi hoàn thành một hành động quan trọng</strong> — Nghi thức Gieo & Buông (Tầng 4). Chạm vào Chữ Ký Cảm Xúc, rồi thật sự buông, không kiểm tra liên tục.</p>
+<p><strong>Buổi tối</strong> — 2–3 phút ghi lại Nhật ký Xung động Kiểm soát, nếu có.</p>
+<p>Không cần làm đủ cả 5 mục trên mỗi ngày để "thành công." Mục tiêu là các tầng dần trở thành phản xạ, không phải danh sách việc cần làm.</p>
+<hr/>
+
+<h2>Phần VIII — Lộ Trình Luyện Tập 90 Ngày</h2>
+<p>Đừng cố làm cả 4 tầng ở cường độ tối đa cùng lúc. Xây theo lớp — mỗi tầng cần lớp trước làm nền. Lộ trình chia thành 3 chu kỳ 30 ngày.</p>
+<p><strong>Chu Kỳ 1 (Ngày 1–30) — Nền Tảng</strong></p>
+<table>
+<thead><tr><th style="width:60px">Tuần</th><th>Trọng tâm chính</th><th>Các tầng khác</th></tr></thead>
+<tbody>
+<tr><td>1</td><td>Tầng 1 — Vi Luyện Tập Trung</td><td>Bắt đầu Nhật ký Ma sát (Tầng 2), nhẹ</td></tr>
+<tr><td>2</td><td>Tầng 2 — Vùng Mềm + Luyện Tập Chủ Động</td><td>Duy trì Tầng 1</td></tr>
+<tr><td>3</td><td>Tầng 3 — Kịch Bản 5D + Rò Rỉ Vào Ngày Thường</td><td>Tầng 1–2 chạy nền</td></tr>
+<tr><td>4</td><td>Tầng 4 — Nghi thức Gieo & Buông + Nhật ký Xung động</td><td>Cả 3 tầng trước đã có nền</td></tr>
+</tbody>
+</table>
+<p><strong>Chu Kỳ 2 (Ngày 31–60) — Áp Lực Thật</strong></p>
+<table>
+<thead><tr><th style="width:60px">Tuần</th><th>Trọng tâm chính</th></tr></thead>
+<tbody>
+<tr><td>5–6</td><td>Luyện Tập Dưới Áp Lực Nhân Tạo (Tầng 1) + Gián Đoạn Có Chủ Đích (Tầng 2), tăng tần suất</td></tr>
+<tr><td>7</td><td>Neo Giác Quan (Tầng 3) — mang vật thể theo hàng ngày, dùng thật trong tình huống căng thẳng</td></tr>
+<tr><td>8</td><td>72 Giờ Không Kiểm Tra (Tầng 4) — áp dụng vào một quyết định thật, có rủi ro thật</td></tr>
+</tbody>
+</table>
+<p><strong>Chu Kỳ 3 (Ngày 61–90) — Tự Động Hóa</strong></p>
+<table>
+<thead><tr><th style="width:60px">Tuần</th><th>Trọng tâm chính</th></tr></thead>
+<tbody>
+<tr><td>9–10</td><td>Vận hành theo Phần VII (Tích hợp Một Ngày) — không cần nhắc, để nó trở thành nhịp sống</td></tr>
+<tr><td>11–12</td><td>Tự đánh giá lại bằng bảng ở Phần II — so sánh điểm số với lần đầu, xác định tầng cần tiếp tục luyện</td></tr>
+</tbody>
+</table>
+<p>Sau 90 ngày, không có "hoàn thành." Bốn tầng trở thành cách bạn vận hành — không phải bài tập bạn còn phải nhắc mình làm.</p>
+<hr/>
+
+<h2>Phần IX — Câu Hỏi Thường Gặp Về Giao Thức</h2>
+<p><strong>"Tôi luyện Tầng 1 nhiều ngày mà vẫn không giữ được 5 giây liên tục. Tôi đang làm sai điều gì?"</strong></p>
+<p>Có thể không. 5 giây tập trung thuần khiết khó hơn cảm giác của hầu hết mọi người trước khi thử. Nếu bạn đang đếm được 2–3 giây trước khi một suy nghĩ chen vào — đó là tiến bộ thật, không phải thất bại. Tiếp tục ở cường độ hiện tại thêm một tuần trước khi đánh giá lại, thay vì tăng độ khó hay bỏ cuộc.</p>
+<p><strong>"Làm sao biết mình đã 'thành thạo' một tầng, để chuyển sang tầng tiếp theo?"</strong></p>
+<p>Không phải khi bạn hoàn hảo. Là khi bài tập chính của tầng đó không còn cần bạn nhắc bản thân làm — nó xảy ra gần như tự động, ít nhất trong điều kiện bình thường (chưa cần dưới áp lực nhân tạo).</p>
+<p><strong>"Giao thức này có thay thế Quy Trình Thiền 4 Giai Đoạn không?"</strong></p>
+<p>Không. Giao thức này bổ trợ cho quy trình thiền, không thay thế. Buổi thiền buổi sáng là nơi bạn <em>nạp</em> trạng thái. Bốn tầng của giao thức này là nơi bạn <em>vận hành</em> trạng thái đó suốt cả ngày, dưới áp lực thật.</p>
+<p><strong>"Tôi có cần làm đúng thứ tự Tầng 1 → 2 → 3 → 4 không?"</strong></p>
+<p>Với chu kỳ đầu tiên (Ngày 1–30) — có, vì mỗi tầng xây trên nền của tầng trước. Sau đó, dùng bảng Tự Chẩn Đoán ở Phần II để biết tầng nào cần quay lại luyện thêm, không cần theo thứ tự tuyến tính nữa.</p>
+<hr/>
+
+<h2>Phần X — Khi Nào Dùng Lại Giao Thức Này</h2>
+<p>Đây không phải công cụ 21 ngày. Đây là công cụ của phần đời còn lại.</p>
+<p>Mở lại tài liệu này khi:</p>
+<ul>
+<li>Bạn cảm thấy mình đang mất tập trung ở những quyết định quan trọng — quay lại Tầng 1.</li>
+<li>Cuộc sống đang ném vào bạn nhiều gián đoạn hơn bình thường — Tầng 2 là nơi cần luyện lại.</li>
+<li>Một mục tiêu mới xuất hiện và bạn cần một Cờ Tàn mới — quay lại Tầng 3, viết Kịch Bản 5D mới.</li>
+<li>Bạn bắt gặp mình đang kiểm tra, đang gồng, đang không tin thực tại sẽ tự sắp xếp — Tầng 4.</li>
+<li>Sau mỗi 90 ngày, dù mọi thứ đang ổn — làm lại bảng Tự Chẩn Đoán ở Phần II một lần, để biết tầng nào cần được nâng cấp tiếp.</li>
+</ul>
+<hr/>
+<blockquote><p><em>"Bốn tầng này không phải bốn kỹ năng riêng biệt.<br/>Chúng là một chuyển động duy nhất — tập trung, hấp thụ, mã hóa, rồi buông.<br/>Người thành thạo chuyển động đó không còn cần đến tài liệu này nữa.<br/>Đó là lúc bạn biết mình đã trở thành Kiến Trúc Sư — không phải người đọc về nó."</em></p></blockquote>
+<p style="font-size:.72rem;color:#c8c2bc;margin-top:20px">The Reality Architect Protocol — Bonus 3, Quantum Rebirth OS 2.0</p>
+</div>`;
+        },
+      },
     };
 
     // Nội dung ngày tích hợp — thay thế khi có content thật
@@ -2539,28 +3070,39 @@ TẦNG 4  SURRENDER        → Giữ danh tính, buông hình thức
     // ═══════════════════════════════════════════════════════════════
     // SIDEBAR
     // ═══════════════════════════════════════════════════════════════
+    // Đề mục Bonus và đề mục Chương Trình Chính là hai danh sách tách biệt —
+    // chỉ kết hợp khi nội dung thật sự liên quan (nhắc trong bài đọc), không gộp menu điều hướng.
+    function contextDays(day) {
+      const ref = DAYS.find(function (x) { return x.day === day; });
+      const isBonus = !!(ref && ref.module === 7);
+      return DAYS.filter(function (x) { return isBonus ? x.module === 7 : x.module !== 7; });
+    }
+
     function buildSidebarHTML() {
       let html = '';
       let lastMod = -1;
+      const list = contextDays(currentDay);
 
-      DAYS.forEach(function (d) {
+      list.forEach(function (d) {
         if (d.module !== lastMod) {
           if (lastMod !== -1) html += '</div>';
+          const modLabel = d.module === 7 ? 'Bonus' : ('Module ' + d.module);
           html += `
-            <div class="sb-module-label">Module ${d.module}</div>
+            <div class="sb-module-label">${modLabel}</div>
             <div class="sb-module-title">${MODULES[d.module]}</div>
             <div>`;
           lastMod = d.module;
         }
-        const isInt  = d.type === 'integration';
-        const isOri  = d.type === 'orientation';
+        const isInt   = d.type === 'integration';
+        const isOri   = d.type === 'orientation';
+        const isBonus = d.type === 'bonus';
         const active = d.day === currentDay;
         const done   = completed.has(d.day);
 
         html += `<a href="?day=${d.day}"
           class="sb-day${active ? ' active' : ''}${done ? ' done' : ''}${isInt ? ' sb-integration' : ''}"
           onclick="return goDay(${d.day})">
-          <span class="sb-day-num">${isInt ? '✦' : isOri ? '▶' : d.day}</span>
+          <span class="sb-day-num">${isInt ? '✦' : isOri ? '▶' : isBonus ? '★' : d.day}</span>
           <span class="sb-day-name">${d.title}</span>
           ${done ? '<span class="sb-check">✓</span>' : ''}
         </a>`;
@@ -2576,20 +3118,23 @@ TẦNG 4  SURRENDER        → Giữ danh tính, buông hình thức
     }
 
     function renderMobileDaybar() {
-      const d    = DAYS.find(function (x) { return x.day === currentDay; });
-      const prevD = DAYS.find(function (x) { return x.day === currentDay - 1; });
-      const nextD = DAYS.find(function (x) { return x.day === currentDay + 1; });
+      const d = DAYS.find(function (x) { return x.day === currentDay; });
       if (!d) return;
+      const list  = contextDays(currentDay);
+      const idx   = list.findIndex(function (x) { return x.day === currentDay; });
+      const prevD = list[idx - 1];
+      const nextD = list[idx + 1];
 
-      document.getElementById('mdb-day-label').textContent  = 'Module ' + d.module + ' · Ngày ' + d.day;
+      document.getElementById('mdb-day-label').textContent  = d.type === 'bonus' ? 'Bonus · Miễn phí' : ('Module ' + d.module + ' · Ngày ' + d.day);
       document.getElementById('mdb-day-title').textContent  = d.title;
       document.getElementById('mdb-prev').disabled = !prevD;
       document.getElementById('mdb-next').disabled = !nextD;
     }
 
     function mdbNav(dir) {
-      const delta = dir === 'prev' ? -1 : 1;
-      const target = DAYS.find(function (x) { return x.day === currentDay + delta; });
+      const list = contextDays(currentDay);
+      const idx  = list.findIndex(function (x) { return x.day === currentDay; });
+      const target = dir === 'prev' ? list[idx - 1] : list[idx + 1];
       if (target) goDay(target.day);
     }
 
@@ -2611,8 +3156,10 @@ TẦNG 4  SURRENDER        → Giữ danh tính, buông hình thức
       if (!d) return;
 
       const done    = completed.has(d.day);
-      const prevD   = DAYS.find(function (x) { return x.day === currentDay - 1; });
-      const nextD   = DAYS.find(function (x) { return x.day === currentDay + 1; });
+      const ctxList = contextDays(currentDay);
+      const ctxIdx  = ctxList.findIndex(function (x) { return x.day === currentDay; });
+      const prevD   = ctxList[ctxIdx - 1];
+      const nextD   = ctxList[ctxIdx + 1];
       const badgeCls = 'badge-' + d.type;
 
       let metaBadges = `<span class="badge ${badgeCls}">${TYPE_LABEL[d.type] || d.type}</span>`;
@@ -2620,21 +3167,26 @@ TẦNG 4  SURRENDER        → Giữ danh tính, buông hình thức
 
       const inner = d.type === 'integration' ? renderIntegration(d)
                   : d.type === 'orientation' ? renderOrientation(d)
+                  : d.type === 'bonus' ? renderBonusContent(d)
                   : renderTabs(d);
 
       const completeBtnHtml = done
         ? `<button class="complete-btn done" disabled>✓ Đã hoàn thành</button>`
         : `<button class="complete-btn" onclick="markComplete(${d.day})">Đánh dấu hoàn thành</button>`;
 
+      const moduleCrumb = d.type === 'bonus' ? 'Bonus' : ('Module ' + d.module);
+      const dayCrumb     = d.type === 'bonus' ? 'Miễn phí' : ('Ngày ' + d.day);
+      const eyebrow      = d.type === 'bonus' ? 'Bonus · Miễn phí cho học viên' : ('Module ' + d.module + ' — Ngày ' + d.day);
+
       document.getElementById('main-content').innerHTML = `
         <div class="breadcrumb">
           <a href="academy-courses.html">Khóa học</a><span>›</span>
           <a href="academy-lessons.html">QROS</a><span>›</span>
-          <span>Module ${d.module}</span><span>›</span>
-          <span>Ngày ${d.day}</span>
+          <span>${moduleCrumb}</span><span>›</span>
+          <span>${dayCrumb}</span>
         </div>
 
-        <p class="day-eyebrow">Module ${d.module} — Ngày ${d.day}</p>
+        <p class="day-eyebrow">${eyebrow}</p>
         <h1 class="day-title">${d.title}</h1>
         <div class="day-meta">${metaBadges}</div>
 
@@ -2837,6 +3389,26 @@ TẦNG 4  SURRENDER        → Giữ danh tính, buông hình thức
         <div class="wb-tomorrow">
           ${nextD ? `Ngày mai (Ngày ${nextD.day}): ${nextD.title} — Hoàn thành journaling trước khi xem.` : ''}
         </div>`;
+    }
+
+    function renderBonusContent(d) {
+      const key   = 'qros_wb_' + d.day;
+      const saved = JSON.parse(localStorage.getItem(key) || '{}');
+
+      function ta(fieldId, rows) {
+        return `<textarea class="wb-ta" style="min-height:${Math.max(56, (rows || 2) * 26)}px"
+          placeholder="Viết câu trả lời của bạn tại đây..."
+          oninput="saveWb(${d.day},'${fieldId}',this.value)">${saved[fieldId] || ''}</textarea>`;
+      }
+
+      function cell(fieldId) {
+        return `<textarea class="wb-ta" style="min-height:38px;padding:6px 8px;font-size:.8rem"
+          oninput="saveWb(${d.day},'${fieldId}',this.value)">${saved[fieldId] || ''}</textarea>`;
+      }
+
+      const c = CONTENT[d.day];
+      if (c && c.render) return c.render(ta, cell);
+      return '<div class="reading-content"><div class="ph-block">Nội dung bonus sẽ sớm được cập nhật.</div></div>';
     }
 
     // ═══════════════════════════════════════════════════════════════
