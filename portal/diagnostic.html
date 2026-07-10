@@ -1927,6 +1927,7 @@ fbq('track', 'PageView');
       document.querySelectorAll('.result-page').forEach(function(p) { p.classList.remove('active'); });
       var page = document.getElementById('result-' + currentGroup);
       if (page) page.classList.add('active');
+      if (typeof fbq === 'function') fbq('track', 'Lead', { content_name: 'diagnostic_group_' + currentGroup });
       if (overlayActive) {
         var banner = document.getElementById('overlay-' + currentGroup);
         if (banner) {
@@ -2065,7 +2066,7 @@ fbq('track', 'PageView');
       ctaEl.id = 'chat-cta-block';
       ctaEl.style.cssText = 'margin-top:28px;padding:24px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:12px;text-align:center;';
       ctaEl.innerHTML = '<p style="font-size:13px;color:var(--color-muted);margin:0 0 16px;">Sẵn sàng tháo gỡ vòng lặp có cấu trúc?</p>'
-        + '<a href="https://www.quantumrebirth.io.vn/" target="_blank" style="display:inline-block;padding:14px 28px;background:var(--color-accent);color:#000;font-weight:700;font-size:14px;letter-spacing:0.04em;border-radius:8px;text-decoration:none;">Xem Quantum Rebirth OS →</a>';
+        + '<a href="https://www.quantumrebirth.io.vn/" target="_blank" onclick="if(typeof fbq===\'function\')fbq(\'track\',\'InitiateCheckout\',{content_name:\'diagnostic_group_\'+currentGroup})" style="display:inline-block;padding:14px 28px;background:var(--color-accent);color:#000;font-weight:700;font-size:14px;letter-spacing:0.04em;border-radius:8px;text-decoration:none;">Xem Quantum Rebirth OS →</a>';
       container.parentNode.insertBefore(ctaEl, container.nextSibling);
     }
 
