@@ -304,3 +304,40 @@ Bài tập "Truy Vết Vùng Đệm" — ba ngày:
 Bài tập ba ngày này cho bạn một dữ liệu quý: bằng chứng sống rằng cơ thể phản ứng khác hoàn toàn so với những gì đầu óc bạn đã "biết". Nhưng nó chỉ chạm được lớp bề mặt — hành vi và phản xạ tức thời. Vùng Đệm Tri Thức hiếm khi đứng một mình. Nó thường được dựng lên để bảo vệ một niềm tin cũ hơn, sâu hơn — một Brule về việc hành động đồng nghĩa với nguy hiểm, được cài đặt từ rất lâu trước khi bạn đọc cuốn sách đầu tiên. Gỡ một hành động không tháo được cả hệ thống nếu tầng danh tính bên dưới vẫn giữ nguyên.
 
 Câu hỏi để bắt đầu: *Bạn không cần thêm một cuốn sách. Bạn cần 48 giờ sống như thể bạn đã biết đủ. Điều bạn viết ra ở Ngày 1 — bạn sẽ chọn cái nào để bắt đầu?*
+
+## Bài 13 — Hiệu Ứng Cantillon Của Năng Lượng
+### Decision Fatigue · Năng Lượng · Tháng 7, 2026
+
+7 giờ sáng. Bạn chưa kịp đánh răng, tay đã mở điện thoại. Tin nhắn nhóm công ty từ 11 giờ đêm qua. Email khách hàng gắn cờ "gấp". Một câu hỏi của đồng nghiệp cần trả lời trước 9 giờ. Bạn trả lời hết, gọn gàng, đúng giờ.
+
+Đến 10 giờ, khi ngồi lại với việc bạn thật sự muốn làm cho chính mình — viết, lên kế hoạch, gọi cho người thân — đầu óc đã mỏi. Không phải mỏi tay chân. Mỏi ở chỗ ra quyết định. Bạn chọn hoãn nó sang chiều. Chiều lại có việc khác chen vào. Việc của bạn luôn xếp cuối danh sách — không phải vì bạn không coi trọng nó, mà vì lúc bạn tới lượt, phần tốt nhất đã được tiêu hết.
+
+Cách giải thích quen thuộc: bạn cần quản lý thời gian tốt hơn. Một cuốn sổ tay mới, một app nhắc việc mới, dậy sớm hơn nửa tiếng. Bạn đã thử vài lần. Vấn đề không biến mất — nó chỉ dời khung giờ.
+
+Có một cách nhìn khác, mượn từ một góc không ai ngờ: kinh tế học tiền tệ.
+
+Khi một ngân hàng trung ương in thêm tiền, số tiền đó không đến tay mọi người cùng lúc và cùng giá trị. Nó chảy vào hệ thống ngân hàng và quỹ đầu tư trước — nơi tiền còn nguyên sức mua. Đến khi chảy tới người làm công ăn lương, giá cả trên thị trường đã kịp điều chỉnh theo lượng tiền mới. Phần nhận được cuối cùng là phần đã mất giá. Nhà kinh tế học **Richard Cantillon** mô tả hiện tượng này từ thế kỷ 18 — tiền không trung tính, thứ tự ai nhận được nó trước mới là thứ quyết định ai thật sự giàu lên.
+
+Năng lượng nhận thức của bạn mỗi sáng vận hành theo đúng trật tự đó. Nó được "in ra" — tái tạo qua giấc ngủ — với số lượng hữu hạn. Và nó chảy tới nơi nhận đầu tiên, không phải nơi xứng đáng nhất.
+
+Nhà tâm lý học **Roy Baumeister**, qua hàng loạt thí nghiệm về *ego depletion*, cho thấy khả năng ra quyết định và tự chủ hoạt động giống một nguồn lực có thể cạn — không phải một phẩm chất cố định. Mỗi lựa chọn, dù nhỏ như trả lời tin nhắn nào trước, đều rút một phần nguồn lực đó. Trong một nghiên cứu thường được trích dẫn, các thẩm phán xét duyệt ân xá có tỷ lệ phê duyệt cao nhất vào đầu phiên làm việc — và giảm dần suốt buổi, bất kể hồ sơ nặng nhẹ ra sao. Không phải họ đổi ý về công lý. Nguồn lực ra quyết định của họ cạn dần theo từng ca.
+
+**Daniel Kahneman** gọi phần tư duy phải cân nhắc, đánh giá, lựa chọn có chủ đích là *System 2* — chậm, tốn sức, và giới hạn trong một ngày. Phần còn lại, phản xạ nhanh và tự động, gần như vô hạn. Vấn đề là: mọi tin nhắn "gấp" buổi sáng đều đòi System 2 phản hồi ngay. Đến lượt việc của chính bạn — thứ đòi hỏi System 2 nhiều nhất, vì nó không có kịch bản sẵn — bạn chỉ còn System 1. Phản xạ. Trì hoãn là phản xạ dễ nhất.
+
+Tôi từng tự hào vì luôn là người phản hồi nhanh nhất trong mọi nhóm chat. Đối tác nhắn lúc 6 giờ rưỡi sáng, tôi trả lời trong vòng năm phút. Nhân viên hỏi gấp, tôi giải quyết trước bữa sáng. Tôi coi đó là kỷ luật. Suốt hơn một năm, cuốn sách tôi muốn viết cho chính mình nằm yên ở trang ba. Không phải vì tôi lười viết. Vì lúc tôi ngồi xuống với nó — luôn là sau 3, 4 giờ chiều — phần não cần để viết một cách rõ ràng đã bị tiêu hết cho những cuộc trò chuyện không phải của tôi.
+
+Tôi không thiếu kỷ luật. Tôi đang tự nguyện đứng ở cuối nguồn năng lượng của chính mình.
+
+Tôi gọi đây là **Người Cuối Nguồn**: một cách vận hành trong đó bạn — người tạo ra năng lượng — luôn là người cuối cùng nhận lại nó, sau khi đầu nguồn đã rút hết phần nguyên chất. Không ai ép bạn đứng đó. Bạn tự xếp hàng, vì mở điện thoại trước khi mở mắt cảm giác giống trách nhiệm, còn ngồi yên với việc của mình cảm giác giống ích kỷ.
+
+Kiểm toán Cantillon cá nhân — ba ngày:
+
+**Ngày 1.** Không thay đổi gì. Chỉ ghi lại ba việc đầu tiên bạn làm sau khi thức dậy, theo đúng thứ tự, và ai là người hưởng lợi từ mỗi việc đó — bạn, hay người gửi tin nhắn.
+
+**Ngày 2.** Lặp lại việc ghi chép. Thêm một câu hỏi cho mỗi mục: "Đây có phải việc quan trọng nhất với cuộc đời tôi, hay chỉ quan trọng nhất với inbox của tôi?" Không cần sửa gì — chỉ cần nhìn thấy rõ.
+
+**Ngày 3.** Chặn 90 phút đầu tiên sau khi thức dậy cho đúng một việc thuộc về cuộc đời bạn — không mở app nhắn tin trong khung giờ đó. Ghi lại việc bạn hoàn thành, và mức độ khó khi phải cưỡng lại thôi thúc kiểm tra điện thoại.
+
+Ba ngày này cho bạn dữ liệu rõ ràng về việc năng lượng thật sự chảy đi đâu trước — và cảm giác cụ thể khi giành lại 90 phút đầu nguồn cho chính mình. Nhưng nó chỉ điều chỉnh được thứ tự hành vi. Cảm giác tội lỗi khi ngồi yên với việc của mình, cảm giác "phải" trả lời ngay để chứng minh giá trị bản thân — đó là tầng sâu hơn nhiều so với một khung giờ 90 phút. Đó thường là một Brule về việc thời gian của mình không quan trọng bằng thời gian của người khác, cài đặt từ rất lâu trước khi có điện thoại thông minh để kiểm tra.
+
+Câu hỏi để bắt đầu: *Bạn không thiếu thời gian. Bạn đang cho người khác quyền rút tiền từ tài khoản năng lượng của mình trước. 90 phút đầu tiên ngày mai — bạn sẽ để ai rút trước?*
