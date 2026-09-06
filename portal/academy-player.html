@@ -2656,13 +2656,21 @@ ${ta('b3_t4_72h_resisted', 1)}
     const INTEGRATION = {
       7: {
         why: 'Ba ngày vừa rồi là những ngày nặng nhất trong khóa học — Nghiện Cảm Xúc, Kiểm Toán Lịch Sử, Bản Đồ Nhà Tù. Hôm nay không có gì để học. Chỉ có không gian để những gì đã mở ra được xử lý trước khi bước vào Tha Thứ Chủ Động.',
-        activity: 'Thiền im lặng 20 phút — không có kỹ thuật mới, không có mục tiêu cần đạt. Chỉ ngồi và để những gì vừa được nhìn thấy có thể thở.\n\nHướng dẫn: (1) Ngồi thẳng, đặt hai tay lên đùi. Thở vào 4 nhịp — thở ra 6 nhịp, làm 3 lần. (2) Nhắm mắt. Để hàm thư giãn, vai xuống, ngực không nén. (3) Hỏi nhẹ: "Cơ thể mình đang giữ gì?" — rồi chú ý không phán xét đến bất kỳ cảm giác nào xuất hiện. Nếu ký ức từ Kiểm Toán hoặc Bản Đồ nổi lên — để nó ở đó, nhìn nó như nhìn mây trôi. (4) Kết thúc: thở ra chậm 3 lần, đặt tay lên tim một khoảnh khắc trước khi mở mắt.',
+        activity: 'Thiền im lặng — 20 phút. Không có kỹ thuật mới, không có mục tiêu cần đạt. Chỉ ngồi — và để những gì vừa được nhìn thấy có thể thở.',
+        steps: [
+          { title: 'Chuẩn bị', instruction: 'Tìm một chỗ ngồi không bị gián đoạn. Tắt thông báo.\n\nKhông cần nhạc, không cần hướng dẫn âm thanh — im lặng là đủ.' },
+          { title: 'Bước 1 — Định vị cơ thể', time: '1–2 phút', instruction: 'Ngồi thẳng nhưng không cứng. Đặt hai tay lên đùi.\n\nThở vào 4 nhịp — thở ra 6 nhịp. Làm 3 lần. Không cần đếm chính xác, chỉ cần thở ra dài hơn thở vào.' },
+          { title: 'Bước 2 — Làm mềm cơ thể', time: '2–3 phút', instruction: 'Nhắm mắt. Chú ý đến mặt — để hàm thư giãn. Vai — để xuống. Ngực — không nén.\n\nKhông cần làm gì. Chỉ chú ý và để mềm ra.' },
+          { title: 'Bước 3 — Để những gì đã mở ra có mặt', time: '12–15 phút', instruction: 'Không cần nhớ lại, không cần phân tích. Chỉ hỏi nhẹ: "Cơ thể mình đang giữ gì?"\n\nRồi chú ý — không phán xét — đến bất kỳ cảm giác nào xuất hiện. Nếu một ký ức hay hình ảnh từ Kiểm Toán Lịch Sử hoặc Bản Đồ Nhà Tù nổi lên — để nó ở đó. Nhìn nó như nhìn mây trôi.' },
+          { title: 'Bước 4 — Kết thúc', time: '1–2 phút', instruction: 'Thở ra chậm — 3 lần. Trước khi mở mắt: đặt tay lên tim một khoảnh khắc.' },
+        ],
         question: 'Điều nào trong Bản Đồ Nhà Tù vẫn đang nặng nhất lúc này?',
         next: 8,
       },
       12: {
         why: 'Sau khi có Tuyên ngôn và Bản Thiết kế, hôm nay là ngày đưa chúng vào cơ thể. Không học thêm lý thuyết — chỉ thực hành.',
         activity: 'Thiền Bản Thiết kế 30 phút (audio hướng dẫn từ James) + ghi lại một dấu ấn cảm xúc bạn cảm nhận được.',
+        audio: true,
         question: 'Một dấu ấn cảm xúc bạn cảm nhận được khi đọc Tuyên ngôn hôm nay là gì?',
         next: 13,
       },
@@ -3391,9 +3399,17 @@ TẦNG 4  SURRENDER        → Giữ danh tính, buông hình thức
         <p class="section-title">Hoạt Động Duy Nhất Hôm Nay</p>
         <p style="font-family:'Inter',sans-serif;font-size:.88rem;color:#2B2B2B;line-height:1.75;margin-bottom:22px">${info.activity}</p>
 
-        <div class="ph-block" style="margin-bottom:28px">
+        ${info.audio ? `<div class="ph-block" style="margin-bottom:28px">
           ✎ Audio hướng dẫn thiền sẽ được nhúng tại đây (SoundCloud / file MP3)
-        </div>
+        </div>` : ''}
+
+        ${(info.steps || []).map(function (s) {
+          return `<div class="wb-block">
+            <div class="wb-ex-title">${s.title}</div>
+            ${s.time ? `<div class="wb-time">~${s.time}</div>` : ''}
+            <div class="wb-instruction">${s.instruction.replace(/\n/g, '<br/>')}</div>
+          </div>`;
+        }).join('')}
 
         <hr style="border:none;border-top:1px solid rgba(197,168,128,.18);margin:28px 0"/>
 
