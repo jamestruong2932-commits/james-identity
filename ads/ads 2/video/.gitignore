@@ -1,0 +1,4 @@
+node_modules/
+out/
+# video gốc nặng, bản đã xử lý nằm trong public/
+/*.mp4

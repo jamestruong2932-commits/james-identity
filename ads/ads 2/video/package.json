@@ -1,0 +1,22 @@
+{
+  "name": "ad2-cortisol",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Ad2 — Ngực Đã Nặng Trước Khi Kịp Mở Mắt (ảnh motion kể chuyện)",
+  "scripts": {
+    "studio": "remotion studio src/index.ts",
+    "render": "remotion render src/index.ts Ad2 out/Ad2_Animated_Cortisol.mp4",
+    "still": "remotion still src/index.ts Ad2"
+  },
+  "dependencies": {
+    "@remotion/cli": "^4.0.544",
+    "@remotion/google-fonts": "^4.0.544",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
+    "remotion": "^4.0.544"
+  },
+  "devDependencies": {
+    "@types/react": "^19.3.0",
+    "typescript": "^7.0.2"
+  }
+}
